@@ -10,7 +10,7 @@ const mapsFile = path.join(__dirname, "api","played_maps.json");
 app.use(express.json());
 
 //serves public files html/js/css in overlays
-app.use(express.static(path.join(__dirname,"overlays")));
+app.use(express.static(path.join(__dirname,"p")));
 
 app.get("/api/played_maps/stream", (req,res) =>{
     res.setHeader("Content-Type","text/event-stream");
