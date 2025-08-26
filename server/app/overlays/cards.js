@@ -7,12 +7,22 @@ const { createElement: h, useState, useEffect } = React;
 
         const [maps, setMaps] = useState([]);
         useEffect(()=>{
-            fetch("/api/played_maps")
-            .then((res)=> res.json())
-            .then((data)=> {
-                setMaps(Object.entries(data)); //convert obj json to array keeps [id, map] pair
-            })
-            .catch((err)=>console.error("Error: ",err));
+            const eventSource = new EventSource("/api/played_maps/stream");
+
+            eventSource.onmessage=(e)=>{
+                try{
+                    const data = JSON.parse(e.data);
+                    setMaps(Object.entries(data));
+                } catch (err){console.error(err)};
+                
+            }
+            
+            // fetch("/api/played_maps")
+            // .then((res)=> res.json())
+            // .then((data)=> {
+            //     setMaps(Object.entries(data)); //convert obj json to array keeps [id, map] pair
+            // })
+            // .catch((err)=>console.error("Error: ",err));
         },[]);
         
 
