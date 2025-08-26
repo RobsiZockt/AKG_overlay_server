@@ -1,18 +1,10 @@
 {
   "1": {
     "name": "Busan",
-    "image": "./img/maps/busan.webp",
-    "ban_red": "./img/heros/ana.png",
-    "ban_blue": "./img/heros/ash.png",
+    "image": "./../img/maps/busan.webp",
+    "ban_red": "./../img/heros/ana.png",
+    "ban_blue": "./../img/heros/ash.png",
     "score_blue": "4",
     "score_red": "1"
-  },
-  "2": {
-    "name": "Ilios",
-    "image": "./img/maps/ilios.webp",
-    "ban_red": "./img/heros/reaper.png",
-    "ban_blue": "./img/heros/sombra.png",
-    "score_blue": "4",
-    "score_red": "3"
   }
 }
