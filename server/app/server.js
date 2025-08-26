@@ -18,10 +18,6 @@ app.get("/api/played_maps/stream", (req,res) =>{
     res.setHeader("Connection","keep-alive");
 
     let lastMtime = 0;
-
-
-
-
  const sendFile = () => {
     try {
       const stats = fs.statSync(mapsFile);
@@ -44,8 +40,25 @@ app.get("/api/played_maps/stream", (req,res) =>{
 
 
 
+app.post('/api/played_maps', (req, res) => {
+  try {
+    // Read existing JSON
+    const json = JSON.parse(fs.readFileSync(mapsFile, 'utf-8'));
 
+   const entryKey = req.body.key;
+    if (!entryKey || !json[entryKey]) return res.status(400).json({ error: "Invalid key" });
+    json[entryKey] = { ...json[entryKey], ...req.body };
+    delete json[entryKey].key;
 
+    // Write updated JSON back to file
+    fs.writeFileSync(mapsFile, JSON.stringify(json, null, 2));
+
+    res.json({ status: 'ok', latest: json[entryKey] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Could not update played_maps.json' });
+  }
+});
 
 
 
@@ -67,15 +80,6 @@ try{
 }
 });
 
-app.post("/api/played_maps",(req,res) =>{
-    console.log("Received body:", req.body);
-try{
-    const data = fs.writeFileSync(mapsFile,JSON.stringify(req.body,null,2));
-    res.json({status: "ok"});
-}catch (err){
-    res.status(500).json({error: "Could not write on played_maps.json"});
-}
-});
 ////////////////LEGACY END ///////////////////////////
 app.listen(PORT,()=>
 console.log("Server is listening on ${PORT}"));
