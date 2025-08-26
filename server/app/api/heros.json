@@ -1,0 +1,217 @@
+{
+  "1": {
+    "name": "ana",
+    "extension": "png",
+    "path": "heros\\ana.png"
+  },
+  "2": {
+    "name": "ash",
+    "extension": "png",
+    "path": "heros\\ash.png"
+  },
+  "3": {
+    "name": "baptiste",
+    "extension": "png",
+    "path": "heros\\baptiste.png"
+  },
+  "4": {
+    "name": "bastion",
+    "extension": "png",
+    "path": "heros\\bastion.png"
+  },
+  "5": {
+    "name": "brigitte",
+    "extension": "png",
+    "path": "heros\\brigitte.png"
+  },
+  "6": {
+    "name": "cassidy",
+    "extension": "png",
+    "path": "heros\\cassidy.png"
+  },
+  "7": {
+    "name": "diva",
+    "extension": "png",
+    "path": "heros\\diva.png"
+  },
+  "8": {
+    "name": "doomfist",
+    "extension": "png",
+    "path": "heros\\doomfist.png"
+  },
+  "9": {
+    "name": "echo",
+    "extension": "png",
+    "path": "heros\\echo.png"
+  },
+  "10": {
+    "name": "freja",
+    "extension": "png",
+    "path": "heros\\freja.png"
+  },
+  "11": {
+    "name": "genji",
+    "extension": "png",
+    "path": "heros\\genji.png"
+  },
+  "12": {
+    "name": "hanzo",
+    "extension": "png",
+    "path": "heros\\hanzo.png"
+  },
+  "13": {
+    "name": "hazard",
+    "extension": "png",
+    "path": "heros\\hazard.png"
+  },
+  "14": {
+    "name": "illari",
+    "extension": "png",
+    "path": "heros\\illari.png"
+  },
+  "15": {
+    "name": "junker_queen",
+    "extension": "png",
+    "path": "heros\\junker_queen.png"
+  },
+  "16": {
+    "name": "junkrat",
+    "extension": "png",
+    "path": "heros\\junkrat.png"
+  },
+  "17": {
+    "name": "juno",
+    "extension": "png",
+    "path": "heros\\juno.png"
+  },
+  "18": {
+    "name": "kiriko",
+    "extension": "png",
+    "path": "heros\\kiriko.png"
+  },
+  "19": {
+    "name": "lifeweaver",
+    "extension": "png",
+    "path": "heros\\lifeweaver.png"
+  },
+  "20": {
+    "name": "lucio",
+    "extension": "png",
+    "path": "heros\\lucio.png"
+  },
+  "21": {
+    "name": "mauga",
+    "extension": "png",
+    "path": "heros\\mauga.png"
+  },
+  "22": {
+    "name": "mei",
+    "extension": "png",
+    "path": "heros\\mei.png"
+  },
+  "23": {
+    "name": "mercy",
+    "extension": "png",
+    "path": "heros\\mercy.png"
+  },
+  "24": {
+    "name": "moira",
+    "extension": "png",
+    "path": "heros\\moira.png"
+  },
+  "25": {
+    "name": "orisa",
+    "extension": "png",
+    "path": "heros\\orisa.png"
+  },
+  "26": {
+    "name": "pharah",
+    "extension": "png",
+    "path": "heros\\pharah.png"
+  },
+  "27": {
+    "name": "ramatra",
+    "extension": "png",
+    "path": "heros\\ramatra.png"
+  },
+  "28": {
+    "name": "reaper",
+    "extension": "png",
+    "path": "heros\\reaper.png"
+  },
+  "29": {
+    "name": "reinhart",
+    "extension": "png",
+    "path": "heros\\reinhart.png"
+  },
+  "30": {
+    "name": "roadhog",
+    "extension": "png",
+    "path": "heros\\roadhog.png"
+  },
+  "31": {
+    "name": "sigma",
+    "extension": "png",
+    "path": "heros\\sigma.png"
+  },
+  "32": {
+    "name": "soilder_76",
+    "extension": "png",
+    "path": "heros\\soilder_76.png"
+  },
+  "33": {
+    "name": "sojourn",
+    "extension": "png",
+    "path": "heros\\sojourn.png"
+  },
+  "34": {
+    "name": "sombra",
+    "extension": "png",
+    "path": "heros\\sombra.png"
+  },
+  "35": {
+    "name": "symmetra",
+    "extension": "png",
+    "path": "heros\\symmetra.png"
+  },
+  "36": {
+    "name": "torbjörn",
+    "extension": "png",
+    "path": "heros\\torbjörn.png"
+  },
+  "37": {
+    "name": "tracer",
+    "extension": "png",
+    "path": "heros\\tracer.png"
+  },
+  "38": {
+    "name": "venture",
+    "extension": "png",
+    "path": "heros\\venture.png"
+  },
+  "39": {
+    "name": "widowmaker",
+    "extension": "png",
+    "path": "heros\\widowmaker.png"
+  },
+  "40": {
+    "name": "winston",
+    "extension": "png",
+    "path": "heros\\winston.png"
+  },
+  "41": {
+    "name": "wrecking_ball",
+    "extension": "png",
+    "path": "heros\\wrecking_ball.png"
+  },
+  "42": {
+    "name": "zarya",
+    "extension": "png",
+    "path": "heros\\zarya.png"
+  },
+  "43": {
+    "name": "zenyatta",
+    "extension": "png",
+    "path": "heros\\zenyatta.png"
+  }
+}
