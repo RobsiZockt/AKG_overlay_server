@@ -1,8 +1,8 @@
 
 
-      const { createElement: h, useState, useEffect } = React;
+const { createElement: h, useState, useEffect } = React;
 
-      function RectangleWithContent() {
+    function RectangleWithContent() {
 
 
         const [maps, setMaps] = useState([]);
@@ -10,26 +10,24 @@
             fetch("/api/played_maps")
             .then((res)=> res.json())
             .then((data)=> {
-                setMaps(Object.values(data)); //convert obj json to array
+                setMaps(Object.entries(data)); //convert obj json to array keeps [id, map] pair
             })
             .catch((err)=>console.error("Error: ",err));
         },[]);
         
-        if(!maps ){
-            return h('div',null,"No Maps founnd");
-        }
+
         if( maps.length===0){
             return h('div', null, "Waiting for first Map");
         }
             
-        const map = maps[0];
 
         const containerStyle = {
           width: '300px',
           height: '420px',
           borderRadius: '16px',
           overflow: 'hidden',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+          border: '2px solid rgba(0, 0, 0, 1)',
+          boxShadow: '2px 4px 12px rgba(0,0,0,0.1)',
           position: 'relative',
         };
 
@@ -42,6 +40,16 @@
           height: '90%',
           backgroundColor: 'gray',
         };
+
+        const scoring ={
+        position: 'absolute',
+          top: '13px',
+          left: '0%',
+          transform: 'translateX(-50%)',
+          color: 'white',
+          fontWeight: 'bold',
+        }
+
         // Creates a red square ontop of bottomStyle
         const redbg ={
           position: 'absolute',
@@ -88,7 +96,7 @@
           position: 'absolute',
           top: '70%',
           left: '25%',
-          transform: 'translateX(-50%)',
+          transform: `translateX(-50%)`,
           width: '90px',
         };
 
@@ -100,30 +108,30 @@
           width: '90px',
         };
 
-        return h('div', { style: containerStyle }, [
-          h('div', { style: topStyle }),
-
-          h('div', { style: bottomStyle },[
-            h('div',{style: redbg}),
-            h('div', {style: bluebg})
-          ]),
-          h('div', { style: overlayTextStyle }, map.name),
-          h('img', {
-            style: overlayImageStyle,
-            src: map.image,
-          }),
-          
-          h('img', {
-            style: ban_red,
-            src: map.ban_red,
-          }),
-          h('img',{
-            style:ban_blue,
-            src: map.ban_blue,
-          })
-            
-        ]);
-      }
+        return h('div',null,
+        maps.map(([id, map],index)=>{
+            const shiftContainerStyle = {
+                ...containerStyle,
+                position: "absolute", 
+                transform: `translate(-50%, -50%) translate(${index * 40}px)`,
+                left: "50$",           // small horizontal offset per card
+                top: "50%",
+                zIndex:  index,       // make the first map on top visually
+            };
+        return h('div', {  style: shiftContainerStyle }, [
+                h('div', { style: topStyle }),
+                h('div', { style: bottomStyle }, [
+                    h('div', { style: redbg }),
+                    h('div', { style: bluebg }),
+                ]),
+                h('div', { style: overlayTextStyle }, map.name),
+                h('img', { style: overlayImageStyle, src: map.image }),
+                h('img', { style: ban_red, src: map.ban_red }),
+                h('img', { style: ban_blue, src: map.ban_blue }),
+            ]);
+        })
+    );
+}
 
       const root = ReactDOM.createRoot(document.getElementById('root'));
       root.render(h(RectangleWithContent));
