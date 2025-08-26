@@ -125,7 +125,7 @@ const { createElement: h, useState, useEffect } = React;
                     h('div', { style: bluebg }),
                 ]),
                 h('div', { style: overlayTextStyle }, map.name),
-                h('div', {style: scoring},map.score_blue, "-", map.score_red),
+                map.score_blue && h('div', {style: scoring},map.score_blue, "-", map.score_red),
                 h('img', { style: overlayImageStyle, src: map.image }),
                 h('img', { style: ban_red, src: map.ban_red }),
                 h('img', { style: ban_blue, src: map.ban_blue }),
