@@ -1,5 +1,3 @@
-
-
 const { createElement: h, useState, useEffect } = React;
 
     function RectangleWithContent() {
@@ -14,7 +12,6 @@ const { createElement: h, useState, useEffect } = React;
                     const data = JSON.parse(e.data);
                     setMaps(Object.entries(data));
                 } catch (err){console.error(err)};
-                
             }
             
             // fetch("/api/played_maps")
