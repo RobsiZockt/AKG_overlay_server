@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Map Editor</title>
+    <style>
+      textarea {
+        width: 100%;
+        height: 300px;
+      }
+      button {
+        margin-top: 10px;
+        padding: 10px 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Edit maps.json</h1>
+    <textarea id="editor"></textarea>
+    <br />
+    <button id="save">Save</button>
+
+    <script>
+      async function load() {
+        const res = await fetch("/api/played_maps");
+        const data = await res.json();
+        document.getElementById("editor").value = JSON.stringify(data, null, 2);
+      }
+
+      async function save() {
+        try {
+          const data = JSON.parse(document.getElementById("editor").value);
+          await fetch("/api/played_maps", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+          alert("Saved!");
+        } catch (e) {
+          alert("Invalid JSON!");
+        }
+      }
+
+      document.getElementById("save").onclick = save;
+      load();
+    </script>
+  </body>
+</html>

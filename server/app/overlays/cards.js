@@ -1,6 +1,29 @@
-      const { createElement: h, useState } = React;
+
+
+      const { createElement: h, useState, useEffect } = React;
 
       function RectangleWithContent() {
+
+
+        const [maps, setMaps] = useState([]);
+        useEffect(()=>{
+            fetch("/api/played_maps")
+            .then((res)=> res.json())
+            .then((data)=> {
+                setMaps(Object.values(data)); //convert obj json to array
+            })
+            .catch((err)=>console.error("Error: ",err));
+        },[]);
+        
+        if(!maps ){
+            return h('div',null,"No Maps founnd");
+        }
+        if( maps.length===0){
+            return h('div', null, "Waiting for first Map");
+        }
+            
+        const map = maps[0];
+
         const containerStyle = {
           width: '300px',
           height: '420px',
@@ -84,19 +107,19 @@
             h('div',{style: redbg}),
             h('div', {style: bluebg})
           ]),
-          h('div', { style: overlayTextStyle }, 'Busan'),
+          h('div', { style: overlayTextStyle }, map.name),
           h('img', {
             style: overlayImageStyle,
-            src: './../img/maps/busan.webp',
+            src: map.image,
           }),
           
           h('img', {
             style: ban_red,
-            src: './../img/heros/ana.png',
+            src: map.ban_red,
           }),
           h('img',{
             style:ban_blue,
-            src: './../img/heros/ash.png',
+            src: map.ban_blue,
           })
             
         ]);

@@ -1,0 +1,8 @@
+{
+  "1": {
+    "name": "Busan",
+    "image": "./../img/maps/busan.webp",
+    "ban_red": "./../img/heros/ana.png",
+    "ban_blue": "./../img/heros/ash.png"
+  }
+}
