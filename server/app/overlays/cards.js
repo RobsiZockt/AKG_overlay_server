@@ -44,7 +44,7 @@ const { createElement: h, useState, useEffect } = React;
         const scoring ={
         position: 'absolute',
           top: '13px',
-          left: '0%',
+          left: '7%',
           transform: 'translateX(-50%)',
           color: 'white',
           fontWeight: 'bold',
@@ -55,7 +55,7 @@ const { createElement: h, useState, useEffect } = React;
           position: 'absolute',
           
           top: '70%',
-          left: '25%',
+          right: '0%',
           width: '90px',
           height: '90px',
           transform: 'translateX(-50%)',
@@ -66,7 +66,7 @@ const { createElement: h, useState, useEffect } = React;
           position: 'absolute',
           
           top: '70%',
-          right: '0%',
+          left: '25%',
           width: '90px',
           height: '90px',
           transform: 'translateX(-50%)',
@@ -95,7 +95,7 @@ const { createElement: h, useState, useEffect } = React;
         const ban_red ={
           position: 'absolute',
           top: '70%',
-          left: '25%',
+          right: '0%',
           transform: `translateX(-50%)`,
           width: '90px',
         };
@@ -103,7 +103,7 @@ const { createElement: h, useState, useEffect } = React;
         const ban_blue ={
           position: 'absolute',
           top: '70%',
-          right: '0%',
+          left: '25%',
           transform: 'translateX(-50%)',
           width: '90px',
         };
@@ -125,6 +125,7 @@ const { createElement: h, useState, useEffect } = React;
                     h('div', { style: bluebg }),
                 ]),
                 h('div', { style: overlayTextStyle }, map.name),
+                h('div', {style: scoring},map.score_blue, "-", map.score_red),
                 h('img', { style: overlayImageStyle, src: map.image }),
                 h('img', { style: ban_red, src: map.ban_red }),
                 h('img', { style: ban_blue, src: map.ban_blue }),
