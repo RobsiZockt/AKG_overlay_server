@@ -11,8 +11,11 @@
   let setHighlight_red_Ext;
 
   //listens to SEE and updates all JSON related values
-  eventSource.onmessage = (event) => {
-    latestJson = JSON.parse(event.data);
+
+  
+  document.addEventListener("playedMapsUpdate", (e) => {
+     latestJson = e.detail;
+    
 
     keys = Object.keys(latestJson).map(Number);
     latestKey = Math.max(...keys);
@@ -23,7 +26,7 @@
     setHighlight_blue_Ext();
 if(setHighlight_red_Ext)
     setHighlight_red_Ext();
-  };
+  });
 
 
   async function update(data) {
