@@ -1,3 +1,5 @@
+const { error } = require("console");
+const e = require("express");
 const express = require("express");
 const fs = require("fs").promises;
 const path = require("path");
@@ -67,18 +69,40 @@ app.get("/api/played_maps", (req, res) => {
 app.post("/api/played_maps", async (req, res) => {
   try {
     const entryKey = req.body.key;
-    if (!entryKey || !playedMapsCache[entryKey]) return res.status(400).json({ error: "Invalid key" });
+    if (!entryKey) return res.status(400).json({ error: "Missing key" });
 
-    playedMapsCache[entryKey] = { ...playedMapsCache[entryKey], ...req.body };
+    if(playedMapsCache[entryKey]) return res.status(400).json({error: "Key allready exists"});
+    
+playedMapsCache[entryKey] = { ...req.body };
     delete playedMapsCache[entryKey].key;
 
     await fs.writeFile(playedmaps, JSON.stringify(playedMapsCache, null, 2), "utf8");
 
-    res.json({ status: "ok", latest: playedMapsCache[entryKey] });
+    res.status(201).json({ status: "ok", latest: playedMapsCache[entryKey] });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Could not update played_maps.json" });
   }
+});
+
+//PUT endpoint updates targeted Object
+app.put("/api/played_maps/:id", async (req,res)=>{
+try{
+  const entryKey = req.params.id;
+  if(!playedMapsCache[entryKey]){ return res.status(404).json({error: "Entry not found"});
+}
+playedMapsCache[entryKey] ={
+  ...playedMapsCache[entryKey],
+  ...req.body
+};
+delete playedMapsCache[entryKey].key;
+
+await fs.writeFile(playedmaps, JSON.stringify(playedMapsCache,null,2),"utf8");
+res.status(201).json({staus: "ok", latest: playedMapsCache[entryKey]});
+}catch (err){
+console.error(err);
+    res.status(500).json({ error: "Could not edit played_maps.json" });
+}
 });
 
 
