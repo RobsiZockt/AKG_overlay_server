@@ -16,7 +16,8 @@
     latestKey = Math.max(...keys);
 
     selectedmap = latestJson[latestKey].name;
-    setHighlightedNameExt(selectedmap);
+    if(setHighlightedNameExt){
+    setHighlightedNameExt(selectedmap);}
   };
 
   async function update(data) {
