@@ -117,6 +117,7 @@ const { createElement: h, useState, useEffect } = React;
 
         return h('div',null,
         maps.map(([id, map],index)=>{
+          if(!map?.name) return null;
             const shiftContainerStyle = {
                 ...containerStyle,
                 position: "absolute", 
