@@ -16,7 +16,8 @@
 
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
-
+  <!--Fuse-->
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2/dist/fuse.min.js"></script>
     <style>
       body {
         margin: 0;
@@ -35,7 +36,7 @@
       function ScriptLayout() {
         return h(
           "div",
-          { className: "flex flex-col items-center gap-4 p-4 w-full h-full " },
+          { className: "flex flex-col items-center gap-4 p-4 w-full h-[100vh] " },
           [
             // Top Slot (fixed height, does not shrink)
             h("div", {
@@ -48,7 +49,7 @@
             // Bottom section (fills all remaining vertical space)
             h(
               "div",
-              { className: "flex gap-4 w-full flex-1" }, // flex-1 makes this fill the rest
+              { className: "flex gap-4 w-full h-full flex-1" }, // flex-1 makes this fill the rest
               [
                 // Left column (two stacked slots share space equally)
                 h("div", { className: "flex flex-col gap-4 flex-1" }, [
@@ -69,15 +70,15 @@
                   // pick/ban stack
                   h(
                     "div",
-                    { className: "flex gap-4 flex-1 flex-1" }, // flex-1 makes this fill the rest
+                    { className: "flex gap-4  flex-1 " }, // flex-1 makes this fill the rest
                     [
                       // Left column (two stacked slots share space equally)
-                      h("div", { className: "flex flex-col gap-4 flex-1 " }, [
+                      h("div", { className: "flex flex-col h-full gap-4 flex-1 " }, [
                         h("div", {
                           id: "mappick",
                           className:
                             "flex-1 bg-gray-200 rounded-xl shadow-md flex items-center justify-center",
-                          children: "Map Pick",
+                          //children: "Map Pick",
                         }),
                         h("div", {
                           id: "heroban",
@@ -116,9 +117,15 @@
         );
       }
 
-      const root = ReactDOM.createRoot(document.getElementById("root"));
-      root.render(h(ScriptLayout));
+if (!window._root) {
+  window._root = ReactDOM.createRoot(document.getElementById("root"));
+}
+
+// Always render via the shared root
+window._root.render(React.createElement(ScriptLayout));
+      
     </script>
     <script src="../js/scoretracker.js"></script>
+    <script src ="../js/mappicker.js"></script>
   </body>
 </html>
