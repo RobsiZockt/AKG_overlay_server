@@ -1,5 +1,6 @@
 // Find a container by its ID
 
+(function(){
 const eventSource = new EventSource("/api/played_maps/stream");
 let keys;
 let latestKey;
@@ -9,7 +10,7 @@ let overwrite2;
 
 function waitForContainer(id, callback) {
   const interval = setInterval(() => {
-    const ex = document.getElementById("scoresetter");
+    const ex = document.getElementById(id);
     if (ex) {
       clearInterval(interval);
       callback(ex);
@@ -147,3 +148,4 @@ async function update(data) {
     console.error("Error updating JSON:", error);
   }
 }
+})();
