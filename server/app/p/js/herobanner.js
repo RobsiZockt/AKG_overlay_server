@@ -4,6 +4,7 @@
   let ban_blue;
   let ban_red;
   let setBan;
+  let sel_team = "1";
   let latestKey;
   let latestJson;
   let setHighlight_blue_Ext;
@@ -22,9 +23,9 @@ const cleanup = window.subscribePlayedMaps((data) => {
     ban_blue = latestJson[latestKey].ban_blue_name;
     ban_red = latestJson[latestKey].ban_red_name;
     if(setHighlight_blue_Ext)
-    setHighlight_blue_Ext();
+    setHighlight_blue_Ext(ban_blue);
 if(setHighlight_red_Ext)
-    setHighlight_red_Ext();
+    setHighlight_red_Ext(ban_red);
   });
 
 
@@ -57,14 +58,19 @@ if(setHighlight_red_Ext)
     }, 100); //100ms pulling rate
   }
   
-  function sel_team(){
-  return "1"
 
+
+  function setTeam(team){
+    if(team === "1"){
+sel_team = "1";}
+if(team === "2"){
+sel_team = "2";
+}
+    
   }
 
-
   function handleImageClick(item) {
-    let team = sel_team();
+    let team = sel_team;
     if (team === "1") {
       setBan = {key: latestKey, ban_blue_name: item.name, ban_blue: item.path};
     }
@@ -118,18 +124,50 @@ if(setHighlight_red_Ext)
       setResults(fuse.search(query).map((r) => r.item));
     }, [query, data]);
 
-    return h("div", { className: "p-4" }, [
-      h("input", {
-        type: "text",
-        placeholder: "Search images...",
-        value: query,
-        onChange: (e) => setQuery(e.target.value),
-        className: "border p-2 w-full mb-4 rounded",
-      }),
+return h("div", { className: "p-4 h-full flex flex-col" }, [
+  // Search bar + buttons
+  h("div", { className: "flex items-center gap-2 mb-4" }, [
+    // Search input
+    h("input", {
+      type: "text",
+      placeholder: "Search images...",
+      value: query,
+      onChange: (e) => setQuery(e.target.value),
+      className: "border p-2 flex-1 rounded",
+    }),
+
+    // Reset Blue button
+    h(
+      "button",
+      {
+        className:
+          "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition",
+        onClick: () => {
+          setTeam("1");
+      
+        },
+      },
+      "Blue Ban"
+    ),
+
+    // Reset Red button
+    h(
+      "button",
+      {
+        className:
+          "bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition",
+        onClick: () => {
+          setTeam("2");
+        
+        },
+      },
+      "Red Ban"
+    ),
+  ]),
       h(
         "div",
         {
-          className: "grid grid-cols-2 md:grid-cols-4 gap-4 overflow-y-auto",
+          className: "grid grid-cols-2 md:grid-cols-6 gap-4 overflow-y-auto",
           style: { flex: "1 1 auto", maxHeight: "calc(2*10rem+2rem" },
         },
         results.map((item, idx) => {
