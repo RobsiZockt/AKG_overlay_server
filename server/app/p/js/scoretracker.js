@@ -1,5 +1,6 @@
 // Find a container by its ID
 
+
 (function(){
 let keys;
 let latestKey;
@@ -53,10 +54,21 @@ waitForContainer("scoresetter", (container) => {
 
   // Create CSS grid
   container.style.display = "grid";
-  container.style.gridTemplateColums = "20% 80%";
-  container.style.gridTemplateRows = "auto auto";
-  container.style.gap = "5px";
-  container.style.justifyItems = "start";
+  container.style.gridTemplateColums = "50% 50%";
+  container.style.gridTemplateRows = "auto";
+
+  const settergrid = document.createElement("div");
+  settergrid.style.display = "grid";
+  settergrid.style.gridTemplateColums = "20% 80%";
+  settergrid.style.gridTemplateRows = "auto auto";
+  settergrid.style.gap = "5px";
+  settergrid.style.justifyItems = "start";
+  settergrid.style.gridColumn ="1";
+  container.appendChild(settergrid);
+
+  const othergrid = document.createElement("div");
+    othergrid.style.gridColumn ="2";
+  container.appendChild(othergrid);
 
   // Create Button 1
   const button1 = document.createElement("button");
@@ -67,7 +79,7 @@ waitForContainer("scoresetter", (container) => {
   button1.addEventListener("click", () => handleButtonClick("1"));
   button1.style.gridRow ="1";
   button1.style.gridColumn ="1";
-  container.appendChild(button1);
+  settergrid.appendChild(button1);
 
   // Create Button 2
   const button2 = document.createElement("button");
@@ -76,7 +88,7 @@ waitForContainer("scoresetter", (container) => {
   button2.addEventListener("click", () => handleButtonClick("2"));
   button2.style.gridRow="2";
   button2.style.gridColumn="1";
-  container.appendChild(button2);
+  settergrid.appendChild(button2);
 
   // Create Texfield for overwriting Score
   overwrite1 = document.createElement("textarea");
@@ -85,7 +97,7 @@ waitForContainer("scoresetter", (container) => {
   overwrite1.style.gridRow = "1";
   overwrite1.style.gridColumn = "2";
   overwrite1.addEventListener("keydown", (event)=>{if(event.key === "Enter"){event.preventDefault();  handleOverwrite("1",overwrite1.value)}});
-  container.appendChild(overwrite1);
+  settergrid.appendChild(overwrite1);
 
 
   overwrite2 = document.createElement("textarea");
@@ -94,21 +106,34 @@ waitForContainer("scoresetter", (container) => {
   overwrite2.style.gridRow = "2";
   overwrite2.style.gridColumn = "2";
   overwrite2.addEventListener("keydown", (event)=>{if(event.key === "Enter"){event.preventDefault();  handleOverwrite("2",overwrite2.value)}});
-  container.appendChild(overwrite2);
+  settergrid.appendChild(overwrite2);
+
+  const newmap = document.createElement("button");
+  newmap.textContent = "NEXT MAP";
+  createButton(newmap,"green");
+  newmap.addEventListener("click", () => handleNewMap());
+  othergrid.appendChild(newmap);
 });
 
+async function handleNewMap() {
+
+  const newkey = String(Number(latestKey + 1));
+  data = {key: newkey, name: "", image: "", ban_red: "", ban_red_name: "",ban_blue: "", ban_blue_name: "", score_blue:"",score_red:""};
+
+  addMap(data);
+}
 
 async function handleOverwrite(team, value) {
 
   let data;
   if(team==="1"){
-    data ={key: latestKey, score_blue: value};
+    data ={ score_blue: value};
   }
   if(team==="2"){
-    data ={key: latestKey,score_red: value};
+    data ={score_red: value};
   }
   
-  update(data);
+  update(latestKey, data);
 }
 
 async function handleButtonClick(option) {
@@ -118,21 +143,37 @@ async function handleButtonClick(option) {
   //Adds +1 to the current score of the selected team
   if (option === "1") {
     newscore = String(Number(latestJson[latestKey].score_blue) + 1);
-    data = { key: latestKey, score_blue: newscore };
+    data = {  score_blue: newscore };
   }
   if (option === "2") {
     newscore = String(Number(latestJson[latestKey].score_red) + 1);
-    data = { key: latestKey, score_red: newscore };
+    data = {  score_red: newscore };
   }
 
-  update(data);
+  update(latestKey,data);
   
 }
 
-async function update(data) {
+async function addMap(data) {
   try {
-    const response = await fetch("/api/played_maps", {
+    const response = await fetch("/api/played_maps",{
       method: "POST",
+      headers: {"Content-Type": "application/json",},
+      body:JSON.stringify(data),
+    });
+    if(!response.ok) throw new Error("Network response was not ok");
+
+    const result = await response.json();
+  } catch (error){
+    console.error("Error adding New Map: ", error)
+  }
+  
+}
+
+async function update(id,data) {
+  try {
+    const response = await fetch(`/api/played_maps/${id}`, {
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
