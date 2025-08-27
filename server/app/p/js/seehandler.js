@@ -1,11 +1,28 @@
 const eventSource = new EventSource("/api/played_maps/stream");
+let cachedata=null;
 
 eventSource.onmessage = (e) => {
-  const data = JSON.parse(e.data);
+    try{
+  const cachedata = JSON.parse(e.data);
   // Broadcast to all components
-  document.dispatchEvent(new CustomEvent("playedMapsUpdate", { detail: data }));
+  document.dispatchEvent(new CustomEvent("playedMapsUpdate", { detail: cachedata }));
+    }
+    catch(err){
+        console.error("Error parsing SEE data: ", err);
+    }
 };
 
 eventSource.onerror = (err) => {
   console.error("SSE error:", err);
 };
+
+window.subscribePlayedMaps=function(handler){
+    const listener = (e) => handler(e.detail);
+    document.addEventListener("playedMapsUpdate",listener);
+
+    if(cachedata !== null){
+        handler(cachedata);
+    }
+
+    return () => document.removeEventListener("playedMapsUpdate",listener);
+}

@@ -1,6 +1,5 @@
 (function () {
   const { useState, useEffect } = React;
-  const eventSource = new EventSource("/api/played_maps/stream");
 
   let ban_blue;
   let ban_red;
@@ -13,8 +12,8 @@
   //listens to SEE and updates all JSON related values
 
   
-  document.addEventListener("playedMapsUpdate", (e) => {
-     latestJson = e.detail;
+const cleanup = window.subscribePlayedMaps((data) => {
+    latestJson = data;
     
 
     keys = Object.keys(latestJson).map(Number);

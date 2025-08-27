@@ -1,6 +1,7 @@
+
+
 (function () {
   const { useState, useEffect } = React;
-  const eventSource = new EventSource("/api/played_maps/stream");
 
   let pickedmap;
   let latestKey;
@@ -9,16 +10,22 @@
   let selectedmap;
 
   //listens to SEE and updates all JSON related values
-  document.addEventListener("playedMapsUpdate", (e) => {
-  latestJson = e.detail;
 
-    keys = Object.keys(latestJson).map(Number);
+
+
+
+  const cleanup = window.subscribePlayedMaps((data) => {
+    latestJson = data;
+        keys = Object.keys(latestJson).map(Number);
     latestKey = Math.max(...keys);
 
     selectedmap = latestJson[latestKey].name;
     if(setHighlightedNameExt){
     setHighlightedNameExt(selectedmap);}
-  });
+})
+
+
+  
 
   async function update(data) {
     try {

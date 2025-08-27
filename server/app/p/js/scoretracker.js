@@ -1,7 +1,6 @@
 // Find a container by its ID
 
 (function(){
-const eventSource = new EventSource("/api/played_maps/stream");
 let keys;
 let latestKey;
 let latestJson = {};
@@ -35,8 +34,8 @@ target.style.padding = "8px 16px";
 }
 
 //listens to SEE and updates all JSON related values
-eventSource.onmessage = (event) => {
-  latestJson = JSON.parse(event.data);
+const cleanup = window.subscribePlayedMaps((data) => {
+    latestJson = data;
   console.log("Latest JSON:", latestJson);
 
   keys = Object.keys(latestJson).map(Number);
@@ -46,7 +45,7 @@ eventSource.onmessage = (event) => {
     overwrite1.value = latestJson[latestKey].score_blue;
   }
   if(overwrite2){overwrite2.value=latestJson[latestKey].score_red;}
-};
+  });
 
 
 
