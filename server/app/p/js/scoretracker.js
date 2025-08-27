@@ -116,11 +116,12 @@ waitForContainer("scoresetter", (container) => {
 });
 
 async function handleNewMap() {
-
+if(latestJson[latestKey]?.name ){
   const newkey = String(Number(latestKey + 1));
   data = {key: newkey, name: "", image: "", ban_red: "", ban_red_name: "",ban_blue: "", ban_blue_name: "", score_blue:"",score_red:""};
 
   addMap(data);
+}
 }
 
 async function handleOverwrite(team, value) {
