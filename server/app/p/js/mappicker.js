@@ -27,24 +27,24 @@
 
   
 
-  async function update(data) {
-    try {
-      const response = await fetch("/api/played_maps", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+ async function update(id,data) {
+  try {
+    const response = await fetch(`/api/played_maps/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
 
-      if (!response.ok) throw new Error("Network response was not ok");
+    if (!response.ok) throw new Error("Network response was not ok");
 
-      const result = await response.json();
-      console.log("JSON updated successfully:", result);
-    } catch (error) {
-      console.error("Error updating JSON:", error);
-    }
+    const result = await response.json();
+    console.log("JSON updated successfully:", result);
+  } catch (error) {
+    console.error("Error updating JSON:", error);
   }
+}
 
   function waitForContainer(id, callback) {
     const interval = setInterval(() => {
@@ -57,8 +57,8 @@
   }
 
   function handleImageClick(item) {
-    pickedmap = { key: latestKey, name: item.name, image: item.path };
-    update(pickedmap);
+    pickedmap = { name: item.name, image: item.path };
+    update(latestKey,pickedmap);
   }
 
   function ImageSearchApp() {

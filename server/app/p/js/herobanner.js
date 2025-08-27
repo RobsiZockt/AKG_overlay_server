@@ -29,24 +29,24 @@ if(setHighlight_red_Ext)
   });
 
 
-  async function update(data) {
-    try {
-      const response = await fetch("/api/played_maps", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+async function update(id,data) {
+  try {
+    const response = await fetch(`/api/played_maps/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
 
-      if (!response.ok) throw new Error("Network response was not ok");
+    if (!response.ok) throw new Error("Network response was not ok");
 
-      const result = await response.json();
-      console.log("JSON updated successfully:", result);
-    } catch (error) {
-      console.error("Error updating JSON:", error);
-    }
+    const result = await response.json();
+    console.log("JSON updated successfully:", result);
+  } catch (error) {
+    console.error("Error updating JSON:", error);
   }
+}
 
   function waitForContainer(id, callback) {
     const interval = setInterval(() => {
@@ -72,12 +72,12 @@ sel_team = "2";
   function handleImageClick(item) {
     let team = sel_team;
     if (team === "1") {
-      setBan = {key: latestKey, ban_blue_name: item.name, ban_blue: item.path};
+      setBan = { ban_blue_name: item.name, ban_blue: item.path};
     }
     if (team === "2") {
-      setBan = { key: latestKey, ban_red_name: item.name, ban_red: item.path};
+      setBan = {  ban_red_name: item.name, ban_red: item.path};
     }
-    update(setBan);
+    update(latestKey,setBan);
   }
 
   function HeroBan() {
