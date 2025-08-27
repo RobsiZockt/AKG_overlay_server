@@ -84,16 +84,32 @@ waitForContainer("scoresetter", (container) => {
   overwrite1.style.height = "20px";
   overwrite1.style.gridRow = "1";
   overwrite1.style.gridColumn = "2";
+  overwrite1.addEventListener("keydown", (event)=>{if(event.key === "Enter"){event.preventDefault();  handleOverwrite("1",overwrite1.value)}});
   container.appendChild(overwrite1);
 
 
-    overwrite2 = document.createElement("textarea");
+  overwrite2 = document.createElement("textarea");
   overwrite2.style.width = "50px";
   overwrite2.style.height = "20px";
   overwrite2.style.gridRow = "2";
   overwrite2.style.gridColumn = "2";
+  overwrite2.addEventListener("keydown", (event)=>{if(event.key === "Enter"){event.preventDefault();  handleOverwrite("2",overwrite2.value)}});
   container.appendChild(overwrite2);
 });
+
+
+async function handleOverwrite(team, value) {
+
+  let data;
+  if(team==="1"){
+    data ={key: latestKey, score_blue: value};
+  }
+  if(team==="2"){
+    data ={key: latestKey,score_red: value};
+  }
+  
+  update(data);
+}
 
 async function handleButtonClick(option) {
   var newscore;
@@ -109,6 +125,11 @@ async function handleButtonClick(option) {
     data = { key: latestKey, score_red: newscore };
   }
 
+  update(data);
+  
+}
+
+async function update(data) {
   try {
     const response = await fetch("/api/played_maps", {
       method: "POST",
