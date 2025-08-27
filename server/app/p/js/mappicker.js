@@ -6,14 +6,18 @@ const eventSource = new EventSource("/api/played_maps/stream");
 let pickedmap;
 let latestKey;
 let latestJson;
+let setHighlightedNameExt;
+let selectedmap;
 
 //listens to SEE and updates all JSON related values
   eventSource.onmessage = (event) => {
     latestJson = JSON.parse(event.data);
-    console.log("Latest JSON:", latestJson);
 
     keys = Object.keys(latestJson).map(Number);
     latestKey = Math.max(...keys);
+
+    selectedmap = latestJson[latestKey].name;
+        setHighlightedNameExt(selectedmap);
   };
 
   async function update(data) {
@@ -56,6 +60,11 @@ function ImageSearchApp() {
   const [data, setData] = useState([]);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
+  const [highlightedName, setHighlightedName] = useState(null);
+
+  React.useEffect(() => {
+    setHighlightedNameExt = setHighlightedName;
+  }, [setHighlightedName]);
 
   useEffect(() => {
     // Fetch JSON from backend
@@ -97,16 +106,22 @@ return h("div", { className: "p-4" }, [
     h(
       "div",
       { className: "grid grid-cols-2 md:grid-cols-4 gap-4 overflow-y-auto", style:{flex: "1 1 auto", maxHeight:"calc(2*10rem+2rem"} },
-      results.map((item, idx) =>
-        h("div", { key: idx, className: "flex flex-col items-center" }, [
+      results.map((item, idx) =>{
+        const isHighlighted = item.name === selectedmap;
+       return h("div", { key: idx, className:  "flex flex-col items-center p-1 rounded cursor-pointer transition-shadow ",
+            onClick: () => handleImageClick(item),
+             }, [
           h("img", {
             src: item.path,
             alt: item.name,
-            className: "w-full h-auto rounded shadow cursor-pointer",
-            onClick:()=>handleImageClick(item),
+            className:
+        "w-full h-auto object-cover rounded shadow " +
+        (isHighlighted ? "ring-4 ring-blue-500" : ""),
           }),
           h("p", { className: "mt-2 text-sm" }, item.name)
         ])
+      }
+        
       )
     )
   ]);
