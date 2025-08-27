@@ -96,7 +96,6 @@ if(setHighlight_red_Ext)
             id: id,
             ...value,
           }));
-          console.log(arrayData);
           setData(arrayData);
           setResults(arrayData); // show all initially
         })
