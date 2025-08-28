@@ -23,13 +23,34 @@ function TopBanner() {
         const response = await fetch("/api/matchup");
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
         const data = await response.json();
+
+        if (data.switched === 1) {
+        const swapped = {
+          ...data,
+          blue: data.red,
+          red: data.blue,
+          blue_score: data.red_score,
+          red_score: data.blue_score,
+          blue_logo: data.red_logo,
+          red_logo: data.blue_logo,
+        };
+        setBannerData(swapped);
+      } else {
         setBannerData(data);
+      }
         console.log(data);
       } catch (err) {
         console.error("Error fetching data:", err);
       }
+
+
+
     }
     fetchData();
+      
+
+      
+
   }, []);
 
   return h("div", { className: "w-screen h-[68px] relative flex" },
