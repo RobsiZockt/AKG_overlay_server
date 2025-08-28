@@ -239,7 +239,7 @@ const res = matchup["blue_score"]+1;
 
 
   const newkey = String(Number(latestKey + 1));
-  data = {key: newkey, name: "", image: "", ban_red: "", ban_red_name: "",ban_blue: "", ban_blue_name: "", score_blue:"",score_red:""};
+  data = {key: newkey, name: "", image: "", ban_red: "", ban_red_name: "",ban_blue: "", ban_blue_name: "", score_blue:"0",score_red:"0"};
   addMap(data);
 
 
