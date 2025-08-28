@@ -21,7 +21,8 @@ waitForContainer("##setup", (container) => {
   try {
     const response = await fetch("/api/matchup");
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-    myData = await response.json();
+    matchup_data = await response.json();
+     console.log(matchup_data);
   } catch (err) {
     console.error("Error fetching data:", err);
   }
@@ -115,6 +116,8 @@ save.style.padding = "8px 16px";
     matchup_data["red_score"] = 0;
 
     newMatchup(matchup_data);
+
+   
 
     }
 
