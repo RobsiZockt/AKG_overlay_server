@@ -108,6 +108,7 @@ waitForContainer("scoresetter", (container) => {
   overwrite2.addEventListener("keydown", (event)=>{if(event.key === "Enter"){event.preventDefault();  handleOverwrite("2",overwrite2.value)}});
   settergrid.appendChild(overwrite2);
 
+
   const newmap = document.createElement("button");
   newmap.textContent = "NEXT MAP";
   createButton(newmap,"green");
@@ -121,6 +122,27 @@ const showPopupButton = document.createElement("button");
   othergrid.appendChild(showPopupButton);
 
 
+  const switchheader = document.createElement("button");
+  switchheader.textContent = "Swap Header";
+  createButton(switchheader, "purple");
+  switchheader.addEventListener("click",()=>swapHeader());
+  othergrid.appendChild(switchheader);
+
+
+  async function  swapHeader(){
+    let data;
+    const old_data = await getMatchup();
+
+    if(old_data["switched"] === 1)
+    {data = {switched: 0};};
+    if(old_data["switched"]=== 0)
+    {data = {switched: 1};};
+
+    await updatematchup(data);
+
+      const iframe = document.getElementById("header_iframe");
+  iframe.contentWindow.location.reload();  
+  }
 
 
   // Function to show the popup
