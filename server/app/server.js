@@ -150,7 +150,7 @@ res.json(JSON.parse(content));
 app.post("/api/matchup", async (req,res) =>{
   try{
     const data = req.body;
-    await writeFile(matchup, JSON.stringify(data, null ,2),"utf8");
+    await fs.writeFile(matchup, JSON.stringify(data, null ,2),"utf8");
     res.status(200).json({status: "ok", latest: data});
   } catch (err){
     res.status(500).json({error:"Could not update matchup.json"});
@@ -164,7 +164,7 @@ app.put("/api/matchup", async (req,res)=>{
    const json = JSON.parse(data);
    const updated = {...json, ...update};
 
-   await writeFile(matchup, JSON.stringify(updated, null, 2),"utf8");
+   await fs.writeFile(matchup, JSON.stringify(updated, null, 2),"utf8");
    res.status(200).json({status: "ok", latest: updated});
 
   }catch (err){
@@ -172,6 +172,24 @@ app.put("/api/matchup", async (req,res)=>{
 
   }
 })
+
+//POST matchup.json + resets cards // used for new matchup
+app.post("/api/new_matchup", async (req,res) =>{
+  try{
+    const data = req.body;
+    await fs.writeFile(matchup, JSON.stringify(data, null ,2),"utf8");
+    try{
+    const reset = JSON.stringify({ "1":{ name: "", image: "", ban_red: "", ban_red_name: "",ban_blue: "", ban_blue_name: "", score_blue:"",score_red:""}});
+    await fs.writeFile(playedmaps, reset, null, 2);
+  } catch (error){
+    console.log("could not reset");
+  }
+      res.status(200).json({status: "ok", latest: data});
+  } catch (err){
+    res.status(500).json({error:"Could not update matchup.json"});
+  }
+})
+
 
 
 app.listen(PORT,()=>
