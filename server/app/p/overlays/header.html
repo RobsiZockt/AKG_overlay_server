@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Top Banner</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="m-0 p-0">
+  <div id="root"></div>
+  <body class="m-0 p-0">
+  <div id="root"></div>
+
+  <script>
+const { createElement: h } = React;
+
+// Placeholder data
+const bannerData = {
+  left: {
+    image: "https://play.toornament.com/media/file/8835242586225246225/logo_large",
+    text: "HSK Centauri",
+    number: 3
+  },
+  right: {
+    image: "https://play.toornament.com/media/file/8835242586225246225/logo_large",
+    text: "404 Average Cookie Enjoyer",
+    number: 0
+  }
+};
+
+// TopBanner component
+function TopBanner() {
+  return h("div", { className: "w-screen h-[6vh] relative flex" },
+
+    // Left Gray Section with bevel
+    h("div", {
+      className: "flex-1 flex items-center justify-start pl-2",
+      style: { clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)", backgroundColor: "#393a3e" } 
+    },
+      h("div", { className: "h-full aspect-square bg-transperant flex items-center justify-center p-1" },
+        h("img", { src: bannerData.left.image, className: "h-auto aspect-square object-cover", alt: "Left" })
+      ),
+      h("div",{className: "h-full w-[2px] bg-black flex "}),
+      h("span", { className: "font-arial text-white w-full text-[40px] pl-2" }, bannerData.left.text),
+    
+    ),
+    h("div",{ className: "w-[70px] flex items-center justify-start pl-0 pb-1 gap-2",
+      style: { clipPath: "polygon(0 0, 100% 0, 60% 100%, 0 100%)", backgroundColor: "#00a2d9" }},
+      h("span", { className: "ml-2 font-arial text-[50px] text-white items-center justify-center" }, bannerData.left.number)
+    ),
+
+    // Center Transparent Section
+    h("div", { className: "w-[30%] bg-transparent flex-shrink-0" }),
+
+    // Right Gray Section with bevel
+    h("div", {className: "w-[70px] flex items-center justify-end pr-0 pb-1 gap-2",
+      style: { clipPath: "polygon(0 0, 100% 0, 100% 100%, 40% 100%)", backgroundColor: "#ca4b5d" }
+    },
+ h("span", { className: "mr-2 font-arial text-[50px] text-white items-center justify-center" }, bannerData.right.number)
+  ),
+    h("div", {
+      className: "flex-1 flex items-center justify-end pr-2",
+      style: { clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)", backgroundColor: "#393a3e" } 
+    },
+     
+      h("span", { className: "text-white text-[40px] font-arial pr-2" }, bannerData.right.text),
+      h("div",{className: "h-full w-[2px] bg-black flex"}),
+      h("div", { className: "h-full aspect-square bg-transperant flex items-center justify-center p-1 " },
+        h("img", { src: bannerData.right.image, className: "h-auto aspect-square object-cover", alt: "Right" })
+      )
+      
+    )
+  );
+}
+
+// Render after DOM is ready
+document.addEventListener("DOMContentLoaded", () => {
+  const root = ReactDOM.createRoot(document.getElementById("root"));
+  root.render(h(TopBanner));
+});
+</script>
+</body>
+</html>
