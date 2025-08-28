@@ -3,5 +3,7 @@
     "blue": "",
     "red":"",
     "blue_score":0,
-    "red_score":0
+    "red_score":0,
+    "blue_logo":"",
+    "red_logo":""
 }
