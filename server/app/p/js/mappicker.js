@@ -73,7 +73,7 @@
 
     useEffect(() => {
       // Fetch JSON from backend
-      fetch("/api/maps") // adjust this URL to your backend
+      fetch("/api/maps") 
         .then((res) => res.json())
         .then((json) => {
           const arrayData = Object.entries(json).map(([id, value]) => ({
