@@ -323,6 +323,9 @@ async function addMap(data) {
   } catch (error){
     console.error("Error adding New Map: ", error)
   }
+
+  const iframe = document.getElementById("header_iframe");
+  iframe.contentWindow.location.reload();  
   
 }
 
