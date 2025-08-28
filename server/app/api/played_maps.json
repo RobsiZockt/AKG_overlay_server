@@ -1,26 +1,12 @@
 {
   "1": {
-    "name": "Busan",
+    "name": "busan",
     "image": "./../img/maps/busan.webp",
-    "ban_red": "./../img/heros/ana.png",
-    "ban_blue": "./../img/heros/ash.png",
-    "score_blue": "4",
-    "score_red": "1"
-  },
-  "2": {
-    "name": "Route 66",
-    "image": "./../img/maps/route_66.webp",
-    "ban_red": "./../img/heros/sombra.png",
-    "ban_blue": "./../img/heros/orisa.png",
-    "score_blue": "4",
-    "score_red": "1"
-  },
-  "3": {
-    "name": "Route 66",
-    "image": "./../img/maps/route_66.webp",
-    "ban_red": "./../img/heros/sombra.png",
-    "ban_blue": "./../img/heros/orisa.png",
-    "score_blue": "17",
-    "score_red": "8"
+    "ban_red": "./../img/heros/genji.png",
+    "ban_red_name": "genji",
+    "ban_blue": "./../img/heros/hanzo.png",
+    "ban_blue_name": "hanzo",
+    "score_blue": "",
+    "score_red": ""
   }
 }
