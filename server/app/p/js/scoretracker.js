@@ -113,7 +113,80 @@ waitForContainer("scoresetter", (container) => {
   createButton(newmap,"green");
   newmap.addEventListener("click", () => handleNewMap());
   othergrid.appendChild(newmap);
+
+const showPopupButton = document.createElement("button");
+  showPopupButton.textContent = "Show Popup";
+  createButton(showPopupButton, "purple");
+  showPopupButton.addEventListener("click",()=>showPopup());
+  othergrid.appendChild(showPopupButton);
+
+
+
+const root = ReactDOM.createRoot(container);
+
+  // Function to show the popup
+ function showPopup() {
+    // 1. Create a temporary div for the popup
+    const popupDiv = document.createElement("div");
+    document.body.appendChild(popupDiv);
+
+    // 2. Create a React root on that div
+    const popupRoot = ReactDOM.createRoot(popupDiv);
+
+    // 3. Popup component
+    function Popup() {
+      
+      return h("div", {
+        style: {
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgba(0,0,0,0.5)",
+          zIndex: 9999
+        }
+      },
+        h("div", {
+          style: {
+            backgroundColor: "white",
+            padding: "2rem",
+            borderRadius: "1rem",
+            minWidth: "300px",
+            textAlign: "center"
+          }
+        },
+          h("h2", null, "Test Popup"),
+          h("p", null, "This popup is fully centered!"),
+          h("button", {
+            style: { marginTop: "1rem", padding: "8px 16px", borderRadius: "6px", cursor: "pointer" },
+            onClick: () => {
+              // 4. Properly unmount the popup
+              popupRoot.unmount();
+              document.body.removeChild(popupDiv);
+            }
+          }, "Close")
+        )
+      );
+    }
+
+    // 5. Render the popup
+    popupRoot.render(h(Popup));
+  }
+
+
+  
+
+
 });
+
+
+
+
+
 
 async function handleNewMap() {
 if(latestJson[latestKey]?.name ){
