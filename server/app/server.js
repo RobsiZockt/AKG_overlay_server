@@ -160,7 +160,8 @@ app.post("/api/matchup", async (req,res) =>{
 app.put("/api/matchup", async (req,res)=>{
   try{
    const update = req.body;
-   const data = await readFile(matchup, "utf8");
+   console.log("Update received:", req.body);
+   const data = await fs.readFile(matchup, "utf8");
    const json = JSON.parse(data);
    const updated = {...json, ...update};
 
