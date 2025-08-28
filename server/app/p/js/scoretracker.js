@@ -122,21 +122,35 @@ const showPopupButton = document.createElement("button");
 
 
 
-const root = ReactDOM.createRoot(container);
 
   // Function to show the popup
- function showPopup() {
-    // 1. Create a temporary div for the popup
-    const popupDiv = document.createElement("div");
-    document.body.appendChild(popupDiv);
+function showPopup() {
+  // 1. Create a temporary div for the popup
+  const popupDiv = document.createElement("div");
+  document.body.appendChild(popupDiv);
 
-    // 2. Create a React root on that div
-    const popupRoot = ReactDOM.createRoot(popupDiv);
+  // 2. Create a React root on that div
+  const popupRoot = ReactDOM.createRoot(popupDiv);
 
-    // 3. Popup component
-    function Popup() {
-      
-      return h("div", {
+  // 3. Popup component
+  function Popup() {
+    // Load script on mount
+    React.useEffect(() => {
+      const script = document.createElement("script");
+      script.src = "./../js/m_setup.js"; // <-- your script
+      script.async = true;
+
+      document.body.appendChild(script);
+
+      // Cleanup when popup unmounts
+      return () => {
+        document.body.removeChild(script);
+      };
+    }, []);
+
+    return h(
+      "div",
+      {
         style: {
           position: "fixed",
           top: 0,
@@ -147,35 +161,46 @@ const root = ReactDOM.createRoot(container);
           justifyContent: "center",
           alignItems: "center",
           backgroundColor: "rgba(0,0,0,0.5)",
-          zIndex: 9999
-        }
+          zIndex: 9999,
+        },
       },
-        h("div", {
+      h(
+        "div",
+        {
           style: {
             backgroundColor: "white",
             padding: "2rem",
             borderRadius: "1rem",
-            minWidth: "300px",
-            textAlign: "center"
-          }
+            minWidth: "500px",
+            textAlign: "center",
+          },
         },
-          h("h2", null, "Test Popup"),
-          h("p", null, "This popup is fully centered!"),
-          h("button", {
-            style: { marginTop: "1rem", padding: "8px 16px", borderRadius: "6px", cursor: "pointer" },
+        h("h2", null, "Test Popup"),
+        h("div", {id: "##setup"}),
+        h(
+          "button",
+          {
+            style: {
+              marginTop: "1rem",
+              padding: "8px 16px",
+              borderRadius: "6px",
+              cursor: "pointer",
+            },
             onClick: () => {
               // 4. Properly unmount the popup
               popupRoot.unmount();
               document.body.removeChild(popupDiv);
-            }
-          }, "Close")
+            },
+          },
+          "Close"
         )
-      );
-    }
-
-    // 5. Render the popup
-    popupRoot.render(h(Popup));
+      )
+    );
   }
+
+  // 5. Render the popup
+  popupRoot.render(h(Popup));
+}
 
 
   
