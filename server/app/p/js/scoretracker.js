@@ -115,7 +115,7 @@ waitForContainer("scoresetter", (container) => {
   othergrid.appendChild(newmap);
 
 const showPopupButton = document.createElement("button");
-  showPopupButton.textContent = "Show Popup";
+  showPopupButton.textContent = "Show Setup";
   createButton(showPopupButton, "purple");
   showPopupButton.addEventListener("click",()=>showPopup());
   othergrid.appendChild(showPopupButton);
@@ -215,10 +215,34 @@ function showPopup() {
 
 async function handleNewMap() {
 if(latestJson[latestKey]?.name ){
+
+  const matchup = await getMatchup();
+
+  let s1=parseInt(latestJson[latestKey].score_blue);
+  let s2=parseInt(latestJson[latestKey].score_red);
+
+  if(s1 === 0 || s2 === 0) console.error("Score could not be read or is empty");
+  if(s1==s2){
+    console.log("Map result: Draw, skippin calculation");
+  }
+  if(s1>s2){
+const res = matchup["blue_score"]+1;
+    data = {blue_score: res};
+        updatematchup(data);
+  }
+  if(s1<s2){
+    const res = matchup["red_score"]+1;
+    data = {red_score: res};
+    updatematchup(data);
+  }
+
+
+
   const newkey = String(Number(latestKey + 1));
   data = {key: newkey, name: "", image: "", ban_red: "", ban_red_name: "",ban_blue: "", ban_blue_name: "", score_blue:"",score_red:""};
-
   addMap(data);
+
+
 }
 }
 
@@ -250,6 +274,39 @@ async function handleButtonClick(option) {
   }
 
   update(latestKey,data);
+  
+}
+
+async function getMatchup() {
+  try {
+    const response = await fetch("/api/matchup");
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+    matchup_data = await response.json();
+     console.log(matchup_data);
+  } catch (err) {
+    console.error("Error fetching data:", err);
+  }
+  return matchup_data;
+  
+}
+
+async function updatematchup(data) {
+   try {
+    const response = await fetch(`/api/matchup`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) throw new Error("Network response was not ok");
+
+    const result = await response.json();
+    console.log("JSON updated successfully:", result);
+  } catch (error) {
+    console.error("Error updating JSON:", error);
+  }
   
 }
 
