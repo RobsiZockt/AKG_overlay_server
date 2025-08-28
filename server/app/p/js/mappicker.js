@@ -100,7 +100,7 @@
       setResults(fuse.search(query).map((r) => r.item));
     }, [query, data]);
 
-    return h("div", { className: "p-4" }, [
+    return h("div", { className: "p-4 h-full flex flex-col" }, [
       h("input", {
         type: "text",
         placeholder: "Search images...",
