@@ -1,12 +1,15 @@
 const { error } = require("console");
 const e = require("express");
 const express = require("express");
+const { readFile, writeFile } = require("fs");
 const fs = require("fs").promises;
 const path = require("path");
+const { json } = require("stream/consumers");
 const app = express();
 const PORT = 4000;
 
 const playedmaps = path.join(__dirname, "api", "played_maps.json");
+const matchup = path.join(__dirname, "api", "matchup.json");
 const maps = path.join(__dirname, "api", "maps.json");
 const heros = path.join(__dirname, "api", "heros.json");
 
@@ -133,21 +136,44 @@ app.get("/api/heros", async (req, res) => {
 });
 
 
-
-
-
-/////////LEGACY GET / POST ////////////////////////
-app.get("/api/played_maps", (req,res) =>{
-try{
-    const data = fs.readFileSync(playedmaps,"utf8");
-    res.json(JSON.parse(data));
-}catch (err){
-    console.error("Error reading played_maps.json:", err);
-    res.status(500).json({error: "Could not read played_maps.json"});
-}
+//GET matchup.json
+app.get("/api/matchup", async (req,res) =>{
+  try{
+const content = await fs.readFile(matchup,"utf8");
+res.json(JSON.parse(content));
+  }catch(err){
+    res.status(500).json({error: "Could not read matchup.json"});
+  }
 });
 
-////////////////LEGACY END ///////////////////////////
+//POST matchup.json
+app.post("/api/matchup", async (req,res) =>{
+  try{
+    const data = req.body;
+    await writeFile(matchup, JSON.stringify(data, null ,2),"utf8");
+    res.status(200).json({status: "ok", latest: data});
+  } catch (err){
+    res.status(500).json({error:"Could not update matchup.json"});
+  }
+})
+
+app.put("/api/matchup", async (req,res)=>{
+  try{
+   const update = req.body;
+   const data = await readFile(matchup, "utf8");
+   const json = JSON.parse(data);
+   const updated = {...json, ...update};
+
+   await writeFile(matchup, JSON.stringify(updated, null, 2),"utf8");
+   res.status(200).json({status: "ok", latest: updated});
+
+  }catch (err){
+    res.status(500).json({error: "Could not update matchup.json"});
+
+  }
+})
+
+
 app.listen(PORT,()=>
 console.log("Server is listening on ${PORT}"));
 console.log("Maps file path:", playedmaps);
