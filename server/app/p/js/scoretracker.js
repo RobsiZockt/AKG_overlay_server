@@ -334,10 +334,9 @@ async function updatematchup(data) {
 
 async function addMap(data) {
   try {
-    const response = await fetch("/api/played_maps",{
+    const response = await fetch("/api/played_maps/new",{
       method: "POST",
       headers: {"Content-Type": "application/json",},
-      body:JSON.stringify(data),
     });
     if(!response.ok) throw new Error("Network response was not ok");
 

@@ -82,14 +82,20 @@ app.get("/api/played_maps", (req, res) => {
 });
 
 // POST endpoint updates cache and writes to disk
-app.post("/api/played_maps", async (req, res) => {
+app.post("/api/played_maps/new", async (req, res) => {
   try {
-    const entryKey = req.body.key;
+
+if(Object.keys(req.body || {}).length > 0) return res.status(400).json({error: "Modified boddy detected, hi nick"});
+
+    const keys = Object.keys(playedMapsCache).map(Number);
+  const latestKey = Math.max(...keys);
+
+    const entryKey = latestKey+1;
     if (!entryKey) return res.status(400).json({ error: "Missing key" });
 
     if(playedMapsCache[entryKey]) return res.status(400).json({error: "Key allready exists"});
     
-playedMapsCache[entryKey] = { ...req.body };
+playedMapsCache[entryKey] = {key: entryKey, name: "", image: "", ban_red: "", ban_red_name: "",ban_blue: "", ban_blue_name: "", score_blue:"0",score_red:"0" };
     delete playedMapsCache[entryKey].key;
 
     await fs.writeFile(playedmaps, JSON.stringify(playedMapsCache, null, 2), "utf8");
