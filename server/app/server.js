@@ -48,7 +48,10 @@ const pollPlayedMaps = async () => {
 setInterval(pollPlayedMaps, 200);
 
 // SSE endpoint just sends cached data
+// SSE endpoint just sends cached data
 app.get("/api/played_maps/stream", (req, res) => {
+
+  // SSE headers
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Connection", "keep-alive");
@@ -56,12 +59,22 @@ app.get("/api/played_maps/stream", (req, res) => {
 
   clients.add(res);
 
-  console.log(`current clients: ${clients.size}`);
-  // send current cached state immediately
+  // Send initial data
   res.write(`data: ${JSON.stringify(playedMapsCache)}\n\n`);
 
-  req.on("close", () => clients.delete(res));
+  // --- Heartbeat / keep-alive ---
+  const heartbeat = setInterval(() => {
+    res.write(':\n\n'); // colon = SSE comment, no effect on client
+  }, 2000); // every 2 seconds (adjust below your Nginx timeout, e.g., 4s for 5s read_timeout)
+
+  // Clean up when client disconnects
+  req.on("close", () => {
+    clearInterval(heartbeat);
+    clients.delete(res);
+  });
+
 });
+
 
 // GET endpoint just returns the cache
 app.get("/api/played_maps", (req, res) => {
