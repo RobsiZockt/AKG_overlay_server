@@ -140,7 +140,11 @@ vite.config.ts.timestamp-*
 
 
 # Development Dokumentation with potential sensible Information
+.certbot
+
 Fullstack.md
 *.pri
 *.ppk
+
+
 
