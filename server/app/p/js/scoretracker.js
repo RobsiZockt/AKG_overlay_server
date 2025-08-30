@@ -267,18 +267,6 @@ async function handleButtonClick(option) {
   
 }
 
-async function getMatchup() {
-  try {
-    const response = await fetch("/api/matchup");
-    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-    matchup_data = await response.json();
-     console.log(matchup_data);
-  } catch (err) {
-    console.error("Error fetching data:", err);
-  }
-  return matchup_data;
-  
-}
 
 async function updatematchup(op) {
    try {
