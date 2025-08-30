@@ -301,9 +301,23 @@ app.post("/api/matchup", [], async (req, res) => {
 
 
 
+
+
 //Safe Call for calculating map score, does not require any body
-app.put("/api/matchup/calc", [], async (req, res) => {
+app.put("/api/matchup", [], async (req, res) => {
+  const op = req.query.op;
+  console.log(op);
   try {
+
+    let update = {};
+
+    if(op === "swap"){
+      if(matchup_data["switched"] === 1)
+    {update = {switched: 0};};
+    if(matchup_data["switched"]=== 0)
+    {update = {switched: 1};};
+    }
+    if(op === "calc"){
     //calculates the new score of the matchup
           let blue = 0;let red = 0;
     for (key in playedMapsCache) {
@@ -322,8 +336,9 @@ app.put("/api/matchup/calc", [], async (req, res) => {
         red++;
       }
     }
-    let update = { blue_score: blue, red_score: red };
+    update = { blue_score: blue, red_score: red };
     console.log(update);
+  }
 
     const data = await fs.readFile(matchup, "utf8");
     const json = JSON.parse(data);

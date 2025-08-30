@@ -129,20 +129,7 @@ const showPopupButton = document.createElement("button");
   othergrid.appendChild(switchheader);
 
 
-  async function  swapHeader(){
-    let data;
-    const old_data = await getMatchup();
 
-    if(old_data["switched"] === 1)
-    {data = {switched: 0};};
-    if(old_data["switched"]=== 0)
-    {data = {switched: 1};};
-
-    await updatematchup(data);
-
-      const iframe = document.getElementById("header_iframe");
-  iframe.contentWindow.location.reload();  
-  }
 
 
   // Function to show the popup
@@ -230,20 +217,23 @@ function showPopup() {
 
 });
 
+  async function  swapHeader(){
+
+await updatematchup("swap");
+      const iframe = document.getElementById("header_iframe");
+  iframe.contentWindow.location.reload();  
+
+  }
 
 
 
 
 
 async function handleNewMap() {
-if(latestJson[latestKey]?.name || true ){
 
-
-  updatematchup();
+  updatematchup("calc");
   addMap();
 
-
-}
 }
 
 async function handleOverwrite(team, value) {
@@ -290,9 +280,9 @@ async function getMatchup() {
   
 }
 
-async function updatematchup() {
+async function updatematchup(op) {
    try {
-    const response = await fetch(`/api/matchup/calc`, {
+    const response = await fetch(`/api/matchup?op=${op}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
