@@ -69,14 +69,10 @@ sel_team = "2";
     
   }
 
-  function handleImageClick(item) {
+  function handleImageClick(idx) {
+    const id =idx+1;
     let team = sel_team;
-    if (team === "1") {
-      setBan = { ban_blue_name: item.name, ban_blue: item.path};
-    }
-    if (team === "2") {
-      setBan = {  ban_red_name: item.name, ban_red: item.path};
-    }
+      setBan = { ban:`team: ${team} hero: ${id}`};
     update(latestKey,setBan);
   }
 
@@ -180,7 +176,7 @@ return h("div", { className: "p-4 h-full flex flex-col" }, [
               key: idx,
               className:
                 "flex flex-col items-center p-1 rounded cursor-pointer transition-shadow ",
-              onClick: () => handleImageClick(item),
+              onClick: () => handleImageClick(idx),
             },
             [
               h("img", {
