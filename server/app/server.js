@@ -352,10 +352,24 @@ app.put("/api/matchup", [], async (req, res) => {
 });
 
 //POST matchup.json + resets cards // used for new matchup
-app.post("/api/new_matchup", async (req, res) => {
+app.post("/api/new_matchup", [
+  //tests if keys do exist in matchup
+ body().custom((value) => {
+      const [key] = Object.keys(value);
+      if (!(key in matchup_data)) {
+        throw new Error(
+          `Invalid key. '${key}' does not exist in playedMapsCache`
+        );
+      }
+      return true;
+    }),
+
+], async (req, res) => {
   try {
     const data = req.body;
     await fs.writeFile(matchup, JSON.stringify(data, null, 2), "utf8");
+
+    //resets map cards
     try {
       const reset = JSON.stringify({
         1: {
@@ -373,6 +387,7 @@ app.post("/api/new_matchup", async (req, res) => {
     } catch (error) {
       console.log("could not reset");
     }
+    
     res.status(200).json({ status: "ok", latest: data });
   } catch (err) {
     res.status(500).json({ error: "Could not update matchup.json" });
