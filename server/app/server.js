@@ -1,10 +1,11 @@
 const { error } = require("console");
 const e = require("express");
 const express = require("express");
-const { readFile, writeFile } = require("fs");
+const { readFile, writeFile, chownSync } = require("fs");
 const fs = require("fs").promises;
 const path = require("path");
 const { json } = require("stream/consumers");
+const { body, validationResult } = require('express-validator');
 const app = express();
 const PORT = 4000;
 
@@ -13,12 +14,20 @@ const matchup = path.join(__dirname, "api", "matchup.json");
 const maps = path.join(__dirname, "api", "maps.json");
 const heros = path.join(__dirname, "api", "heros.json");
 
+let map_data;
+
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "p")));
 
 // Keep track of all connected SSE clients
 const clients = new Set();
+async function loaddata() {
+    const map_raw = await fs.readFile(maps, "utf8");
+    map_data=JSON.parse(map_raw);
 
+}
+
+loaddata();
 
 // Function to broadcast data to all connected clients
 const broadcast = (data) => {
@@ -82,6 +91,7 @@ app.get("/api/played_maps", (req, res) => {
 });
 
 // POST endpoint updates cache and writes to disk
+//WILL FAIL IF REQUEST HAS A BODY, security reasons
 app.post("/api/played_maps/new", async (req, res) => {
   try {
 
@@ -108,16 +118,75 @@ playedMapsCache[entryKey] = {key: entryKey, name: "", image: "", ban_red: "", ba
 });
 
 //PUT endpoint updates targeted Object
-app.put("/api/played_maps/:id", async (req,res)=>{
+//will block 
+app.put("/api/played_maps/:id", [
+  //Test for amount of keys, returns if not 1 key
+  body().custom((value) =>{
+    const keys = Object.keys(value);
+    if(keys.length !== 1){
+      console.log(keys.length);
+      throw new Error("Invalid amount of Keys");
+    }
+    return true;
+  }),
+  //checks if the entered value of a key is a number, returns if not
+  body().custom((value)=>{
+    const [key] = Object.values(value);
+    if(Number.isNaN(key)){
+      throw new Error("Entered key value is NaN", value);
+    }
+    return true;
+  }),
+  //checks if key exists in cache or is played maps
+    body().custom((value) => {
+      const [key] = Object.keys(value);
+      if (!(key in playedMapsCache[1])) {
+        if( key === "map"){ return true};
+        throw new Error(`Invalid key. '${key}' does not exist in playedMapsCache`);
+      }
+      return true;
+    }),
+
+], async (req,res)=>{
+
+  const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      console.log(errors.array());
+      return res.status(400).json({ errors: errors.array() });
+    };
+
 try{
   const entryKey = req.params.id;
-  if(!playedMapsCache[entryKey]){ return res.status(404).json({error: "Entry not found"});
+  console.log(req.body);
+  try{
+  if(!parseInt(entryKey)) return res.status(403).json({error: "recived id is NaN"});
+  } catch (error){
+    res.status(403).json({error: "recived id is NaN"});
+    console.error("Recived key in /api/played_maps/:id was not properly escaped", entryKey);
+  }
+  if(!playedMapsCache[entryKey]){ return res.status(404).json({error: `Entry not found ${playedMapsCache[entryKey]}`});
 }
+
+const [key] = Object.keys(req.body);
+const value = req.body[key];
+
+if (key === "map"){
+
+  const lookupdata = map_data[value +1];
+  if(!lookupdata) return res.status(404).json({error: `Map not found ${value}`});
+  
+  playedMapsCache[entryKey].name = lookupdata.name;
+  playedMapsCache[entryKey].image = lookupdata.path;
+
+} else {
+
 playedMapsCache[entryKey] ={
   ...playedMapsCache[entryKey],
   ...req.body
 };
 delete playedMapsCache[entryKey].key;
+
+}
 
 await fs.writeFile(playedmaps, JSON.stringify(playedMapsCache,null,2),"utf8");
 res.status(201).json({staus: "ok", latest: playedMapsCache[entryKey]});

@@ -56,8 +56,8 @@
     }, 100); //100ms pulling rate
   }
 
-  function handleImageClick(item) {
-    pickedmap = { name: item.name, image: item.path };
+  function handleImageClick(idx) {
+    pickedmap = { map: idx };
     update(latestKey,pickedmap);
   }
 
@@ -122,7 +122,7 @@
               key: idx,
               className:
                 "flex flex-col items-center p-1 rounded cursor-pointer transition-shadow ",
-              onClick: () => handleImageClick(item),
+              onClick: () => {handleImageClick(idx);},
             },
             [
               h("img", {
