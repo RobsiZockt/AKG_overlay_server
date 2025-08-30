@@ -16,21 +16,32 @@ const heros = path.join(__dirname, "api", "heros.json");
 
 let map_data;
 let ban_data;
+let matchup_data;
+let playedMapsCache = {};
+let lastMtime = 0;
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "p")));
 
 // Keep track of all connected SSE clients
 const clients = new Set();
-async function loaddata() {
+
+const loaddata = async () => {
   const map_raw = await fs.readFile(maps, "utf8");
   map_data = JSON.parse(map_raw);
 
   const ban_raw = await fs.readFile(heros, "utf8");
   ban_data = JSON.parse(ban_raw);
-}
+};
 
 loaddata();
+
+const loaddata_sync = async () => {
+  const matchup_raw = await fs.readFile(matchup, "utf8");
+  matchup_data = JSON.parse(matchup_raw);
+};
+
+setInterval(loaddata_sync, 500);
 
 // Function to broadcast data to all connected clients
 const broadcast = (data) => {
@@ -39,9 +50,6 @@ const broadcast = (data) => {
     res.write(message);
   }
 };
-
-let playedMapsCache = {};
-let lastMtime = 0;
 
 // Single poll interval
 const pollPlayedMaps = async () => {
@@ -101,6 +109,8 @@ app.post("/api/played_maps/new", async (req, res) => {
 
     const keys = Object.keys(playedMapsCache).map(Number);
     const latestKey = Math.max(...keys);
+
+    if(!playedMapsCache[latestKey].name) return res.status(500).json({error: "New Empty map allready exists"});
 
     const entryKey = latestKey + 1;
     if (!entryKey) return res.status(400).json({ error: "Missing key" });
@@ -201,7 +211,7 @@ app.put(
 
       const [key] = Object.keys(req.body);
       const value = req.body[key];
-//will search map by id and retruns the img path and map name
+      //will search map by id and retruns the img path and map name
       if (key === "map") {
         const lookupdata = map_data[value + 1];
         if (!lookupdata)
@@ -279,7 +289,7 @@ app.get("/api/matchup", async (req, res) => {
 });
 
 //POST matchup.json
-app.post("/api/matchup", async (req, res) => {
+app.post("/api/matchup", [], async (req, res) => {
   try {
     const data = req.body;
     await fs.writeFile(matchup, JSON.stringify(data, null, 2), "utf8");
@@ -289,10 +299,32 @@ app.post("/api/matchup", async (req, res) => {
   }
 });
 
-app.put("/api/matchup", async (req, res) => {
+
+
+//Safe Call for calculating map score, does not require any body
+app.put("/api/matchup/calc", [], async (req, res) => {
   try {
-    const update = req.body;
-    console.log("Update received:", req.body);
+    //calculates the new score of the matchup
+          let blue = 0;let red = 0;
+    for (key in playedMapsCache) {
+
+      let s1 = parseInt(playedMapsCache[key].score_blue);
+      let s2 = parseInt(playedMapsCache[key].score_red);
+
+
+      if (s1 == s2) {
+        console.log("Map result: Draw, skippin calculation");
+      }
+      if (s1 > s2) {
+        blue++;
+      }
+      if (s1 < s2) {
+        red++;
+      }
+    }
+    let update = { blue_score: blue, red_score: red };
+    console.log(update);
+
     const data = await fs.readFile(matchup, "utf8");
     const json = JSON.parse(data);
     const updated = { ...json, ...update };

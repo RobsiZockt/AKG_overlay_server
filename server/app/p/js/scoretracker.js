@@ -236,33 +236,11 @@ function showPopup() {
 
 
 async function handleNewMap() {
-if(latestJson[latestKey]?.name ){
-
-  const matchup = await getMatchup();
-
-  let s1=parseInt(latestJson[latestKey].score_blue);
-  let s2=parseInt(latestJson[latestKey].score_red);
-
-  if(s1 === 0 || s2 === 0) console.error("Score could not be read or is empty");
-  if(s1==s2){
-    console.log("Map result: Draw, skippin calculation");
-  }
-  if(s1>s2){
-const res = matchup["blue_score"]+1;
-    data = {blue_score: res};
-        updatematchup(data);
-  }
-  if(s1<s2){
-    const res = matchup["red_score"]+1;
-    data = {red_score: res};
-    updatematchup(data);
-  }
+if(latestJson[latestKey]?.name || true ){
 
 
-
-  const newkey = String(Number(latestKey + 1));
-  data = {key: newkey, name: "", image: "", ban_red: "", ban_red_name: "",ban_blue: "", ban_blue_name: "", score_blue:"0",score_red:"0"};
-  addMap(data);
+  updatematchup();
+  addMap();
 
 
 }
@@ -312,14 +290,13 @@ async function getMatchup() {
   
 }
 
-async function updatematchup(data) {
+async function updatematchup() {
    try {
-    const response = await fetch(`/api/matchup`, {
+    const response = await fetch(`/api/matchup/calc`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
     });
 
     if (!response.ok) throw new Error("Network response was not ok");
@@ -332,7 +309,7 @@ async function updatematchup(data) {
   
 }
 
-async function addMap(data) {
+async function addMap() {
   try {
     const response = await fetch("/api/played_maps/new",{
       method: "POST",
