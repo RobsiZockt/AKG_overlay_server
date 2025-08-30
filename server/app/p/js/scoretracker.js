@@ -129,20 +129,7 @@ const showPopupButton = document.createElement("button");
   othergrid.appendChild(switchheader);
 
 
-  async function  swapHeader(){
-    let data;
-    const old_data = await getMatchup();
 
-    if(old_data["switched"] === 1)
-    {data = {switched: 0};};
-    if(old_data["switched"]=== 0)
-    {data = {switched: 1};};
-
-    await updatematchup(data);
-
-      const iframe = document.getElementById("header_iframe");
-  iframe.contentWindow.location.reload();  
-  }
 
 
   // Function to show the popup
@@ -230,42 +217,23 @@ function showPopup() {
 
 });
 
+  async function  swapHeader(){
+
+await updatematchup("swap");
+      const iframe = document.getElementById("header_iframe");
+  iframe.contentWindow.location.reload();  
+
+  }
 
 
 
 
 
 async function handleNewMap() {
-if(latestJson[latestKey]?.name ){
 
-  const matchup = await getMatchup();
+  updatematchup("calc");
+  addMap();
 
-  let s1=parseInt(latestJson[latestKey].score_blue);
-  let s2=parseInt(latestJson[latestKey].score_red);
-
-  if(s1 === 0 || s2 === 0) console.error("Score could not be read or is empty");
-  if(s1==s2){
-    console.log("Map result: Draw, skippin calculation");
-  }
-  if(s1>s2){
-const res = matchup["blue_score"]+1;
-    data = {blue_score: res};
-        updatematchup(data);
-  }
-  if(s1<s2){
-    const res = matchup["red_score"]+1;
-    data = {red_score: res};
-    updatematchup(data);
-  }
-
-
-
-  const newkey = String(Number(latestKey + 1));
-  data = {key: newkey, name: "", image: "", ban_red: "", ban_red_name: "",ban_blue: "", ban_blue_name: "", score_blue:"0",score_red:"0"};
-  addMap(data);
-
-
-}
 }
 
 async function handleOverwrite(team, value) {
@@ -299,27 +267,14 @@ async function handleButtonClick(option) {
   
 }
 
-async function getMatchup() {
-  try {
-    const response = await fetch("/api/matchup");
-    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-    matchup_data = await response.json();
-     console.log(matchup_data);
-  } catch (err) {
-    console.error("Error fetching data:", err);
-  }
-  return matchup_data;
-  
-}
 
-async function updatematchup(data) {
+async function updatematchup(op) {
    try {
-    const response = await fetch(`/api/matchup`, {
+    const response = await fetch(`/api/matchup?op=${op}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
     });
 
     if (!response.ok) throw new Error("Network response was not ok");
@@ -332,12 +287,11 @@ async function updatematchup(data) {
   
 }
 
-async function addMap(data) {
+async function addMap() {
   try {
-    const response = await fetch("/api/played_maps",{
+    const response = await fetch("/api/played_maps/new",{
       method: "POST",
       headers: {"Content-Type": "application/json",},
-      body:JSON.stringify(data),
     });
     if(!response.ok) throw new Error("Network response was not ok");
 
