@@ -97,6 +97,8 @@ waitForContainer("scoresetter", (container) => {
   overwrite1.style.height = "20px";
   overwrite1.style.gridRow = "1";
   overwrite1.style.gridColumn = "2";
+  overwrite1.style.resize ="none";
+  overwrite1.style.overflow ="hidden";
   overwrite1.addEventListener("keydown", (event)=>{if(event.key === "Enter"){event.preventDefault();  handleOverwrite("1",overwrite1.value)}});
   settergrid.appendChild(overwrite1);
 
@@ -107,6 +109,8 @@ waitForContainer("scoresetter", (container) => {
   overwrite2.style.height = "20px";
   overwrite2.style.gridRow = "2";
   overwrite2.style.gridColumn = "2";
+  overwrite2.style.resize ="none";
+  overwrite2.style.overflow ="hidden";
   overwrite2.addEventListener("keydown", (event)=>{if(event.key === "Enter"){event.preventDefault();  handleOverwrite("2",overwrite2.value)}});
   settergrid.appendChild(overwrite2);
 
