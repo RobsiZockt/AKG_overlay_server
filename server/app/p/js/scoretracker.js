@@ -2,6 +2,19 @@
 
 
 (function(){
+
+    function getH() {
+    if (window.h) return window.h;
+    if (window.React) {
+      window.h = window.React.createElement;
+      return window.h;
+    }
+    throw new Error("React not loaded yet");
+  }
+
+  const h = getH();
+
+  
 let keys;
 let latestKey;
 let latestJson = {};
@@ -226,8 +239,6 @@ function showPopup() {
   async function  swapHeader(){
 
 await updatematchup("swap");
-      const iframe = document.getElementById("header_iframe");
-  iframe.contentWindow.location.reload();  
 
   }
 
@@ -306,8 +317,6 @@ async function addMap() {
     console.error("Error adding New Map: ", error)
   }
 
-  const iframe = document.getElementById("header_iframe");
-  iframe.contentWindow.location.reload();  
   
 }
 

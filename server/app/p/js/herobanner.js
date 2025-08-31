@@ -1,4 +1,17 @@
 (function () {
+
+    function getH() {
+    if (window.h) return window.h;
+    if (window.React) {
+      window.h = window.React.createElement;
+      return window.h;
+    }
+    throw new Error("React not loaded yet");
+  }
+
+  const h = getH();
+
+
   const { useState, useEffect } = React;
 
   let ban_blue;

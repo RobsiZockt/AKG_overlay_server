@@ -45,7 +45,7 @@
                 "w-full h-[75px] flex-shrink-0 bg-[#2b2d30] rounded-xl shadow-md flex items-center justify-center",
               children: "header",
             },[
-              h("iframe",{id: "header_iframe", src: "./header.html", className:"w-full h-full p-1", style: {border: "none"}}),
+              //h("iframe",{id: "header_iframe", src: "./header.html", className:"w-full h-full p-1", style: {border: "none"}}),
             ]),
             
             // Bottom section (fills all remaining vertical space)
@@ -91,12 +91,13 @@
                       ]),
 
                       h("div", {
-                        id: "mapCardPrevis",
+                        id: "MapcardsPrevis",
                         className:
-                          "flex-1 bg-[#2b2d30] rounded-xl shadow-md flex items-center justify-center",
+                          "flex-1  bg-[#2b2d30] rounded-xl shadow-md flex items-center justify-center overflow-hidden",
                         children: "Mapcard Previs",
                       },[
-                    h("iframe",{id: "Mapcards", src: "./map_cards.html", className:"w-full h-full", style: {border: "none"}})
+                        h("div",{id: "Mapcards", className: "h-[100%] w-[100%] bg-[#2b2d30] relative rounded-xl shadow-md items-center justify-center overflow-hidden"})
+                    //h("iframe",{id: "Mapcards", src: "./map_cards.html", className:"w-full h-full", style: {border: "none"}})
                     ]),
                     ]
                   ),
@@ -131,5 +132,7 @@ window._root.render(React.createElement(ScriptLayout));
     <script src="../js/scoretracker.js"></script>
     <script src ="../js/mappicker.js"></script>
     <script src ="../js/herobanner.js"></script>
+    <script src ="../js/header.js"></script>
+    <script src ="../js/cards.js"></script>
   </body>
 </html>
