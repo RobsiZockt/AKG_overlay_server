@@ -35,7 +35,7 @@ const containerStyle = {
   height: '420px',
   borderRadius: '16px',
   overflow: 'hidden',
-  border: '2px solid rgba(0, 0, 0, 1)',
+  border: '2px solid rgba(87, 87, 87, 1)',
   boxShadow: '2px 4px 12px rgba(0,0,0,0.1)',
   position: 'relative',
   justifyContent: "flex-start",
@@ -44,13 +44,13 @@ const containerStyle = {
 
 const topStyle = {
   height: '10%',
-  backgroundColor: 'green',
+  backgroundColor: '#008022',
   flexShrink: 0,
 };
 
 const bottomStyle = {
   height: '90%',
-  backgroundColor: 'gray',
+  backgroundColor: '#808080',
   flexShrink: 0,
   position: 'relative', // needed for absolute positioning of children
 };

@@ -21,7 +21,7 @@
     <style>
       body {
         margin: 0;
-        background: #f0f0f0;
+        background: #262626;
         font-family: sans-serif;
         height: 100vh; /* full screen */
       }
@@ -42,7 +42,7 @@
             h("div", {
               id: "header",
               className:
-                "w-full h-[75px] flex-shrink-0 bg-gray-200 rounded-xl shadow-md flex items-center justify-center",
+                "w-full h-[75px] flex-shrink-0 bg-[#2b2d30] rounded-xl shadow-md flex items-center justify-center",
               children: "header",
             },[
               h("iframe",{id: "header_iframe", src: "./header.html", className:"w-full h-full p-1", style: {border: "none"}}),
@@ -59,13 +59,13 @@
                     h("div", {
                       id: "scoresetter",
                       className:
-                        "flex-1 h-[150px] bg-gray-200 rounded-xl shadow-md flex items-center justify-center",
+                        "flex-1 h-[150px] bg-[#2b2d30] rounded-xl shadow-md flex items-center justify-center",
                      // children: "Score setter",
                     }),
                     h("div", {
                       id: "log",
                       className:
-                        "w-[300px] h-[150px] bg-gray-200 rounded-xl shadow-md flex items-center justify-center",
+                        "w-[300px] h-[150px] bg-[#2b2d30] rounded-xl shadow-md flex items-center justify-center",
                       children: "log",
                     }),
                   ]),
@@ -79,13 +79,13 @@
                         h("div", {
                           id: "mappick",
                           className:
-                            "h-[45%] bg-gray-200 rounded-xl shadow-md flex items-center justify-center",
+                            "h-[45%] bg-[#2b2d30] rounded-xl shadow-md flex items-center justify-center",
                           //children: "Map Pick",
                         }),
                         h("div", {
                           id: "heroban",
                           className:
-                            "h-[45%] bg-gray-200 rounded-xl shadow-md flex items-center justify-center",
+                            "h-[45%] bg-[#2b2d30] rounded-xl shadow-md flex items-center justify-center",
                           children: "Hero Bans",
                         }),
                       ]),
@@ -93,7 +93,7 @@
                       h("div", {
                         id: "mapCardPrevis",
                         className:
-                          "flex-1 bg-gray-200 rounded-xl shadow-md flex items-center justify-center",
+                          "flex-1 bg-[#2b2d30] rounded-xl shadow-md flex items-center justify-center",
                         children: "Mapcard Previs",
                       },[
                     h("iframe",{id: "Mapcards", src: "./map_cards.html", className:"w-full h-full", style: {border: "none"}})
@@ -106,7 +106,7 @@
                 h("div", {
                   id: "chat",
                   className:
-                    "w-[25%] bg-gray-200 rounded-xl shadow-md flex items-center justify-center",
+                    "w-[25%] bg-[#2b2d30] rounded-xl shadow-md flex items-center justify-center",
                   children: "Chat",
                  },
                 [

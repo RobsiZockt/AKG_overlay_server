@@ -92,6 +92,7 @@ waitForContainer("scoresetter", (container) => {
 
   // Create Texfield for overwriting Score
   overwrite1 = document.createElement("textarea");
+  overwrite1.style.backgroundColor = "#3b3b3b";
   overwrite1.style.width = "50px";
   overwrite1.style.height = "20px";
   overwrite1.style.gridRow = "1";
@@ -101,6 +102,7 @@ waitForContainer("scoresetter", (container) => {
 
 
   overwrite2 = document.createElement("textarea");
+  overwrite2.style.backgroundColor = "#3b3b3b"; 
   overwrite2.style.width = "50px";
   overwrite2.style.height = "20px";
   overwrite2.style.gridRow = "2";

@@ -106,7 +106,7 @@
         placeholder: "Search images...",
         value: query,
         onChange: (e) => setQuery(e.target.value),
-        className: "border p-2 w-full mb-4 rounded",
+        className: "border border-[#939497] p-2 w-full mb-4 rounded bg-[#3b3b3b]",
       }),
       h(
         "div",
@@ -132,7 +132,7 @@
                   "w-full h-auto object-cover rounded shadow " +
                   (isHighlighted ? "ring-4 ring-blue-500" : ""),
               }),
-              h("p", { className: "mt-2 text-sm" }, item.name),
+              h("p", { className: "mt-2 text-white text-sm" }, item.name),
             ]
           );
         })
