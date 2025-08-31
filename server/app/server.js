@@ -84,7 +84,7 @@ setInterval(pollPlayedMaps, 200);
 
 // SSE endpoint just sends cached data
 // SSE endpoint just sends cached data
-app.get("/api/played_maps/stream", (req, res) => {
+app.get("/api/update/stream", (req, res) => {
   // SSE headers
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");

@@ -11,7 +11,7 @@
 
   const h = getH();
 
-const eventSource = new EventSource("/api/played_maps/stream");
+const eventSource = new EventSource("/api/update/stream");
 let cachedata=null;
 
 eventSource.onmessage = (e) => {
