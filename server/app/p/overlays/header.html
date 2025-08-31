@@ -10,12 +10,37 @@
 </head>
 <body class="m-0 p-0 w-full h-[68px] overflow-hidden">
   <div id="root"></div>
-
+<script src ="../js/seehandler.js"> </script>
   <script>
 const { createElement: h, useState, useEffect } = React;
 
+let setBannerDataExt;
+const cleanup = window.subscribeMatchup((data)=>{
+
+   if (data.switched === 1) {
+        const swapped = {
+          ...data,
+          blue: data.red,
+          red: data.blue,
+          blue_score: data.red_score,
+          red_score: data.blue_score,
+          blue_logo: data.red_logo,
+          red_logo: data.blue_logo,
+        };
+        setBannerDataExt(swapped);
+      } else {
+        setBannerDataExt(data);
+      }
+})
+
+
+
 function TopBanner() {
   const [bannerData, setBannerData] = useState({});
+
+useEffect(()=>{
+  setBannerDataExt = setBannerData;
+},[setBannerData]);
 
   useEffect(() => {
     async function fetchData() {
@@ -88,6 +113,5 @@ document.addEventListener("DOMContentLoaded", () => {
   root.render(h(TopBanner));
 });
 </script>
-
 </body>
 </html>

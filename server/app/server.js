@@ -1,7 +1,7 @@
 const { error } = require("console");
 const e = require("express");
 const express = require("express");
-const { readFile, writeFile, chownSync } = require("fs");
+const { readFile, writeFile, chownSync, lstatSync } = require("fs");
 const fs = require("fs").promises;
 const path = require("path");
 const { json } = require("stream/consumers");
@@ -16,9 +16,10 @@ const heros = path.join(__dirname, "api", "heros.json");
 
 let map_data;
 let ban_data;
-let matchup_data;
+let matchupCache ={};
 let playedMapsCache = {};
-let lastMtime = 0;
+let lastMtime_playedMaps = 0;
+let lastMtime_matchup = 0;
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "p")));
@@ -36,12 +37,6 @@ const loaddata = async () => {
 
 loaddata();
 
-const loaddata_sync = async () => {
-  const matchup_raw = await fs.readFile(matchup, "utf8");
-  matchup_data = JSON.parse(matchup_raw);
-};
-
-setInterval(loaddata_sync, 500);
 
 // Function to broadcast data to all connected clients
 const broadcast = (data) => {
@@ -51,15 +46,35 @@ const broadcast = (data) => {
   }
 };
 
+
+const pollMatchup = async ()=>{
+  try{
+    const stats = await fs.stat(matchup);
+    if(stats.mtimeMs !== lastMtime_matchup && stats.size > 0){
+      const content = await fs.readFile(matchup,"utf8");
+      matchupCache = JSON.parse(content);
+      lastMtime_matchup = stats.mtimeMs;
+      broadcast({type: "matchupUpdate", payload: matchupCache});
+    }
+  }catch (err){
+console.error("Error reading matchup.json: ". err)
+  }
+
+};
+
+setInterval(pollMatchup, 300);
+
+
+
 // Single poll interval
 const pollPlayedMaps = async () => {
   try {
     const stats = await fs.stat(playedmaps);
-    if (stats.mtimeMs !== lastMtime && stats.size > 0) {
+    if (stats.mtimeMs !== lastMtime_playedMaps && stats.size > 0) {
       const content = await fs.readFile(playedmaps, "utf8");
       playedMapsCache = JSON.parse(content);
-      lastMtime = stats.mtimeMs;
-      broadcast(playedMapsCache); // send to all SSE clients
+      lastMtime_playedMaps = stats.mtimeMs;
+      broadcast({type: "playedMapsUpdate", payload: playedMapsCache}); // send to all SSE clients
     }
   } catch (err) {
     console.error("Error reading played_maps.json:", err);
@@ -79,7 +94,7 @@ app.get("/api/played_maps/stream", (req, res) => {
   clients.add(res);
 
   // Send initial data
-  res.write(`data: ${JSON.stringify(playedMapsCache)}\n\n`);
+  res.write(`data: ${JSON.stringify({type: "playedMapsUpdate", payload: playedMapsCache})}\n\n`);
 
   // --- Heartbeat / keep-alive ---
   const heartbeat = setInterval(() => {
@@ -312,9 +327,9 @@ app.put("/api/matchup", [], async (req, res) => {
     let update = {};
 
     if(op === "swap"){
-      if(matchup_data["switched"] === 1)
+      if(matchupCache["switched"] === 1)
     {update = {switched: 0};};
-    if(matchup_data["switched"]=== 0)
+    if(matchupCache["switched"]=== 0)
     {update = {switched: 1};};
     }
     if(op === "calc"){
@@ -356,7 +371,7 @@ app.post("/api/new_matchup", [
   //tests if keys do exist in matchup
  body().custom((value) => {
       const [key] = Object.keys(value);
-      if (!(key in matchup_data)) {
+      if (!(key in matchupCache)) {
         throw new Error(
           `Invalid key. '${key}' does not exist in playedMapsCache`
         );
