@@ -173,14 +173,14 @@ return h('div', null,
     };
 
     return h('div', {
-      className: "absolute left-1/2 top-1/2 z-[${index}] flex flex-col w-[300px] h-[420px] rounded-xl overflow-hidden border-2 border-gray-700 shadow-md",
+      className: "absolute left-1/2 top-1/2 z-[${index}] flex flex-col w-[300px] h-[420px] rounded-xl overflow-hidden border-2 border-[#575757] shadow-md",
       style: shiftStyle
     }, [
       // Top bar
-      h('div', { className: "flex-shrink-0 h-[10%] bg-green-700" }),
+      h('div', { className: "flex-shrink-0 h-[10%] bg-[#008000]" }),
 
       // Bottom section (relative to allow stacking)
-      h('div', { className: "flex-shrink-0 h-[90%] bg-gray-500 " }, [
+      h('div', { className: "flex-shrink-0 h-[90%] bg-[#808080] " }, [
         // Red Ban
         map.ban_red && h('div', { className: "absolute top-[65%] left-[75%] -translate-x-1/2 w-[90px] h-[90px] bg-red-600" }, [
           map.ban_red && h('img', { className: "absolute w-[90px] ", src: map.ban_red }),
