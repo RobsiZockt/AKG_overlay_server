@@ -8,12 +8,22 @@
     console.error("react not loaded");
     throw new Error("React not loaded yet");
   }
-
   const h = getH();
+
+
+    function waitForContainer(id, callback) {
+    const interval = setInterval(() => {
+      const ex = document.getElementById(id);
+      if (ex) {
+        clearInterval(interval);
+        callback(ex);
+      }
+    }, 100); //100ms pulling rate
+  }
 
 const { useState, useEffect } = React;
 
-    function RectangleWithContent() {
+    function Map_Cards() {
 
 
         const [maps, setMaps] = useState([]);
@@ -97,7 +107,9 @@ return h('div', {
 );
 }
 
-      const root = ReactDOM.createRoot(document.getElementById('Mapcards'));
-      root.render(h(RectangleWithContent));
+waitForContainer("Mapcards",(container)=>{
+      const root = ReactDOM.createRoot(container);
+    root.render(h(Map_Cards));
+})
 
       })();
