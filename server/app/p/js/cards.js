@@ -42,7 +42,10 @@ const { useState, useEffect } = React;
             
 
 
-return h('div', null,
+return h('div', {
+    className: "relative w-full h-full ", 
+    style: { transform: `translateX(-${maps.length * 15}px)` }, // shift the entire stack
+},
   maps.map(([id, map], index) => {
     if (!map?.name) return null;
 
@@ -51,11 +54,11 @@ return h('div', null,
     };
 
     return h('div', {
-      className: "absolute left-1/2 top-1/2 z-[${index}] flex flex-col w-[300px] h-[420px] rounded-xl overflow-hidden border-2 border-[#575757] shadow-md",
+      className: `absolute left-1/2 top-1/2 z-[${index}] flex flex-col w-[300px] h-[420px] rounded-xl overflow-hidden border-2 border-[#575757] shadow-md`,
       style: shiftStyle
     }, [
       // Top bar
-      h('div', { className: "flex-shrink-0 h-[10%] bg-[#008000]" }),
+      h('div', { className: "flex-shrink-0 h-[10%] bg-[#35a652]" }),
 
       // Bottom section (relative to allow stacking)
       h('div', { className: "flex-shrink-0 h-[90%] bg-[#808080] " }, [
