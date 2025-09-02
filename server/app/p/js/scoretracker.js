@@ -2,6 +2,19 @@
 
 
 (function(){
+
+    function getH() {
+    if (window.h) return window.h;
+    if (window.React) {
+      window.h = window.React.createElement;
+      return window.h;
+    }
+    throw new Error("React not loaded yet");
+  }
+
+  const h = getH();
+
+  
 let keys;
 let latestKey;
 let latestJson = {};
@@ -92,19 +105,25 @@ waitForContainer("scoresetter", (container) => {
 
   // Create Texfield for overwriting Score
   overwrite1 = document.createElement("textarea");
+  overwrite1.style.backgroundColor = "#3b3b3b";
   overwrite1.style.width = "50px";
   overwrite1.style.height = "20px";
   overwrite1.style.gridRow = "1";
   overwrite1.style.gridColumn = "2";
+  overwrite1.style.resize ="none";
+  overwrite1.style.overflow ="hidden";
   overwrite1.addEventListener("keydown", (event)=>{if(event.key === "Enter"){event.preventDefault();  handleOverwrite("1",overwrite1.value)}});
   settergrid.appendChild(overwrite1);
 
 
   overwrite2 = document.createElement("textarea");
+  overwrite2.style.backgroundColor = "#3b3b3b"; 
   overwrite2.style.width = "50px";
   overwrite2.style.height = "20px";
   overwrite2.style.gridRow = "2";
   overwrite2.style.gridColumn = "2";
+  overwrite2.style.resize ="none";
+  overwrite2.style.overflow ="hidden";
   overwrite2.addEventListener("keydown", (event)=>{if(event.key === "Enter"){event.preventDefault();  handleOverwrite("2",overwrite2.value)}});
   settergrid.appendChild(overwrite2);
 
@@ -220,8 +239,6 @@ function showPopup() {
   async function  swapHeader(){
 
 await updatematchup("swap");
-      const iframe = document.getElementById("header_iframe");
-  iframe.contentWindow.location.reload();  
 
   }
 
@@ -300,8 +317,6 @@ async function addMap() {
     console.error("Error adding New Map: ", error)
   }
 
-  const iframe = document.getElementById("header_iframe");
-  iframe.contentWindow.location.reload();  
   
 }
 
