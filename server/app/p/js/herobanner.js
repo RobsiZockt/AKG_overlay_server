@@ -1,4 +1,17 @@
 (function () {
+
+    function getH() {
+    if (window.h) return window.h;
+    if (window.React) {
+      window.h = window.React.createElement;
+      return window.h;
+    }
+    throw new Error("React not loaded yet");
+  }
+
+  const h = getH();
+
+
   const { useState, useEffect } = React;
 
   let ban_blue;
@@ -129,7 +142,7 @@ return h("div", { className: "p-4 h-full flex flex-col" }, [
       placeholder: "Search images...",
       value: query,
       onChange: (e) => setQuery(e.target.value),
-      className: "border p-2 flex-1 rounded",
+      className: "border border-[#939497] p-2 w-full mb-4 rounded bg-[#3b3b3b]",
     }),
 
     // Reset Blue button
@@ -186,7 +199,7 @@ return h("div", { className: "p-4 h-full flex flex-col" }, [
                   "w-full h-auto object-cover rounded shadow " +
                   ringClass,
               }),
-              h("p", { className: "mt-2 text-sm" }, item.name),
+              h("p", { className: "mt-2 text-white text-sm" }, item.name),
             ]
           );
         })
