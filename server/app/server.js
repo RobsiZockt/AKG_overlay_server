@@ -13,6 +13,7 @@ const playedmaps = path.join(__dirname, "api", "played_maps.json");
 const matchup = path.join(__dirname, "api", "matchup.json");
 const maps = path.join(__dirname, "api", "maps.json");
 const heros = path.join(__dirname, "api", "heros.json");
+const players = path.join(__dirname, "api", "players.json");
 
 let map_data;
 let ban_data;
@@ -408,6 +409,19 @@ app.post("/api/new_matchup", [
     res.status(500).json({ error: "Could not update matchup.json" });
   }
 });
+
+app.get("/api/players", async (req,res) => {
+try{
+  const data = await fs.readFile(players, "utf8");
+  res.json(JSON.parse(data)); 
+}catch (error){
+  res.status(500).json({error: "Could not read players.json"})
+}
+})
+
+
+
+
 
 app.listen(PORT, () => console.log("Server is listening on ${PORT}"));
 console.log("Maps file path:", playedmaps);
