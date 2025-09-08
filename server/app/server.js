@@ -229,7 +229,7 @@ app.put(
       const value = req.body[key];
       //will search map by id and retruns the img path and map name
       if (key === "map") {
-        const lookupdata = map_data[value + 1];
+        const lookupdata = map_data[value];
         if (!lookupdata)
           return res.status(404).json({ error: `Map not found ${value}` });
 

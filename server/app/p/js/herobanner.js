@@ -82,8 +82,7 @@ sel_team = "2";
     
   }
 
-  function handleImageClick(idx) {
-    const id =idx+1;
+  function handleImageClick(id) {
     let team = sel_team;
       setBan = { ban:`team: ${team} hero: ${id}`};
     update(latestKey,setBan);
@@ -189,7 +188,7 @@ return h("div", { className: "p-4 h-full flex flex-col" }, [
               key: idx,
               className:
                 "flex flex-col items-center p-1 rounded cursor-pointer transition-shadow ",
-              onClick: () => handleImageClick(idx),
+              onClick: () => handleImageClick(item.id),
             },
             [
               h("img", {
