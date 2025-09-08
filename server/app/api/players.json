@@ -1,19 +1,22 @@
 {
   "blue": [
-    { "id": 1, "name": "Test", "main": "./../img/heros/freja.png", "role": "Tank" },
-    { "id": 2, "name": "Test2", "main": "./../img/heros/freja.png", "role": "DPS" },
-    { "id": 3, "name": "Test3", "main": "./../img/heros/freja.png", "role": "DPS" },
-    { "id": 4, "name": "Test4", "main": "./../img/heros/freja.png", "role": "Support" },
-    { "id": 5, "name": "Test5", "main": "./../img/heros/freja.png", "role": "Support" },
-    { "id": 6, "name": "Test6", "main": "./../img/heros/freja.png", "role": "supstetude" },
-     { "id": 7, "name": "Test6", "main": "./../img/heros/freja.png", "role": "supstetude" }
+    { "id": 1, "name": "RobsiZockt", "main": "./../img/heros/freja.png", "role": "Tank", "extra": "Captain" },
+    { "id": 2, "name": "Test2", "main": "./../img/heros/freja.png", "role": "DPS", "extra": "" },
+    { "id": 3, "name": "Test3", "main": "./../img/heros/freja.png", "role": "Tank, DPS", "extra": "" },
+    { "id": 4, "name": "Test4", "main": "./../img/heros/freja.png", "role": "Support", "extra": "Co-Captain" },
+    { "id": 5, "name": "Test5", "main": "./../img/heros/freja.png", "role": "Support", "extra": "" },
+    { "id": 6, "name": "Test6", "main": "./../img/heros/freja.png", "role": "supstetude", "extra": "" },
+    { "id": 7, "name": "Test7", "main": "./../img/heros/freja.png", "role": "supstetude", "extra": "" },
+    { "id": 8, "name": "Test8", "main": "./../img/heros/freja.png", "role": "supstetude", "extra": "" },
+    { "id": 9, "name": "Luca17a", "main": "./../img/heros/freja.png", "role": "supstetude", "extra": "" },
+    { "id": 10, "name": "Test10", "main": "./../img/heros/freja.png", "role": "supstetude", "extra": "" }
   ],
   "red": [
-    { "id": 1, "name": "Test", "main": "./../img/heros/freja.png", "role": "Tank" },
-    { "id": 2, "name": "Test2", "main": "./../img/heros/freja.png", "role": "DPS" },
-    { "id": 3, "name": "Test3", "main": "./../img/heros/freja.png", "role": "DPS" },
-    { "id": 4, "name": "Test4", "main": "./../img/heros/freja.png", "role": "Support" },
-    { "id": 5, "name": "Test5", "main": "./../img/heros/freja.png", "role": "Support" },
-    { "id": 6, "name": "Test6", "main": "./../img/heros/freja.png", "role": "supstetude" }
+    { "id": 1, "name": "WWWWWWWWWWWW", "main": "./../img/heros/freja.png", "role": "Tank", "extra": "Captain" },
+    { "id": 2, "name": "Test2", "main": "./../img/heros/freja.png", "role": "DPS", "extra": "" },
+    { "id": 3, "name": "Test3", "main": "./../img/heros/freja.png", "role": "DPS", "extra": "Off-Role" },
+    { "id": 4, "name": "Test4", "main": "./../img/heros/freja.png", "role": "Support", "extra": "" },
+    { "id": 5, "name": "Test5", "main": "./../img/heros/freja.png", "role": "Flex", "extra": "" },
+    { "id": 6, "name": "Test6", "main": "./../img/heros/freja.png", "role": "supstetude", "extra": "" }
   ]
 }

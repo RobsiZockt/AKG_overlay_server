@@ -94,8 +94,13 @@ function PlayerVS(){
                 ),
                 h("img", { src: p.main, className: " flex aspect-square object-contain",}),
               ),
-              h("div",{id:"rolebox", className:"h-[20%] bg-[#000000aa] flex w-full justify-end"},
-                h("span", { className: "font-arial text-white text-[23px] p-0 m-0 leading-none inline-block pl-2" }, p.role),
+              h("div",{id:"rolebox", className:"h-[20%] bg-[#000000aa] flex flex-row w-full "},
+                h("div", {id:"extra", className:"h-full w-[50%] flex justify-start"},
+                  h("span", {className: "font-arial text-[#35a652] text-[23px] p-0 m-0 leading-none inline-block pl-4"}, p.extra),
+                ),
+                h("div", {id:"role", className:"h-full w-[50%] flex justify-end"},
+                  h("span", { className: "font-arial text-white text-[23px] p-0 m-0 leading-none inline-block " }, p.role),
+                ), 
               ),
             ),
             h("div",{id: "role", className:"max-w-[7%] h-full flex flex-1 bg-blue-700"},
@@ -153,13 +158,18 @@ function PlayerVS(){
                   h("span", { className: "font-arial text-white text-[55px] p-0 m-0 leading-none inline-block pr-2 " }, p.name),
                 ),
               ),
-              h("div",{id:"rolebox", className:"h-[20%] bg-[#000000aa] flex w-full justify-start"},
-                h("span", { className: "font-arial text-white text-[23px] p-0 m-0 leading-none inline-block pr-2" }, p.role),
+              h("div",{id:"rolebox", className:"h-[20%] bg-[#000000aa] flex flex-row w-full "},
+                h("div", {id:"role", className:"h-full w-[50%] flex justify-start"},
+                  h("span", { className: "font-arial text-white text-[23px] p-0 m-0 leading-none inline-block " }, p.role),
+                ),
+                h("div", {id:"extra", className:"h-full w-[50%] flex justify-end"},
+                  h("span", {className: "font-arial text-[#35a652] text-[23px] p-0 m-0 leading-none inline-block pr-4"}, p.extra),
+                ),
               ),
             ),
           )
         }):null,
-        //render logic for the substetudes / id > 5
+        //render logic for the substetudes red / id > 5
         h("div",{id:"subs", className:"h-[7.5vh] flex w-full justify-start"},[
           players.red ? players.red.map((p)=>{
             if(p.id >5){
