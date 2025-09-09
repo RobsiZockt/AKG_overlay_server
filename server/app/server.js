@@ -74,7 +74,6 @@ const pollPlayers = async ()=>{
       playersCache = JSON.parse(content);
       lastMtime_players = stats.mtimeMs;
       broadcast({type: "playersUpdate", payload: playersCache});
-      console.log("broadcast payload", playersCache);
     }
   }catch (err){
 console.error("Error reading matchup.json: ". err)
@@ -453,24 +452,28 @@ app.put("/api/players/:team/:id", [], async (req, res) =>{
 try{
 const {team,id} = req.params;
 const update = req.body;
-  const teamdata = playersCache[team];
+  let teamdata = playersCache[team];
   if (!teamdata) {
     return res.status(404).json({ error: "Team not found" });
   }
 
 
   const player = teamdata.find(p => p.id === parseInt(id, 10));
-  if (!player) {
-    return res.status(404).json({ error: "Player not found" });
+  if (!player) {  
+    if(Object.keys(req.body).length === 0){
+       teamdata[teamdata.length] = { id: parseInt(id),name: "",main: "",role: "",extra: ""};
+    }else{
+         return res.status(404).json({ error: "Player not found" });
+    }
   }
-  
-  if(key == "main"){
+  if(Object.keys(req.body).length !== 0)
+{  if(key == "main"){
     const id = update[key];
     player[key] = ban_data[id].path;
   }else{
     player[key] = update[key];
-  }
-
+  }}
+teamdata.sort((a,b)=>a.id-b.id);
 await fs.writeFile(players, JSON.stringify(playersCache, null, 2), "utf8");
  res.status(200).json({ status: "ok", latest: update});
 }catch(err){
