@@ -151,7 +151,7 @@ async function Safe(){
 }
 
 
-const renderPlayers= (p,team)=>{
+const renderPlayers= (p,team,start_id)=>{
 let colorloockup=[];
   if(team ==="blue"){
 colorloockup[0]="blue-700";
@@ -159,7 +159,8 @@ colorloockup[0]="blue-700";
   colorloockup[0]="red-700";
 };
 
-        if(p.id >5) return null;
+const search_id = "s"+ (parseInt(p.id)-start_id);
+        
         
         return h("div",{id: p.id, className:`h-full w-[20%] flex flex-1 flex-col bg-${colorloockup[0]}`},
           h("img",{id:`role`, className:"h-[5%] w-full bg-[#000000aa]", src: iconMap[p.id]}),
@@ -175,12 +176,12 @@ colorloockup[0]="blue-700";
             h("input", {
               type: "text",
               placeholder: "Search images...",
-              value: queries["s"+p.id],
-              onChange: (e) => handleSearchChange("s"+p.id, e.target.value),
+              value: queries[search_id],
+              onChange: (e) => handleSearchChange(search_id, e.target.value),
               className: "border border-[#939497] p-2 w-full mb-4 rounded bg-[#3b3b3b]",
             }),
             h("div",{className: "grid grid-cols-2 md:grid-cols-4 gap-2 overflow-y-auto",style: { flex: "1 1 auto", maxHeight: "calc(2*10rem+2rem" },},
-              results["s"+p.id]?.map((item, idx) => {
+              results[search_id]?.map((item, idx) => {
                 const isHighlighted = item.path === p.main;
                 return h("div",{key: idx,
                     className:"flex flex-col items-center p-1 rounded cursor-pointer transition-shadow ",
@@ -218,13 +219,16 @@ const renderTeam = (team)=>{
     if(team === "blue"){
       if( players.blue){
         return players.blue.map((p) => {
-          return renderPlayers(p,team);
+          if(p.id<2)return null;
+          if(p.id >6) return null;
+          return renderPlayers(p,team,1);
         })
       }
     } else if (team === "red"){
       if(players.red){
+        if(p.id >5) return null;
         return players.red.map((p)=>{
-          return renderPlayers(p,team);
+          return renderPlayers(p,team,0);
         })
       }
     }
