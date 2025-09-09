@@ -23,6 +23,7 @@ const iconMap={
 }
 
 
+
 //Import hero picker from control
 //Make all textfields save / send on enter and blur
 //make layout
@@ -101,15 +102,45 @@ const handleSearchChange = (key, value) => {
 };
 
 const handleImageClick=(player_id, img_id)=>{
+ UpdatePlayers("blue", player_id,"main",img_id);
 
+};
+
+const UpdatePlayers=async (team, player_id,item,val)=>{
+
+  const data = {[item]:val}
+
+  const response = await fetch(`/api/players/${team}/${player_id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
 
 };
 
 
+async function Safe(){
+        const data = players;
+        try {
+          const response = await fetch("/api/players", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+          if (!response.ok) throw new Error("Network response was not ok");
+
+          const result = await response.json();
+          console.log(result);
+        } catch (error) {
+          console.error("Error setting up new Matchup: ", error);
+        }   
+}
+
+
   
-  return h(
-    "div",
-    { id: "container", className: "h-[70%] w-[90%]  rounded-xl" },
+  return h("div",{ id: "container", className: "h-[70%] w-[90%]  rounded-xl" },
     h("div",{id: "team-select",className: "flex h-[10%] w-full bg-sky-700 rounded-t-xl items-center justify-center",},
       h("button",{id: "select-blue",className: `h-[90%] w-auto ${team === "blue" ? "text-white" : "text-gray-700"} text-xl px-4 py-2`,},"Blue Team"),
       h("button",{id: "select-red",className: `h-[90%] w-auto ${team === "red" ? "text-white" : "text-gray-700"} text-xl px-4 py-2`,},"Red Team")
@@ -122,8 +153,10 @@ const handleImageClick=(player_id, img_id)=>{
           h("img",{id:`role`, className:"h-[5%] w-full bg-blue-700", src: iconMap[p.id]}),
           h("input", {type: "text", placeholder: "UserName", value: p.name , onChange: (e) => {
             const updatedPlayers= {...players};
-            updatedPlayers.blue[p.id - 1] = {...p, name: e.target.value};
+            updatedPlayers.blue[p.id-1] = {...p, name: e.target.value};
             setPlayers(updatedPlayers);
+          },onBlur:(e)=>{
+            UpdatePlayers("blue", p.id,"name",e.target.value);
           },className: "border border-[#939497] p-2 w-full mb-4 rounded bg-[#3b3b3b]",}),
           //modified code from hero picker
           h("div",{id:"Mainpicker", className:"h-[60%] w-full flex flex-col"},
@@ -136,11 +169,13 @@ const handleImageClick=(player_id, img_id)=>{
             }),
             h("div",{className: "grid grid-cols-2 md:grid-cols-4 gap-2 overflow-y-auto",style: { flex: "1 1 auto", maxHeight: "calc(2*10rem+2rem" },},
               results["s"+p.id]?.map((item, idx) => {
+                const isHighlighted = item.path === p.main;
                 return h("div",{key: idx,
                     className:"flex flex-col items-center p-1 rounded cursor-pointer transition-shadow ",
                     onClick: () => handleImageClick(p.id, item.id),
                   },[
-                  h("img", {src: item.path,alt: item.name,className:"w-full h-auto object-cover rounded shadow ",
+                    
+                  h("img", {src: item.path,alt: item.name,className:"w-full h-auto object-cover rounded shadow " + (isHighlighted ? "ring-4 ring-blue-500" : ""),
                   }),
                   h("p", { className: "mt-2 text-white text-sm" }, item.name),
                   ]
@@ -152,18 +187,26 @@ const handleImageClick=(player_id, img_id)=>{
             const updatedPlayers= {...players};
             updatedPlayers.blue[p.id - 1] = {...p, role: e.target.value};
             setPlayers(updatedPlayers);
-          },className: "border border-[#939497] p-2 w-full mb-4 rounded bg-[#3b3b3b]",}),
-          
+          },onBlur:(e)=>{
+            UpdatePlayers("blue", p.id,"role",e.target.value);
+          },className: "border border-[#939497] p-2 w-full mb-4 rounded bg-[#3b3b3b]",}),          
           h("input", {type: "text", placeholder: "Extra Info", value: p.extra , onChange: (e) => {
             const updatedPlayers= {...players};
             updatedPlayers.blue[p.id - 1] = {...p, extra: e.target.value};
             setPlayers(updatedPlayers);
+          },onBlur:(e)=>{
+            UpdatePlayers("blue", p.id,"extra",e.target.value);
           },className: "border border-[#939497] p-2 w-full mb-4 rounded bg-[#3b3b3b]",}),
         )
       }) : players.red ? players.red.map((p)=>{
 
       }):null
-    )
+    ),
+    h("button",{className:"bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition",
+      onClick: () => Safe(),
+      },
+      "SAFE"
+    ),
   );
 }
 
