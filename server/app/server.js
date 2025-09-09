@@ -481,6 +481,30 @@ await fs.writeFile(players, JSON.stringify(playersCache, null, 2), "utf8");
 }
 })
 
+app.delete("/api/players/:team/:id", [], async (req, res) =>{
+try{
+const {team,id} = req.params;
+  let teamdata = playersCache[team];
+  if (!teamdata) {
+    return res.status(404).json({ error: "Team not found" });
+  }
+
+  const player = teamdata.find(p => p.id === parseInt(id, 10));
+  if (!player) {   
+    return res.status(404).json({ error: "Player not found" });
+  }
+
+  teamdata.splice(parseInt(id, 10)-1,1);
+
+    await fs.writeFile(players, JSON.stringify(playersCache, null, 2), "utf8");
+     res.status(200).json({ status: "ok", latest: update});
+}catch(err){
+   res.status(500).json({ error: "Could not update players.json" });
+}
+
+})
+
+
 
 app.listen(PORT, () => console.log("Server is listening on ${PORT}"));
 console.log("Maps file path:", playedmaps);
