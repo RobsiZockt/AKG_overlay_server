@@ -234,7 +234,7 @@ const search_id = "s"+ (parseInt(p.id)-start_id);
       UpdatePlayers(team, p.id,"extra",e.target.value);
       },className: "border border-[#939497] p-2 w-full mb-4 rounded bg-[#3b3b3b]",}
      ),
-     p.id>5?h("button",{id: "new_player",className:"bg-red-300 w-[80%] h-[7%] text-white px-4 py-2 rounded hover:bg-red-200 transition",onClick:()=> deletePlayer(p.id)},"DeletePlayer"):null,
+     p.id>5?h("button",{id: "new_player",className:"bg-red-300 w-[80%] h-[7%] text-white px-4 py-2 rounded hover:bg-red-200 transition",onClick:()=> deletePlayer(p.id-dif)},"DeletePlayer"):null,
   )
 
 }
@@ -263,13 +263,13 @@ const renderTeam = (team)=>{
               return renderGap(latest-div,team,5);
             });
             
-            return h(React.Fragment,null, ...skips, renderPlayers(p,team,first,div));
+            return h(React.Fragment,null, ...skips, renderPlayers(p,team,first,skipp_amount));
           }
           latest = p.id;
-          return h(React.Fragment,null,renderPlayers(p,team,first,0));
+          return h(React.Fragment,null,renderPlayers(p,team,first,skipp_amount));
           
         }),(h_id = players.blue[players.blue.length-1].id) !== 10?(()=>{
-          const div= 10 - h_id;
+          const div= first+5 - h_id;
             const skips= Array.from({length: div},(_,i) =>{
               return renderGap(h_id+div,team,5);
             });
@@ -299,14 +299,14 @@ const renderTeam = (team)=>{
               return renderGap(latest-div,team,5);
             });
             
-            return h(React.Fragment,null, ...skips, renderPlayers(p,team,first,div));
+            return h(React.Fragment,null, ...skips, renderPlayers(p,team,first,skipp_amount));
           }
           latest = p.id;
 
-          return h(React.Fragment,null,renderPlayers(p,team,first,0));
+          return h(React.Fragment,null,renderPlayers(p,team,first,skipp_amount));
           
         }),(h_id = players.red[players.red.length-1].id) !== 10?(()=>{
-          const div= 10 - h_id;
+          const div= first+5 - h_id;
             const skips= Array.from({length: div},(_,i) =>{
               return renderGap(h_id+div,team,5);
             });
