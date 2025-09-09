@@ -159,6 +159,15 @@ async function Safe(){
     })
 }
 
+async function deletePlayer(id) {
+  const response = await fetch(`/api/players/${team}/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+}
+
 const renderGap =(id,team,start_id)=>{
   let colorloockup=[];
   if(team ==="blue"){
@@ -168,7 +177,7 @@ colorloockup[0]="blue-700";
 };
 
   return  h("div",{id: id, className:`h-full w-[20%] flex justify-center items-center bg-${colorloockup[0]}/40`}, 
-    h("button",{id: "new_player",className:"bg-gray-300 w-[80%] h-[7%] text-white px-4 py-2 rounded hover:bg-gray-200 transition",onClick:()=> addPlayer(id)},"Add Player")
+    h("button",{id: "new_player",className:"bg-gray-300 w-[80%] h-[7%] text-white px-4 py-2 rounded hover:bg-gray-200 transition",onClick:()=> addPlayer(id)},"Add Player"),
   )
 }
 
@@ -233,6 +242,7 @@ const search_id = "s"+ (parseInt(p.id)-start_id);
       UpdatePlayers("blue", p.id,"extra",e.target.value);
       },className: "border border-[#939497] p-2 w-full mb-4 rounded bg-[#3b3b3b]",}
      ),
+     p.id>5?h("button",{id: "new_player",className:"bg-red-300 w-[80%] h-[7%] text-white px-4 py-2 rounded hover:bg-red-200 transition",onClick:()=> deletePlayer(p.id)},"DeletePlayer"):null,
   )
 
 }
@@ -258,9 +268,9 @@ const renderTeam = (team)=>{
             return h(React.Fragment,null, ...skips, renderPlayers(p,team,5));
           }
           latest = p.id;
-          if(p.id<6)return null;
-          if(p.id >10) return null;
-          return h(React.Fragment,null,renderPlayers(p,team,5));
+          if(p.id<3)return null;
+          if(p.id >7) return null;
+          return h(React.Fragment,null,renderPlayers(p,team,2));
           
         }),(h_id = players.blue[players.blue.length-1].id) !== 10?(()=>{
           const div= 10 - h_id;
