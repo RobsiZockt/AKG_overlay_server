@@ -2,7 +2,9 @@ const { useEffect, useState } = React;
 
 (function () {
   
-let team_Ext;
+let SetPlayers_EXT;
+let SetTeam_EXT;
+let latestJson;
 
 function waitForContainer(id, callback) {
   const interval = setInterval(() => {
@@ -22,7 +24,11 @@ const iconMap={
   5: "../img/icons/Support_icon.svg",
 }
 
-
+const cleanup = window.subscribePlayers((data) => {
+    latestJson = data;
+    SetPlayers_EXT(latestJson);
+    console.log(data);
+});
 
 //Import hero picker from control
 //Make all textfields save / send on enter and blur
@@ -40,8 +46,12 @@ function Versus_Setup() {
   const [data,setData] =useState([]);
 
   React.useEffect(() => {
-    team_Ext = team;
-  }, [team]);
+    SetPlayers_EXT = setPlayers;
+  }, [setPlayers]);
+
+  React.useEffect(()=>{
+SetTeam_EXT=setTeam;
+  },[setTeam]);
 
 useEffect(() => {
       // Fetch JSON from backend
@@ -95,7 +105,9 @@ useEffect(() => {
   setResults(newResults);
 }, [queries, data]);
 
-
+const handleTeamSelect = (team)=>{
+SetTeam_EXT(team);
+};
 
 const handleSearchChange = (key, value) => {
   setQueries((prev) => ({ ...prev, [key]: value }));
@@ -139,18 +151,18 @@ async function Safe(){
 }
 
 
-  
-  return h("div",{ id: "container", className: "h-[70%] w-[90%]  rounded-xl" },
-    h("div",{id: "team-select",className: "flex h-[10%] w-full bg-sky-700 rounded-t-xl items-center justify-center",},
-      h("button",{id: "select-blue",className: `h-[90%] w-auto ${team === "blue" ? "text-white" : "text-gray-700"} text-xl px-4 py-2`,},"Blue Team"),
-      h("button",{id: "select-red",className: `h-[90%] w-auto ${team === "red" ? "text-white" : "text-gray-700"} text-xl px-4 py-2`,},"Red Team")
-    ),
-    h("div",{ id: "edit-cluster", className: "h-[90%] w-[90%] flex space-x-2" },
-      players.blue ? players.blue.map((p) => {
+const renderPlayers= (p,team)=>{
+let colorloockup=[];
+  if(team ==="blue"){
+colorloockup[0]="blue-700";
+} else if(team ==="red"){
+  colorloockup[0]="red-700";
+};
+
         if(p.id >5) return null;
         
-        return h("div",{id: p.id, className:" h-full w-[20%] flex flex-1 flex-col bg-green-700"},
-          h("img",{id:`role`, className:"h-[5%] w-full bg-blue-700", src: iconMap[p.id]}),
+        return h("div",{id: p.id, className:`h-full w-[20%] flex flex-1 flex-col bg-${colorloockup[0]}`},
+          h("img",{id:`role`, className:"h-[5%] w-full bg-[#000000aa]", src: iconMap[p.id]}),
           h("input", {type: "text", placeholder: "UserName", value: p.name , onChange: (e) => {
             const updatedPlayers= {...players};
             updatedPlayers.blue[p.id-1] = {...p, name: e.target.value};
@@ -175,7 +187,7 @@ async function Safe(){
                     onClick: () => handleImageClick(p.id, item.id),
                   },[
                     
-                  h("img", {src: item.path,alt: item.name,className:"w-full h-auto object-cover rounded shadow " + (isHighlighted ? "ring-4 ring-blue-500" : ""),
+                  h("img", {src: item.path,alt: item.name,className:"w-full h-auto object-cover rounded shadow " + (isHighlighted ? "ring-4 ring-[#35a652]" : ""),
                   }),
                   h("p", { className: "mt-2 text-white text-sm" }, item.name),
                   ]
@@ -198,9 +210,37 @@ async function Safe(){
             UpdatePlayers("blue", p.id,"extra",e.target.value);
           },className: "border border-[#939497] p-2 w-full mb-4 rounded bg-[#3b3b3b]",}),
         )
-      }) : players.red ? players.red.map((p)=>{
 
-      }):null
+}
+
+const renderTeam = (team)=>{
+  {
+    if(team === "blue"){
+      if( players.blue){
+        return players.blue.map((p) => {
+          return renderPlayers(p,team);
+        })
+      }
+    } else if (team === "red"){
+      if(players.red){
+        return players.red.map((p)=>{
+          return renderPlayers(p,team);
+        })
+      }
+    }
+  }
+}
+
+
+  
+  return h("div",{ id: "container", className: "h-[70%] w-[90%]  rounded-xl" },
+    h("div",{id: "team-select",className: "flex h-[10%] w-full bg-sky-700 rounded-t-xl items-center justify-center",},
+      h("button",{id: "select-blue",className: `h-[90%] w-auto ${team === "blue" ? "text-white" : "text-gray-700"} text-xl px-4 py-2`,onClick: () => handleTeamSelect("blue")},"Blue Team"),
+      h("button",{id: "select-red",className: `h-[90%] w-auto ${team === "red" ? "text-white" : "text-gray-700"} text-xl px-4 py-2`,onClick: () => handleTeamSelect("red")},"Red Team")
+    ),
+    h("div",{ id: "edit-cluster", className: "h-[90%] w-[90%] flex space-x-2" },
+      
+      team === "blue"? renderTeam(team):team ==="red"? renderTeam(team):null,
     ),
     h("button",{className:"bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition",
       onClick: () => Safe(),
