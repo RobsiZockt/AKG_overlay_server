@@ -52,4 +52,15 @@ window.subscribeMatchup=function(handler){
     return () => document.removeEventListener("matchupUpdate",listener);
 }
 
+window.subscribePlayers=function(handler){
+    const listener = (e) => handler(e.detail);
+    document.addEventListener("playersUpdate",listener);
+
+    if(cachedata !== null){
+        handler(cachedata);
+    }
+
+    return () => document.removeEventListener("playersUpdate",listener);
+}
+
 })();
