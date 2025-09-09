@@ -72,8 +72,9 @@ const pollPlayers = async ()=>{
     if(stats.mtimeMs !== lastMtime_players && stats.size > 0){
       const content = await fs.readFile(players,"utf8");
       playersCache = JSON.parse(content);
-      lastMtime_matchup = stats.mtimeMs;
+      lastMtime_players = stats.mtimeMs;
       broadcast({type: "playersUpdate", payload: playersCache});
+      console.log("broadcast payload", playersCache);
     }
   }catch (err){
 console.error("Error reading matchup.json: ". err)
@@ -471,10 +472,6 @@ const update = req.body;
   }
 
 await fs.writeFile(players, JSON.stringify(playersCache, null, 2), "utf8");
-
-    
-
-
  res.status(200).json({ status: "ok", latest: update});
 }catch(err){
       res.status(500).json({ error: "Could not update players.json" });
