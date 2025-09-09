@@ -150,6 +150,27 @@ async function Safe(){
         }   
 }
 
+ async function addPlayer(id){
+  const response = await fetch(`/api/players/${team}/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+}
+
+const renderGap =(id,team,start_id)=>{
+  let colorloockup=[];
+  if(team ==="blue"){
+colorloockup[0]="blue-700";
+} else if(team ==="red"){
+  colorloockup[0]="red-700";
+};
+
+  return  h("div",{id: id, className:`h-full w-[20%] flex justify-center items-center bg-${colorloockup[0]}/40`}, 
+    h("button",{id: "new_player",className:"bg-gray-300 w-[80%] h-[7%] text-white px-4 py-2 rounded hover:bg-gray-200 transition",onClick:()=> addPlayer(id)},"Add Player")
+  )
+}
 
 const renderPlayers= (p,team,start_id)=>{
 let colorloockup=[];
@@ -160,57 +181,59 @@ colorloockup[0]="blue-700";
 };
 
 const search_id = "s"+ (parseInt(p.id)-start_id);
-        
-        
-        return h("div",{id: p.id, className:`h-full w-[20%] flex flex-1 flex-col bg-${colorloockup[0]}`},
-          h("img",{id:`role`, className:"h-[5%] w-full bg-[#000000aa]", src: iconMap[p.id]}),
-          h("input", {type: "text", placeholder: "UserName", value: p.name , onChange: (e) => {
-            const updatedPlayers= {...players};
-            updatedPlayers.blue[p.id-1] = {...p, name: e.target.value};
-            setPlayers(updatedPlayers);
-          },onBlur:(e)=>{
-            UpdatePlayers("blue", p.id,"name",e.target.value);
-          },className: "border border-[#939497] p-2 w-full mb-4 rounded bg-[#3b3b3b]",}),
-          //modified code from hero picker
-          h("div",{id:"Mainpicker", className:"h-[60%] w-full flex flex-col"},
-            h("input", {
-              type: "text",
-              placeholder: "Search images...",
-              value: queries[search_id],
-              onChange: (e) => handleSearchChange(search_id, e.target.value),
-              className: "border border-[#939497] p-2 w-full mb-4 rounded bg-[#3b3b3b]",
-            }),
-            h("div",{className: "grid grid-cols-2 md:grid-cols-4 gap-2 overflow-y-auto",style: { flex: "1 1 auto", maxHeight: "calc(2*10rem+2rem" },},
-              results[search_id]?.map((item, idx) => {
-                const isHighlighted = item.path === p.main;
-                return h("div",{key: idx,
-                    className:"flex flex-col items-center p-1 rounded cursor-pointer transition-shadow ",
-                    onClick: () => handleImageClick(p.id, item.id),
-                  },[
-                    
-                  h("img", {src: item.path,alt: item.name,className:"w-full h-auto object-cover rounded shadow " + (isHighlighted ? "ring-4 ring-[#35a652]" : ""),
-                  }),
-                  h("p", { className: "mt-2 text-white text-sm" }, item.name),
-                  ]
-                );
-              })
-            ),
-          ),
-            h("input", {type: "text", placeholder: "Roles", value: p.role , onChange: (e) => {
-            const updatedPlayers= {...players};
-            updatedPlayers.blue[p.id - 1] = {...p, role: e.target.value};
-            setPlayers(updatedPlayers);
-          },onBlur:(e)=>{
-            UpdatePlayers("blue", p.id,"role",e.target.value);
-          },className: "border border-[#939497] p-2 w-full mb-4 rounded bg-[#3b3b3b]",}),          
-          h("input", {type: "text", placeholder: "Extra Info", value: p.extra , onChange: (e) => {
-            const updatedPlayers= {...players};
-            updatedPlayers.blue[p.id - 1] = {...p, extra: e.target.value};
-            setPlayers(updatedPlayers);
-          },onBlur:(e)=>{
-            UpdatePlayers("blue", p.id,"extra",e.target.value);
-          },className: "border border-[#939497] p-2 w-full mb-4 rounded bg-[#3b3b3b]",}),
-        )
+
+
+  return h("div",{id: p.id, className:`h-full w-[20%] flex flex-1 flex-col bg-${colorloockup[0]}`},
+  h("img",{id:`role`, className:"h-[5%] w-full bg-[#000000aa]", src: iconMap[p.id]}),
+    h("input", {type: "text", placeholder: "UserName", value: p.name , onChange: (e) => {
+      const updatedPlayers= {...players};
+      updatedPlayers.blue[p.id-1] = {...p, name: e.target.value};
+      setPlayers(updatedPlayers);
+      },onBlur:(e)=>{
+        UpdatePlayers("blue", p.id,"name",e.target.value);
+      },className: "border border-[#939497] p-2 w-full mb-4 rounded bg-[#3b3b3b]",}),
+    //modified code from hero picker
+    h("div",{id:"Mainpicker", className:"h-[60%] w-full flex flex-col"},
+      h("input", {
+        type: "text",
+        placeholder: "Search images...",
+        value: queries[search_id],
+        onChange: (e) => handleSearchChange(search_id, e.target.value),
+        className: "border border-[#939497] p-2 w-full mb-4 rounded bg-[#3b3b3b]",
+      }),
+      h("div",{className: "grid grid-cols-2 md:grid-cols-4 gap-2 overflow-y-auto",style: { flex: "1 1 auto", maxHeight: "calc(2*10rem+2rem" },},
+        results[search_id]?.map((item, idx) => {
+        const isHighlighted = item.path === p.main;
+          return h("div",{key: idx,
+            className:"flex flex-col items-center p-1 rounded cursor-pointer transition-shadow ",
+            onClick: () => handleImageClick(p.id, item.id),
+            },[
+                   
+              h("img", {src: item.path,alt: item.name,className:"w-full h-auto object-cover rounded shadow " + (isHighlighted ? "ring-4 ring-[#35a652]" : ""),
+                }),
+              h("p", { className: "mt-2 text-white text-sm" }, item.name),
+            ]
+          );
+        })
+      ),
+    ),
+    h("input", {type: "text", placeholder: "Roles", value: p.role , onChange: (e) => {
+      const updatedPlayers= {...players};
+      updatedPlayers.blue[p.id - 1] = {...p, role: e.target.value};
+      setPlayers(updatedPlayers);
+      },onBlur:(e)=>{
+        UpdatePlayers("blue", p.id,"role",e.target.value);
+      },className: "border border-[#939497] p-2 w-full mb-4 rounded bg-[#3b3b3b]",}
+    ),          
+    h("input", {type: "text", placeholder: "Extra Info", value: p.extra , onChange: (e) => {
+      const updatedPlayers= {...players};
+      updatedPlayers.blue[p.id - 1] = {...p, extra: e.target.value};
+      setPlayers(updatedPlayers);
+    },onBlur:(e)=>{
+      UpdatePlayers("blue", p.id,"extra",e.target.value);
+      },className: "border border-[#939497] p-2 w-full mb-4 rounded bg-[#3b3b3b]",}
+     ),
+  )
 
 }
 
@@ -218,17 +241,45 @@ const renderTeam = (team)=>{
   {
     if(team === "blue"){
       if( players.blue){
-        return players.blue.map((p) => {
-          if(p.id<2)return null;
-          if(p.id >6) return null;
-          return renderPlayers(p,team,1);
-        })
+        let latest=0;
+        let skipp_amount =0;
+        return  h(React.Fragment,null, players.blue.map((p) => {
+
+
+          if(p.id !==latest+1){
+            const div= p.id-latest-1;
+            skipp_amount += div;
+            console.log("asd",skipp_amount,div);
+            latest = p.id;
+            const skips= Array.from({length: div},(_,i) =>{
+              return renderGap(latest-div,team,5);
+            });
+            
+            return h(React.Fragment,null, ...skips, renderPlayers(p,team,5));
+          }
+          latest = p.id;
+          if(p.id<6)return null;
+          if(p.id >10) return null;
+          return h(React.Fragment,null,renderPlayers(p,team,5));
+          
+        }),(h_id = players.blue[players.blue.length-1].id) !== 10?(()=>{
+          const div= 10 - h_id;
+            const skips= Array.from({length: div},(_,i) =>{
+              return renderGap(h_id+div,team,5);
+            });
+            return h(React.Fragment,null, ...skips);
+        })():null,
+            
+          
+
+      )
       }
     } else if (team === "red"){
       if(players.red){
-        if(p.id >5) return null;
+
         return players.red.map((p)=>{
-          return renderPlayers(p,team,0);
+          if(p.id >5) return null;
+          return renderPlayers(p,team,0,false);
         })
       }
     }
