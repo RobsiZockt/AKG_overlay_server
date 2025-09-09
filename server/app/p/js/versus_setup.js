@@ -39,6 +39,7 @@ const cleanup = window.subscribePlayers((data) => {
 //roles as multi select checkboxes (=> backend if all res = "Flex" (at least for id 5+))
 
 function Versus_Setup() {
+  const [site,setSite] = useState("1");
   const [team, setTeam] = useState("blue");
   const [players, setPlayers] = useState({});
   const [queries, setQueries] = useState({s1:"",s2:"",s3:"",s4:"",s5:""});
@@ -106,7 +107,8 @@ useEffect(() => {
 }, [queries, data]);
 
 const handleTeamSelect = (team)=>{
-SetTeam_EXT(team);
+setTeam(team);
+setSite("1");
 };
 
 const handleSearchChange = (key, value) => {
@@ -114,7 +116,7 @@ const handleSearchChange = (key, value) => {
 };
 
 const handleImageClick=(player_id, img_id)=>{
- UpdatePlayers("blue", player_id,"main",img_id);
+ UpdatePlayers(team, player_id,"main",img_id);
 
 };
 
@@ -133,21 +135,10 @@ const UpdatePlayers=async (team, player_id,item,val)=>{
 };
 
 
-async function Safe(){
-        const data = players;
-        try {
-          const response = await fetch("/api/players", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
-          });
-          if (!response.ok) throw new Error("Network response was not ok");
-
-          const result = await response.json();
-          console.log(result);
-        } catch (error) {
-          console.error("Error setting up new Matchup: ", error);
-        }   
+async function swapSites(){
+if(site ==="1") setSite("2");
+else if(site ==="2") setSite("1");
+else console.error("Manipulation Detected");
 }
 
  async function addPlayer(id){
@@ -181,7 +172,7 @@ colorloockup[0]="blue-700";
   )
 }
 
-const renderPlayers= (p,team,start_id)=>{
+const renderPlayers= (p,team,start_id,dif)=>{
 let colorloockup=[];
   if(team ==="blue"){
 colorloockup[0]="blue-700";
@@ -196,10 +187,10 @@ const search_id = "s"+ (parseInt(p.id)-start_id);
   h("img",{id:`role`, className:"h-[5%] w-full bg-[#000000aa]", src: iconMap[p.id]}),
     h("input", {type: "text", placeholder: "UserName", value: p.name , onChange: (e) => {
       const updatedPlayers= {...players};
-      updatedPlayers.blue[p.id-1] = {...p, name: e.target.value};
+      updatedPlayers[team][p.id-1-dif] = {...p, name: e.target.value};
       setPlayers(updatedPlayers);
       },onBlur:(e)=>{
-        UpdatePlayers("blue", p.id,"name",e.target.value);
+        UpdatePlayers(team, p.id,"name",e.target.value);
       },className: "border border-[#939497] p-2 w-full mb-4 rounded bg-[#3b3b3b]",}),
     //modified code from hero picker
     h("div",{id:"Mainpicker", className:"h-[60%] w-full flex flex-col"},
@@ -228,18 +219,19 @@ const search_id = "s"+ (parseInt(p.id)-start_id);
     ),
     h("input", {type: "text", placeholder: "Roles", value: p.role , onChange: (e) => {
       const updatedPlayers= {...players};
-      updatedPlayers.blue[p.id - 1] = {...p, role: e.target.value};
+      updatedPlayers[team][p.id - 1 -dif] = {...p, role: e.target.value};
       setPlayers(updatedPlayers);
       },onBlur:(e)=>{
-        UpdatePlayers("blue", p.id,"role",e.target.value);
+        UpdatePlayers(team, p.id,"role",e.target.value);
       },className: "border border-[#939497] p-2 w-full mb-4 rounded bg-[#3b3b3b]",}
     ),          
     h("input", {type: "text", placeholder: "Extra Info", value: p.extra , onChange: (e) => {
       const updatedPlayers= {...players};
-      updatedPlayers.blue[p.id - 1] = {...p, extra: e.target.value};
+      updatedPlayers[team][p.id-1-dif] = {...p, extra: e.target.value};
+      console.log(updatedPlayers, p.id-1-dif);
       setPlayers(updatedPlayers);
     },onBlur:(e)=>{
-      UpdatePlayers("blue", p.id,"extra",e.target.value);
+      UpdatePlayers(team, p.id,"extra",e.target.value);
       },className: "border border-[#939497] p-2 w-full mb-4 rounded bg-[#3b3b3b]",}
      ),
      p.id>5?h("button",{id: "new_player",className:"bg-red-300 w-[80%] h-[7%] text-white px-4 py-2 rounded hover:bg-red-200 transition",onClick:()=> deletePlayer(p.id)},"DeletePlayer"):null,
@@ -248,29 +240,33 @@ const search_id = "s"+ (parseInt(p.id)-start_id);
 }
 
 const renderTeam = (team)=>{
-  {
+  let first=0;
+  if(site==="1") first=0;
+  else if(site==="2") first=5;
     if(team === "blue"){
       if( players.blue){
-        let latest=0;
+        let latest=first;
         let skipp_amount =0;
         return  h(React.Fragment,null, players.blue.map((p) => {
-
+          if(p.id<=first)return null;
+          if(p.id >first+5) return null;
 
           if(p.id !==latest+1){
             const div= p.id-latest-1;
             skipp_amount += div;
+            if(div<=0) return null;
+
             console.log("asd",skipp_amount,div);
             latest = p.id;
+            console.log("fde",p.id, latest);
             const skips= Array.from({length: div},(_,i) =>{
               return renderGap(latest-div,team,5);
             });
             
-            return h(React.Fragment,null, ...skips, renderPlayers(p,team,5));
+            return h(React.Fragment,null, ...skips, renderPlayers(p,team,first,div));
           }
           latest = p.id;
-          if(p.id<3)return null;
-          if(p.id >7) return null;
-          return h(React.Fragment,null,renderPlayers(p,team,2));
+          return h(React.Fragment,null,renderPlayers(p,team,first,0));
           
         }),(h_id = players.blue[players.blue.length-1].id) !== 10?(()=>{
           const div= 10 - h_id;
@@ -286,14 +282,43 @@ const renderTeam = (team)=>{
       }
     } else if (team === "red"){
       if(players.red){
+        let latest=first;
+        let skipp_amount =0;
+        return  h(React.Fragment,null, players.red.map((p) => {
+          if(p.id<=first)return null;
+          if(p.id >first+5) return null;
 
-        return players.red.map((p)=>{
-          if(p.id >5) return null;
-          return renderPlayers(p,team,0,false);
-        })
+          if(p.id !==latest+1){
+            const div= p.id-latest-1;
+            skipp_amount += div;
+            if(div<=0) return null;
+            console.log("fde",p.id, p.id-latest);
+            console.log("asd",skipp_amount,div);
+            latest = p.id;
+            const skips= Array.from({length: div},(_,i) =>{
+              return renderGap(latest-div,team,5);
+            });
+            
+            return h(React.Fragment,null, ...skips, renderPlayers(p,team,first,div));
+          }
+          latest = p.id;
+
+          return h(React.Fragment,null,renderPlayers(p,team,first,0));
+          
+        }),(h_id = players.red[players.red.length-1].id) !== 10?(()=>{
+          const div= 10 - h_id;
+            const skips= Array.from({length: div},(_,i) =>{
+              return renderGap(h_id+div,team,5);
+            });
+            return h(React.Fragment,null, ...skips);
+        })():null,
+            
+          
+
+      )
       }
     }
-  }
+  
 }
 
 
@@ -303,15 +328,17 @@ const renderTeam = (team)=>{
       h("button",{id: "select-blue",className: `h-[90%] w-auto ${team === "blue" ? "text-white" : "text-gray-700"} text-xl px-4 py-2`,onClick: () => handleTeamSelect("blue")},"Blue Team"),
       h("button",{id: "select-red",className: `h-[90%] w-auto ${team === "red" ? "text-white" : "text-gray-700"} text-xl px-4 py-2`,onClick: () => handleTeamSelect("red")},"Red Team")
     ),
-    h("div",{ id: "edit-cluster", className: "h-[90%] w-[90%] flex space-x-2" },
+    h("div",{id:"edit", className:"h-[90%] w-full flex items-center"},
+    h("div",{ id: "player-cluster", className: "h-full w-[90%] flex space-x-2" },
       
       team === "blue"? renderTeam(team):team ==="red"? renderTeam(team):null,
     ),
-    h("button",{className:"bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition",
-      onClick: () => Safe(),
+    h("button",{className:" h-[7%] w-[10%] bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition flex justify-center",
+      onClick: () => swapSites(),
       },
-      "SAFE"
+      "Swap Sides"
     ),
+  ),
   );
 }
 
