@@ -27,7 +27,6 @@ const iconMap={
 const cleanup = window.subscribePlayers((data) => {
     latestJson = data;
     SetPlayers_EXT(latestJson);
-    console.log(data);
 });
 
 //Import hero picker from control
@@ -228,7 +227,6 @@ const search_id = "s"+ (parseInt(p.id)-start_id);
     h("input", {type: "text", placeholder: "Extra Info", value: p.extra , onChange: (e) => {
       const updatedPlayers= {...players};
       updatedPlayers[team][p.id-1-dif] = {...p, extra: e.target.value};
-      console.log(updatedPlayers, p.id-1-dif);
       setPlayers(updatedPlayers);
     },onBlur:(e)=>{
       UpdatePlayers(team, p.id,"extra",e.target.value);
@@ -255,14 +253,11 @@ const renderTeam = (team)=>{
             const div= p.id-latest-1;
             skipp_amount += div;
             if(div<=0) return null;
-
-            console.log("asd",skipp_amount,div);
+            const latest_clon=latest;
             latest = p.id;
-            console.log("fde",p.id, latest);
             const skips= Array.from({length: div},(_,i) =>{
-              return renderGap(latest-div,team,5);
+              return renderGap(latest_clon+i+1,team,5);
             });
-            
             return h(React.Fragment,null, ...skips, renderPlayers(p,team,first,skipp_amount));
           }
           latest = p.id;
@@ -271,7 +266,7 @@ const renderTeam = (team)=>{
         }),(h_id = players.blue[players.blue.length-1].id) !== 10?(()=>{
           const div= first+5 - h_id;
             const skips= Array.from({length: div},(_,i) =>{
-              return renderGap(h_id+div,team,5);
+              return renderGap(h_id+i+1,team,5);
             });
             return h(React.Fragment,null, ...skips);
         })():null,
@@ -292,8 +287,6 @@ const renderTeam = (team)=>{
             const div= p.id-latest-1;
             skipp_amount += div;
             if(div<=0) return null;
-            console.log("fde",p.id, p.id-latest);
-            console.log("asd",skipp_amount,div);
             latest = p.id;
             const skips= Array.from({length: div},(_,i) =>{
               return renderGap(latest-div,team,5);
