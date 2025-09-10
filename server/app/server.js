@@ -489,7 +489,7 @@ const {team,id} = req.params;
     return res.status(404).json({ error: "Team not found" });
   }
 
-  const player = teamdata.find(p => p.id === parseInt(id, 10));
+  const player = teamdata.length >= parseInt(id, 10);
   if (!player) {   
     return res.status(404).json({ error: "Player not found" });
   }
