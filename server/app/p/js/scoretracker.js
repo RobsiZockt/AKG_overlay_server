@@ -21,6 +21,11 @@ let latestJson = {};
 let overwrite1;
 let overwrite2;
 
+/**
+ * Checkes for an react element until it exists and returns it
+ * @param {string} id - The id name of the targeted container
+ * @param {import("react").ReactElement} callback - the returned react element targeted by id
+ */
 function waitForContainer(id, callback) {
   const interval = setInterval(() => {
     const ex = document.getElementById(id);
@@ -88,7 +93,7 @@ waitForContainer("scoresetter", (container) => {
 
   button1.textContent = "Blue Team +1";
 
-  createButton(button1, "lightblue");
+  createButton(button1, "#00a2de");
   button1.addEventListener("click", () => handleButtonClick("1"));
   button1.style.gridRow ="1";
   button1.style.gridColumn ="1";
@@ -231,30 +236,23 @@ function showPopup() {
 }
 
 
-  
-
-
 });
 
-  async function  swapHeader(){
-
-await updatematchup("swap");
-
-  }
-
-
-
-
-
-async function handleNewMap() {
-
-  updatematchup("calc");
-  addMap();
-
+async function  swapHeader(){
+  await updatematchup("swap");
 }
 
-async function handleOverwrite(team, value) {
+async function handleNewMap() {
+  updatematchup("calc");
+  addMap();
+}
 
+/**
+ * 
+ * @param {string} team - the targeted team as a string 1=blue 2=red
+ * @param {number} value - the score of the targeted team
+ */
+async function handleOverwrite(team, value) {
   let data;
   if(team==="1"){
     data ={ score_blue: value};
@@ -262,15 +260,18 @@ async function handleOverwrite(team, value) {
   if(team==="2"){
     data ={score_red: value};
   }
-  
   update(latestKey, data);
 }
 
+/**
+ * Adds +1 to the current score of the selected team
+ * @param {string} option - the targeted team as a string 1=blue 2=red
+ */
 async function handleButtonClick(option) {
   var newscore;
   var data;
 
-  //Adds +1 to the current score of the selected team
+  
   if (option === "1") {
     newscore = String(Number(latestJson[latestKey].score_blue) + 1);
     data = {  score_blue: newscore };
