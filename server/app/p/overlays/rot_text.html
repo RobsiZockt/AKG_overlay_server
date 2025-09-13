@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rot Text</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="m-0 p-0 w-full h-[68px] overflow-hidden">
+  <div id="root"></div>
+  
+<script type="text/javascript">
+const { createElement: h, useEffect, useState } = React;
+ const App = () => {
+      const [text,setText] = useState([]);
+      const [randomText, setRandomText] = useState("");
+      let texts=[];
+
+      useEffect(()=>{
+        async function fetchData() {
+          try {
+            
+            const response = await fetch("/api/rot_text");
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+            const data = await response.json();
+            texts = data;
+            setText(["hardcode","as"]);
+
+          }catch(err){console.error("Error fetching data:", err);}
+        }
+
+        fetchData();
+      },[]);
+
+      useEffect(() => {
+                    
+        // Function to select random text
+        const pickRandomText = () => {
+          console.log(text);
+          if(texts.length ===0 ) return null;
+          const randomIndex = Math.floor(Math.random() * texts.length);
+          setRandomText(texts[randomIndex]);
+        };
+
+        // Immediately pick one
+        pickRandomText();
+
+        // Set interval to change text every 3 seconds
+        const interval = setInterval(pickRandomText, 10000);
+
+        // Cleanup on unmount
+        return () => clearInterval(interval);
+      }, []);
+
+      return (
+        React.createElement('div', { className: "flex flex-col items-center" },
+          React.createElement('div', { className: "p-6 bg-white shadow-md rounded-lg text-center" },
+            React.createElement('p', { className: "text-xl text-gray-700 mb-4" }, randomText)
+          )
+        )
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(React.createElement(App));
+
+</script>
+
+</body>
+</html>

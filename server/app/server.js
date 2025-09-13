@@ -14,6 +14,7 @@ const matchup = path.join(__dirname, "api", "matchup.json");
 const maps = path.join(__dirname, "api", "maps.json");
 const heros = path.join(__dirname, "api", "heros.json");
 const players = path.join(__dirname, "api", "players.json");
+const rot_text = path.join(__dirname,"api", "rot_text.json");
 
 let map_data;
 let ban_data;
@@ -502,6 +503,16 @@ const {team,id} = req.params;
    res.status(500).json({ error: "Could not update players.json" });
 }
 
+})
+
+app.get("/api/rot_text",[],async (req,res)=>{
+  try{
+  const data = await fs.readFile(rot_text, "utf8");
+  res.json(JSON.parse(data)); 
+}catch (error){
+  console.log(error);
+  res.status(500).json({error: "Could not read players.json"})
+}
 })
 
 
