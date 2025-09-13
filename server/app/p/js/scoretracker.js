@@ -20,6 +20,15 @@ let latestKey;
 let latestJson = {};
 let overwrite1;
 let overwrite2;
+let button1;
+let button2;
+
+
+const cleanMatchup = window.subscribeMatchup((data)=>{
+  button1.textContent = `${data.blue} +1`;
+button2.textContent = `${data.red} +1`;
+
+})
 
 /**
  * Checkes for an react element until it exists and returns it
@@ -89,10 +98,8 @@ waitForContainer("scoresetter", (container) => {
   container.appendChild(othergrid);
 
   // Create Button 1
-  const button1 = document.createElement("button");
-
+  button1 = document.createElement("button");
   button1.textContent = "Blue Team +1";
-
   createButton(button1, "#00a2de");
   button1.addEventListener("click", () => handleButtonClick("1"));
   button1.style.gridRow ="1";
@@ -100,7 +107,7 @@ waitForContainer("scoresetter", (container) => {
   settergrid.appendChild(button1);
 
   // Create Button 2
-  const button2 = document.createElement("button");
+  button2 = document.createElement("button");
   button2.textContent = "Red Team +1";
   createButton(button2,"red");
   button2.addEventListener("click", () => handleButtonClick("2"));
@@ -182,43 +189,15 @@ function showPopup() {
     }, []);
 
     return h(
-      "div",
-      {
-        style: {
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "rgba(0,0,0,0.5)",
-          zIndex: 9999,
-        },
-      },
+      "div",{className:"fixed inset-0 w-full h-full flex justify-center items-center bg-black/50 z-[9999]"},
       h(
         "div",
-        {
-          style: {
-            backgroundColor: "white",
-            padding: "2rem",
-            borderRadius: "1rem",
-            minWidth: "500px",
-            textAlign: "center",
-          },
-        },
+        {className:"bg-white p-8 rounded-2xl min-w-[500px] text-center"},
         h("h2", null, "Test Popup"),
         h("div", {id: "##setup"}),
         h(
           "button",
-          {
-            style: {
-              marginTop: "1rem",
-              padding: "8px 16px",
-              borderRadius: "6px",
-              cursor: "pointer",
-            },
+          {className:"mt-4 px-4 py-2 rounded-md cursor-pointer",
             onClick: () => {
               // 4. Properly unmount the popup
               popupRoot.unmount();
