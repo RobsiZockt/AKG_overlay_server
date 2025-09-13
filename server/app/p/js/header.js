@@ -75,7 +75,6 @@ useEffect(()=>{
       } else {
         setBannerData(data);
       }
-        console.log(data);
       } catch (err) {
         console.error("Error fetching data:", err);
       }
