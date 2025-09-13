@@ -103,7 +103,7 @@ useEffect(()=>{
       style: { clipPath: "polygon(0 0, 100% 0, 60% 100%, 0 100%)", backgroundColor: "#00a2d9" }},
       h("span", { className: "ml-2 font-arial text-[50px] text-white items-center justify-center" }, bannerData.blue_score)
     ),
-    h("div", { className: "w-[30%] bg-transparent flex-shrink-0" }),
+    h("div", {id:"h-mid-spacer", className: "w-[30%] bg-transparent flex-shrink-0" }),
     // Right Gray Section
     h("div", {className: "w-[70px] flex items-center justify-end pr-0 pb-1 gap-2",
       style: { clipPath: "polygon(0 0, 100% 0, 100% 100%, 40% 100%)", backgroundColor: "#ca4b5d" }},
