@@ -65,7 +65,7 @@ if(sdelayed.getHours()>=20 && sdelayed.getHours() <=23)color_delay = colorMap["l
 },[]);
   
 
-  return h("div",{id:"time_container",className:" items-center justify-center"},
+  return h("div",{id:"time_container",className:"flex flex-col items-center justify-center p-1"},
     h("div",{id:"live",className:`flex text-2xl text-${color_live} font-bold bg-transparent items-center justify-center`},slive.toLocaleTimeString([], {hour: '2-digit',minute: '2-digit',second: '2-digit'})),
 h("div",{id:"delayed",className:`flex text-gl text-${color_delay} font-bold bg-transparent items-center justify-center`},sdelayed.toLocaleTimeString([], {hour: '2-digit',minute: '2-digit',second: '2-digit'})),
   )
