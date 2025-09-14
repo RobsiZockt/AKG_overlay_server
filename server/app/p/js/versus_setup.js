@@ -3,8 +3,9 @@ const { useEffect, useState } = React;
 (function () {
   
 let SetPlayers_EXT;
-let SetTeam_EXT;
+
 let latestJson;
+let matchup;
 
 function waitForContainer(id, callback) {
   const interval = setInterval(() => {
@@ -24,9 +25,14 @@ const iconMap={
   5: "../img/icons/Support_icon.svg",
 }
 
-const cleanup = window.subscribePlayers((data) => {
+const cleanupPlayers = window.subscribePlayers((data) => {
     latestJson = data;
     SetPlayers_EXT(latestJson);
+});
+
+const cleanupMatchup = window-subscribeMatchup((data)=>{
+matchup=data;
+SetMatchup_EXT(matchup);
 });
 
 //Import hero picker from control
@@ -44,18 +50,19 @@ function Versus_Setup() {
   const [queries, setQueries] = useState({s1:"",s2:"",s3:"",s4:"",s5:""});
   const [results, setResults] = useState({s1:[],s2:[],s3:[],s4:[],s5:[]});
   const [data,setData] =useState([]);
+  const [matchup, SetMatchup] = useState({});
 
   React.useEffect(() => {
     SetPlayers_EXT = setPlayers;
   }, [setPlayers]);
 
   React.useEffect(()=>{
-SetTeam_EXT=setTeam;
-  },[setTeam]);
+SetMatchup_EXT=SetMatchup;
+  },[SetMatchup]);
 
 useEffect(() => {
       // Fetch JSON from backend
-      fetch("/api/heros") // adjust this URL to your backend
+      fetch("/api/heros") 
         .then((res) => res.json())
         .then((json) => {
           const arrayData = Object.entries(json).map(([id, value]) => ({
@@ -69,20 +76,36 @@ useEffect(() => {
     }, []);
 
    
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch("/api/players");
-        if (!response.ok)
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        const data = await response.json();
-        setPlayers(data);
-      } catch (err) {
-        console.error("Error fetching data:", err);
-      }
+useEffect(() => {
+  async function fetchData() {
+    try {
+      const response = await fetch("/api/players");
+      if (!response.ok)
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      const data = await response.json();
+      setPlayers(data);
+    } catch (err) {
+      console.error("Error fetching data:", err);
     }
-    fetchData();
-  }, []);
+  }
+  fetchData();
+}, []);
+
+
+useEffect(()=>{
+  async function fetchData() {
+    try {
+      const response = await fetch("/api/matchup");
+      if (!response.ok)
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      const data = await response.json();
+      SetMatchup(data);
+    } catch (err) {
+      console.error("Error fetching data:", err);
+    }
+  }
+  fetchData();
+},[]);
 
     useEffect(() => {
   if (!data) return; // wait until data is loaded
@@ -314,14 +337,66 @@ const renderTeam = (team)=>{
   
 }
 
+const UpdateMatchup= async (property,value)=>{
+  const data = {[property]: value};
+ try {
+    const response = await fetch(`/api/matchup?op=up`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) throw new Error("Network response was not ok");
+
+    const result = await response.json();
+    console.log("JSON updated successfully:", result);
+  } catch (error) {
+    console.error("Error updating JSON:", error);
+  }
+}
+
+const renderTeamSetName = (team)=>{
+
+  return h("div",{className:"flex w-full h-full space-x-2"},
+  h("div",{className:"w-[33%]"}, 
+  h("input", {type: "text", placeholder: "Team Name", value: matchup[team] , onChange: (e) => {
+      const updatedMatchup = {...matchup, [team]: e.target.value};
+      console.log(updatedMatchup);
+      SetMatchup(updatedMatchup);
+      },onBlur:(e)=>{
+        UpdateMatchup(team, e.target.value);
+      },className: "border border-[#939497] p-2 w-full mb-4 rounded bg-[#3b3b3b]",}
+    ) 
+  ),
+  h("div",{className:"w-[33%]"}, 
+  h("input", {type: "text", placeholder: "Image URL", onChange: (e) => {
+      const updatedMatchup = {...matchup, [`${team}_logo`]: e.target.value};
+      console.log(updatedMatchup);
+      SetMatchup(updatedMatchup);
+      },onBlur:(e)=>{
+        if(e.target.value === "") return;
+        UpdateMatchup(`${team}_logo`, e.target.value);
+        e.target.value= "";
+      },className: "border border-[#939497] p-2 w-full mb-4 rounded bg-[#3b3b3b]",}
+    ) 
+  ),
+  h("img", { src: matchup[`${team}_logo`], className: "h-auto aspect-square object-contain", alt: "Left" })
+)
+}
+
 
   
-  return h("div",{ id: "container", className: "h-[70%] w-[90%]  rounded-xl" },
-    h("div",{id: "team-select",className: "flex h-[10%] w-full bg-sky-700 rounded-t-xl items-center justify-center",},
+  return h("div",{ id: "container", className: "h-[100%] w-[90%]  rounded-xl" },
+    h("div",{id: "team-select",className: "flex h-[10%] w-full bg-transparent rounded-t-xl items-center justify-center",},
       h("button",{id: "select-blue",className: `h-[90%] w-auto ${team === "blue" ? "text-white" : "text-gray-700"} text-xl px-4 py-2`,onClick: () => handleTeamSelect("blue")},"Blue Team"),
       h("button",{id: "select-red",className: `h-[90%] w-auto ${team === "red" ? "text-white" : "text-gray-700"} text-xl px-4 py-2`,onClick: () => handleTeamSelect("red")},"Red Team")
     ),
-    h("div",{id:"edit", className:"h-[90%] w-full flex items-center"},
+    h("div",{id:"Team setter", className:"h-[10%] w-full"},
+      team === "blue"? renderTeamSetName(team):team ==="red"? renderTeamSetName(team):null,
+    ),
+    h("div",{id:"edit", className:"h-[80%] w-full flex items-center"},
     h("div",{ id: "player-cluster", className: "h-full w-[90%] flex space-x-2" },
       
       team === "blue"? renderTeam(team):team ==="red"? renderTeam(team):null,
