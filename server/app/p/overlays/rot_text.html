@@ -16,7 +16,7 @@ const { createElement: h, useEffect, useState } = React;
  const App = () => {
       const [text,setText] = useState([]);
       const [randomText, setRandomText] = useState("");
-      let texts=[];
+      let texts=["Building Delay"];
 
       useEffect(()=>{
         async function fetchData() {
@@ -56,8 +56,8 @@ const { createElement: h, useEffect, useState } = React;
 
       return (
         React.createElement('div', { className: "flex flex-col items-center" },
-          React.createElement('div', { className: "p-6 bg-white shadow-md rounded-lg text-center" },
-            React.createElement('p', { className: "text-xl text-gray-700 mb-4" }, randomText)
+          React.createElement('div', { className: "p-6 bg-transparent shadow-md rounded-lg text-center" },
+            React.createElement('p', { className: "text-5xl text-white mb-4" }, randomText)
           )
         )
       );
