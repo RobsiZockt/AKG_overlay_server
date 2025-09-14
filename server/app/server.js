@@ -351,7 +351,7 @@ app.put("/api/matchup", [], async (req, res) => {
     if(matchupCache["switched"]=== 0)
     {update = {switched: 1};};
     }
-    if(op === "calc"){
+    else if(op === "calc"){
     //calculates the new score of the matchup
           let blue = 0;let red = 0;
     for (key in playedMapsCache) {
@@ -373,6 +373,9 @@ app.put("/api/matchup", [], async (req, res) => {
     update = { blue_score: blue, red_score: red };
     console.log(update);
   }
+  else{
+    update = req.body;
+  }  
 
     const data = await fs.readFile(matchup, "utf8");
     const json = JSON.parse(data);
