@@ -1,70 +1,126 @@
 {
   "1": {
-    "name": "blizzard_world",
-    "path": "maps\\blizzard_world.webp"
+    "name": "aatlis",
+    "path": "maps\\aatlis.webp"
   },
   "2": {
+    "name": "antarctic peninsula",
+    "path": "maps\\antarctic_peninsula.webp"
+  },
+  "3": {
+    "name": "blizzard world",
+    "path": "maps\\blizzard_world.webp"
+  },
+  "4": {
     "name": "busan",
     "path": "maps\\busan.webp"
   },
-  "3": {
+  "5": {
+    "name": "circuit royal",
+    "path": "maps\\circuit_royal.webp"
+  },
+  "6": {
+    "name": "colosseo",
+    "path": "maps\\colosseo.webp"
+  },
+  "7": {
+    "name": "dorado",
+    "path": "maps\\dorado.webp"
+  },
+  "8": {
+    "name": "eichenwalde",
+    "path": "maps\\eichenwalde.webp"
+  },
+  "9": {
     "name": "esperanca",
     "path": "maps\\esperanca.webp"
   },
-  "4": {
+  "10": {
     "name": "gibraltar",
     "path": "maps\\gibraltar.webp"
   },
-  "5": {
+  "11": {
+    "name": "hanaoka",
+    "path": "maps\\hanaoka.webp"
+  },
+  "12": {
     "name": "havana",
     "path": "maps\\havana.webp"
   },
-  "6": {
+  "13": {
     "name": "hollywood",
     "path": "maps\\hollywood.webp"
   },
-  "7": {
+  "14": {
+    "name": "ilios",
+    "path": "maps\\ilios.webp"
+  },
+  "15": {
+    "name": "junkertown",
+    "path": "maps\\junkertown.webp"
+  },
+  "16": {
+    "name": "kings row",
+    "path": "maps\\kings_row.webp"
+  },
+  "17": {
+    "name": "lijiang tower",
+    "path": "maps\\lijiang_tower.webp"
+  },
+  "18": {
     "name": "midtown",
     "path": "maps\\midtown.webp"
   },
-  "8": {
+  "19": {
     "name": "nepal",
     "path": "maps\\nepal.webp"
   },
-  "9": {
-    "name": "new_junk_city",
+  "20": {
+    "name": "new junk city",
     "path": "maps\\new_junk_city.webp"
   },
-  "10": {
-    "name": "new_queen_street",
+  "21": {
+    "name": "new queen street",
     "path": "maps\\new_queen_street.webp"
   },
-  "11": {
+  "22": {
     "name": "numbani",
     "path": "maps\\numbani.webp"
   },
-  "12": {
+  "23": {
     "name": "oasis",
     "path": "maps\\oasis.webp"
   },
-  "13": {
+  "24": {
+    "name": "paraiso",
+    "path": "maps\\paraiso.webp"
+  },
+  "25": {
     "name": "rialto",
     "path": "maps\\rialto.webp"
   },
-  "14": {
-    "name": "route_66",
+  "26": {
+    "name": "route 66",
     "path": "maps\\route_66.webp"
   },
-  "15": {
+  "27": {
     "name": "runasapi",
     "path": "maps\\runasapi.webp"
   },
-  "16": {
+  "28": {
     "name": "samoa",
     "path": "maps\\samoa.webp"
   },
-  "17": {
+  "29": {
+    "name": "shambali monastery",
+    "path": "maps\\shambali_monastery.webp"
+  },
+  "30": {
     "name": "suravasa",
     "path": "maps\\suravasa.webp"
+  },
+  "31": {
+    "name": "throne of anubis",
+    "path": "maps\\throne_of_anubis.webp"
   }
 }

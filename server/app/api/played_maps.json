@@ -1,11 +1,11 @@
 {
   "1": {
-    "name": "busan",
-    "image": "./../img/maps/busan.webp",
-    "ban_red": "./../img/heros/genji.png",
-    "ban_red_name": "genji",
-    "ban_blue": "./../img/heros/hanzo.png",
-    "ban_blue_name": "hanzo",
+    "name": "colosseo",
+    "image": "./../img/maps/colosseo.webp",
+    "ban_red": "./../img/heros/wuyang.png",
+    "ban_red_name": "wuyang",
+    "ban_blue": "./../img/heros/wuyang.png",
+    "ban_blue_name": "wuyang",
     "score_blue": "",
     "score_red": ""
   }
