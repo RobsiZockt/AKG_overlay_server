@@ -13,7 +13,7 @@ function indexFiles(folder) {
   files.forEach(file => {
     if (file.isFile()) {
       fileIndex[counter] = {
-        name: path.parse(file.name).name, // filename without extension
+        name: path.parse(file.name).name.replace("_", " "), // filename without extension
         path: path.join(folder, file.name)
       };
       counter++;
