@@ -1,6 +1,7 @@
-const { useEffect, useState } = React;
+
 
 (function () {
+  const { useEffect, useState } = React;
   
 let SetPlayers_EXT;
 
@@ -388,7 +389,7 @@ const renderTeamSetName = (team)=>{
 
 
   
-  return h("div",{ id: "container", className: "h-[100%] w-[90%]  rounded-xl" },
+  return h("div",{ id: "container", className: "h-full w-[90%]  rounded-xl" },
     h("div",{id: "team-select",className: "flex h-[10%] w-full bg-transparent rounded-t-xl items-center justify-center",},
       h("button",{id: "select-blue",className: `h-[90%] w-auto ${team === "blue" ? "text-white" : "text-gray-700"} text-xl px-4 py-2`,onClick: () => handleTeamSelect("blue")},"Blue Team"),
       h("button",{id: "select-red",className: `h-[90%] w-auto ${team === "red" ? "text-white" : "text-gray-700"} text-xl px-4 py-2`,onClick: () => handleTeamSelect("red")},"Red Team")

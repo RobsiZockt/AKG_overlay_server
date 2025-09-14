@@ -79,6 +79,7 @@ const cleanup = window.subscribePlayedMaps((data) => {
 
 waitForContainer("scoresetter", (container) => {
 
+
   // Create CSS grid
   container.style.display = "grid";
   container.style.gridTemplateColums = "50% 50%";
@@ -171,30 +172,34 @@ function showPopup() {
 
   // 2. Create a React root on that div
   const popupRoot = ReactDOM.createRoot(popupDiv);
-
+   
   // 3. Popup component
   function Popup() {
     // Load script on mount
+
     React.useEffect(() => {
       const script = document.createElement("script");
-      script.src = "./../js/m_setup.js"; // <-- your script
+      script.src = "./../js/versus_setup.js"; // <-- your script
       script.async = true;
+      script.dataset.versus = "true";
 
       document.body.appendChild(script);
 
       // Cleanup when popup unmounts
-      return () => {
-        document.body.removeChild(script);
-      };
+       return () => {
+      const existing = document.querySelector('script[data-versus]');
+      if (existing) {
+        existing.remove(); // remove the <script> element
+      }
+    };
     }, []);
 
     return h(
-      "div",{className:"fixed inset-0 w-full h-full flex justify-center items-center bg-black/50 z-[9999]"},
+      "div",{className:"fixed inset-0 w-full h-full  justify-center items-center bg-black/50 z-[9999]"},
       h(
         "div",
-        {className:"bg-white p-8 rounded-2xl min-w-[500px] text-center"},
-        h("h2", null, "Test Popup"),
-        h("div", {id: "##setup"}),
+        {className:"bg-white p-8 rounded-2xl w-full h-[95%] flex text-center flex-col overflow-hidden object-contain"},
+        h("div", {id: "versus_setup",className:"w-full h-[90%]"}),
         h(
           "button",
           {className:"mt-4 px-4 py-2 rounded-md cursor-pointer",
