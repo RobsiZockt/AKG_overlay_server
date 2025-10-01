@@ -213,5 +213,10 @@
     "name": "zenyatta",
     "extension": "png",
     "path": "./../img/heros/zenyatta.png"
+  },
+  "44": {
+    "name": "wuyang",
+    "extension": "png",
+    "path": "./../img/heros/wuyang.png"
   }
 }

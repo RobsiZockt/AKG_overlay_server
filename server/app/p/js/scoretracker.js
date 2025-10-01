@@ -20,7 +20,21 @@ let latestKey;
 let latestJson = {};
 let overwrite1;
 let overwrite2;
+let button1;
+let button2;
 
+
+const cleanMatchup = window.subscribeMatchup((data)=>{
+  button1.textContent = `${data.blue} +1`;
+button2.textContent = `${data.red} +1`;
+
+})
+
+/**
+ * Checkes for an react element until it exists and returns it
+ * @param {string} id - The id name of the targeted container
+ * @param {import("react").ReactElement} callback - the returned react element targeted by id
+ */
 function waitForContainer(id, callback) {
   const interval = setInterval(() => {
     const ex = document.getElementById(id);
@@ -65,6 +79,7 @@ const cleanup = window.subscribePlayedMaps((data) => {
 
 waitForContainer("scoresetter", (container) => {
 
+
   // Create CSS grid
   container.style.display = "grid";
   container.style.gridTemplateColums = "50% 50%";
@@ -84,18 +99,16 @@ waitForContainer("scoresetter", (container) => {
   container.appendChild(othergrid);
 
   // Create Button 1
-  const button1 = document.createElement("button");
-
+  button1 = document.createElement("button");
   button1.textContent = "Blue Team +1";
-
-  createButton(button1, "lightblue");
+  createButton(button1, "#00a2de");
   button1.addEventListener("click", () => handleButtonClick("1"));
   button1.style.gridRow ="1";
   button1.style.gridColumn ="1";
   settergrid.appendChild(button1);
 
   // Create Button 2
-  const button2 = document.createElement("button");
+  button2 = document.createElement("button");
   button2.textContent = "Red Team +1";
   createButton(button2,"red");
   button2.addEventListener("click", () => handleButtonClick("2"));
@@ -159,61 +172,37 @@ function showPopup() {
 
   // 2. Create a React root on that div
   const popupRoot = ReactDOM.createRoot(popupDiv);
-
+   
   // 3. Popup component
   function Popup() {
     // Load script on mount
+
     React.useEffect(() => {
       const script = document.createElement("script");
-      script.src = "./../js/m_setup.js"; // <-- your script
+      script.src = "./../js/versus_setup.js"; // <-- your script
       script.async = true;
+      script.dataset.versus = "true";
 
       document.body.appendChild(script);
 
       // Cleanup when popup unmounts
-      return () => {
-        document.body.removeChild(script);
-      };
+       return () => {
+      const existing = document.querySelector('script[data-versus]');
+      if (existing) {
+        existing.remove(); // remove the <script> element
+      }
+    };
     }, []);
 
     return h(
-      "div",
-      {
-        style: {
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "rgba(0,0,0,0.5)",
-          zIndex: 9999,
-        },
-      },
+      "div",{className:"fixed inset-0 w-full h-full  justify-center items-center bg-black/50 z-[9999]"},
       h(
         "div",
-        {
-          style: {
-            backgroundColor: "white",
-            padding: "2rem",
-            borderRadius: "1rem",
-            minWidth: "500px",
-            textAlign: "center",
-          },
-        },
-        h("h2", null, "Test Popup"),
-        h("div", {id: "##setup"}),
+        {className:"bg-white p-8 rounded-2xl w-full h-[95%] flex text-center flex-col overflow-hidden object-contain"},
+        h("div", {id: "versus_setup",className:"w-full h-[90%]"}),
         h(
           "button",
-          {
-            style: {
-              marginTop: "1rem",
-              padding: "8px 16px",
-              borderRadius: "6px",
-              cursor: "pointer",
-            },
+          {className:"mt-4 px-4 py-2 rounded-md cursor-pointer",
             onClick: () => {
               // 4. Properly unmount the popup
               popupRoot.unmount();
@@ -231,30 +220,23 @@ function showPopup() {
 }
 
 
-  
-
-
 });
 
-  async function  swapHeader(){
-
-await updatematchup("swap");
-
-  }
-
-
-
-
-
-async function handleNewMap() {
-
-  updatematchup("calc");
-  addMap();
-
+async function  swapHeader(){
+  await updatematchup("swap");
 }
 
-async function handleOverwrite(team, value) {
+async function handleNewMap() {
+  updatematchup("calc");
+  addMap();
+}
 
+/**
+ * 
+ * @param {string} team - the targeted team as a string 1=blue 2=red
+ * @param {number} value - the score of the targeted team
+ */
+async function handleOverwrite(team, value) {
   let data;
   if(team==="1"){
     data ={ score_blue: value};
@@ -262,15 +244,18 @@ async function handleOverwrite(team, value) {
   if(team==="2"){
     data ={score_red: value};
   }
-  
   update(latestKey, data);
 }
 
+/**
+ * Adds +1 to the current score of the selected team
+ * @param {string} option - the targeted team as a string 1=blue 2=red
+ */
 async function handleButtonClick(option) {
   var newscore;
   var data;
 
-  //Adds +1 to the current score of the selected team
+  
   if (option === "1") {
     newscore = String(Number(latestJson[latestKey].score_blue) + 1);
     data = {  score_blue: newscore };

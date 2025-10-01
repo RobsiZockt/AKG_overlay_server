@@ -14,13 +14,16 @@ const matchup = path.join(__dirname, "api", "matchup.json");
 const maps = path.join(__dirname, "api", "maps.json");
 const heros = path.join(__dirname, "api", "heros.json");
 const players = path.join(__dirname, "api", "players.json");
+const rot_text = path.join(__dirname,"api", "rot_text.json");
 
 let map_data;
 let ban_data;
 let matchupCache ={};
 let playedMapsCache = {};
+let playersCache ={};
 let lastMtime_playedMaps = 0;
 let lastMtime_matchup = 0;
+let lastMtime_players = 0;
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "p")));
@@ -62,8 +65,23 @@ console.error("Error reading matchup.json: ". err)
   }
 
 };
-
 setInterval(pollMatchup, 300);
+
+const pollPlayers = async ()=>{
+  try{
+    const stats = await fs.stat(players);
+    if(stats.mtimeMs !== lastMtime_players && stats.size > 0){
+      const content = await fs.readFile(players,"utf8");
+      playersCache = JSON.parse(content);
+      lastMtime_players = stats.mtimeMs;
+      broadcast({type: "playersUpdate", payload: playersCache});
+    }
+  }catch (err){
+console.error("Error reading matchup.json: ". err)
+  }
+
+};
+setInterval(pollPlayers, 300);
 
 
 
@@ -229,7 +247,7 @@ app.put(
       const value = req.body[key];
       //will search map by id and retruns the img path and map name
       if (key === "map") {
-        const lookupdata = map_data[value + 1];
+        const lookupdata = map_data[value];
         if (!lookupdata)
           return res.status(404).json({ error: `Map not found ${value}` });
 
@@ -333,7 +351,7 @@ app.put("/api/matchup", [], async (req, res) => {
     if(matchupCache["switched"]=== 0)
     {update = {switched: 1};};
     }
-    if(op === "calc"){
+    else if(op === "calc"){
     //calculates the new score of the matchup
           let blue = 0;let red = 0;
     for (key in playedMapsCache) {
@@ -355,6 +373,9 @@ app.put("/api/matchup", [], async (req, res) => {
     update = { blue_score: blue, red_score: red };
     console.log(update);
   }
+  else{
+    update = req.body;
+  }  
 
     const data = await fs.readFile(matchup, "utf8");
     const json = JSON.parse(data);
@@ -419,7 +440,83 @@ try{
 }
 })
 
+app.post("/api/players", [], async (req, res) => {
+  try {
+    const data = req.body;
+    await fs.writeFile(players, JSON.stringify(data, null, 2), "utf8");
+    res.status(200).json({ status: "ok", latest: data });
+  } catch (err) {
+    res.status(500).json({ error: "Could not update matchup.json" });
+  }
+});
 
+app.put("/api/players/:team/:id", [], async (req, res) =>{
+   const key = Object.keys(req.body);
+  console.log(req.body);
+try{
+const {team,id} = req.params;
+const update = req.body;
+  let teamdata = playersCache[team];
+  if (!teamdata) {
+    return res.status(404).json({ error: "Team not found" });
+  }
+
+
+  const player = teamdata.find(p => p.id === parseInt(id, 10));
+  if (!player) {  
+    if(Object.keys(req.body).length === 0){
+       teamdata[teamdata.length] = { id: parseInt(id),name: "",main: "",role: "",extra: ""};
+    }else{
+         return res.status(404).json({ error: "Player not found" });
+    }
+  }
+  if(Object.keys(req.body).length !== 0)
+{  if(key == "main"){
+    const id = update[key];
+    player[key] = ban_data[id].path;
+  }else{
+    player[key] = update[key];
+  }}
+teamdata.sort((a,b)=>a.id-b.id);
+await fs.writeFile(players, JSON.stringify(playersCache, null, 2), "utf8");
+ res.status(200).json({ status: "ok", latest: update});
+}catch(err){
+      res.status(500).json({ error: "Could not update players.json" });
+}
+})
+
+app.delete("/api/players/:team/:id", [], async (req, res) =>{
+try{
+const {team,id} = req.params;
+  let teamdata = playersCache[team];
+  if (!teamdata) {
+    return res.status(404).json({ error: "Team not found" });
+  }
+
+  const player = teamdata.length >= parseInt(id, 10);
+  if (!player) {   
+    return res.status(404).json({ error: "Player not found" });
+  }
+
+  teamdata.splice(parseInt(id, 10)-1,1);
+
+    await fs.writeFile(players, JSON.stringify(playersCache, null, 2), "utf8");
+     res.status(200).json({ status: "ok", latest: update});
+}catch(err){
+   res.status(500).json({ error: "Could not update players.json" });
+}
+
+})
+
+app.get("/api/rot_text",[],async (req,res)=>{
+  try{
+  const data = await fs.readFile(rot_text, "utf8");
+  res.json(JSON.parse(data)); 
+}catch (error){
+  console.log(error);
+  res.status(500).json({error: "Could not read players.json"})
+}
+})
 
 
 

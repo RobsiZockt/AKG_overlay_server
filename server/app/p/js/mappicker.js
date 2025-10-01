@@ -57,7 +57,9 @@
   }
 
   function handleImageClick(idx) {
-    pickedmap = { map: idx };
+    const id = parseInt(idx);
+    pickedmap = { map: id };
+    console.log(pickedmap);
     update(latestKey,pickedmap);
   }
 
@@ -115,6 +117,7 @@
           style: { flex: "1 1 auto", maxHeight: "calc(2*10rem+2rem" },
         },
         results.map((item, idx) => {
+
           const isHighlighted = item.name === selectedmap;
           return h(
             "div",
@@ -122,7 +125,7 @@
               key: idx,
               className:
                 "flex flex-col items-center p-1 rounded cursor-pointer transition-shadow ",
-              onClick: () => {handleImageClick(idx);},
+              onClick: () => handleImageClick(item.id),
             },
             [
               h("img", {
