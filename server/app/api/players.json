@@ -1,19 +1,76 @@
 {
   "blue": [
-    { "id": 1, "name": "Test", "main": "./../img/heros/freja.png", "role": "Tank" },
-    { "id": 2, "name": "Test2", "main": "./../img/heros/freja.png", "role": "DPS" },
-    { "id": 3, "name": "Test3", "main": "./../img/heros/freja.png", "role": "DPS" },
-    { "id": 4, "name": "Test4", "main": "./../img/heros/freja.png", "role": "Support" },
-    { "id": 5, "name": "Test5", "main": "./../img/heros/freja.png", "role": "Support" },
-    { "id": 6, "name": "Test6", "main": "./../img/heros/freja.png", "role": "supstetude" },
-     { "id": 7, "name": "Test6", "main": "./../img/heros/freja.png", "role": "supstetude" }
+    {
+      "id": 1,
+      "name": "Playerdsa",
+      "main": "./../img/heros/bastion.png",
+      "role": "Tank, DPS,",
+      "extra": "Captain"
+    },
+    {
+      "id": 2,
+      "name": "Spieler2a",
+      "main": "./../img/heros/ash.png",
+      "role": "DPS",
+      "extra": ""
+    },
+    {
+      "id": 3,
+      "name": "Kai",
+      "main": "./../img/heros/freja.png",
+      "role": "Tank, DPS",
+      "extra": "KEK"
+    },
+    {
+      "id": 4,
+      "name": "Spieler4",
+      "main": "./../img/heros/freja.png",
+      "role": "Support",
+      "extra": "Co-Captain"
+    },
+    {
+      "id": 5,
+      "name": "Spieler5",
+      "main": "./../img/heros/freja.png",
+      "role": "Support",
+      "extra": ""
+    }
   ],
   "red": [
-    { "id": 1, "name": "Test", "main": "./../img/heros/freja.png", "role": "Tank" },
-    { "id": 2, "name": "Test2", "main": "./../img/heros/freja.png", "role": "DPS" },
-    { "id": 3, "name": "Test3", "main": "./../img/heros/freja.png", "role": "DPS" },
-    { "id": 4, "name": "Test4", "main": "./../img/heros/freja.png", "role": "Support" },
-    { "id": 5, "name": "Test5", "main": "./../img/heros/freja.png", "role": "Support" },
-    { "id": 6, "name": "Test6", "main": "./../img/heros/freja.png", "role": "supstetude" }
+    {
+      "id": 1,
+      "name": "WWWWWWWWWWWW",
+      "main": "./../img/heros/freja.png",
+      "role": "Tank",
+      "extra": "Captain"
+    },
+    {
+      "id": 2,
+      "name": "Spieler2A",
+      "main": "./../img/heros/freja.png",
+      "role": "DPS",
+      "extra": ""
+    },
+    {
+      "id": 3,
+      "name": "Spieler3d",
+      "main": "./../img/heros/freja.png",
+      "role": "DPS",
+      "extra": "Off-Role"
+    },
+    {
+      "id": 4,
+      "name": "Spieler4",
+      "main": "./../img/heros/freja.png",
+      "role": "Support",
+      "extra": ""
+    },
+    {
+      "id": 5,
+      "name": "Spieler5",
+      "main": "./../img/heros/freja.png",
+      "role": "Flex",
+      "extra": ""
+    }
   ]
 }

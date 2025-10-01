@@ -31,94 +31,36 @@
     <div id="root" class="h-full"></div>
 
     <script type="text/javascript">
-      const { createElement: h } = React;
+const { createElement: h } = React;
 
-      function ScriptLayout() {
-        return h(
-          "div",
-          { className: "flex flex-col items-center gap-4 p-4 w-full h-[100vh] " },
-          [
-            // Top Slot (fixed height, does not shrink)
-            h("div", {
-              id: "header",
-              className:
-                "w-full h-[75px] flex-shrink-0 bg-[#2b2d30] rounded-xl shadow-md flex items-center justify-center p-3",
-              children: "header",
-            },[
-              //h("iframe",{id: "header_iframe", src: "./header.html", className:"w-full h-full p-1", style: {border: "none"}}),
-            ]),
-            
-            // Bottom section (fills all remaining vertical space)
-            h(
-              "div",
-              { className: "flex gap-4 w-full h-full flex-1" }, // flex-1 makes this fill the rest
-              [
-                // Left column (two stacked slots share space equally)
-                h("div", { className: "flex flex-col gap-4 flex-1" }, [
-                  h("div", { className: "flex flex-none gap-4 " }, [
-                    h("div", {
-                      id: "scoresetter",
-                      className:
-                        "flex-1 h-[150px] bg-[#2b2d30] rounded-xl shadow-md flex items-center justify-center",
-                     // children: "Score setter",
-                    }),
-                    h("div", {
-                      id: "log",
-                      className:
-                        "w-[300px] h-[150px] bg-[#2b2d30] rounded-xl shadow-md flex items-center justify-center",
-                      children: "log",
-                    }),
-                  ]),
-                  // pick/ban stack
-                  h(
-                    "div",
-                    { className: "flex gap-4  h-[90%] " }, // flex-1 makes this fill the rest
-                    [
-                      // Left column (two stacked slots share space equally)
-                      h("div", { className: "flex flex-col gap-4 flex-1 " }, [
-                        h("div", {
-                          id: "mappick",
-                          className:
-                            "h-[45%] bg-[#2b2d30] rounded-xl shadow-md flex items-center justify-center",
-                          //children: "Map Pick",
-                        }),
-                        h("div", {
-                          id: "heroban",
-                          className:
-                            "h-[45%] bg-[#2b2d30] rounded-xl shadow-md flex items-center justify-center",
-                          children: "Hero Bans",
-                        }),
-                      ]),
-
-                      h("div", {
-                        id: "MapcardsPrevis",
-                        className:
-                          "flex-1  bg-[#2b2d30] rounded-xl shadow-md flex items-center justify-center overflow-hidden",
-                        children: "Mapcard Previs",
-                      },[
-                        h("div",{id: "Mapcards", className: "h-[100%] w-[100%] bg-[#2b2d30] relative rounded-xl shadow-md items-center justify-center overflow-hidden"})
-                    //h("iframe",{id: "Mapcards", src: "./map_cards.html", className:"w-full h-full", style: {border: "none"}})
-                    ]),
-                    ]
-                  ),
-                ]),
-
-                // Right slot (fills height of left column)
-                h("div", {
-                  id: "chat",
-                  className:
-                    "w-[25%] bg-[#2b2d30] rounded-xl shadow-md flex items-center justify-center",
-                  children: "Chat",
-                 },
-                [
-                     h("iframe",{id: "Twitchchat", src: "https://www.twitch.tv/embed/akgamingkempten/chat?parent=cast.robsizockt.de", className:"w-full h-full", style: {border: "none"}})
-                 ]
-                ),
-              ]
-            ),
-          ]
-        );
-      }
+function ScriptLayout() {
+  return h("div",{ className: "flex flex-col items-center gap-4 p-4 w-full h-[100vh] " },
+    h("div", {id: "header",className:"w-full h-[8%] flex-shrink-0 bg-[#2b2d30] rounded-xl shadow-md flex items-center justify-center p-3",children: "header"}),       
+    // Bottom section (fills all remaining vertical space)
+    h("div",{ className: "flex gap-4 w-full h-[92%]" },     
+      h("div", { className: "flex flex-col gap-4 flex-1" }, 
+        h("div", { className: "flex flex-none gap-4 " }, 
+          h("div", {id: "scoresetter",className:"flex-1 h-[110px] bg-[#2b2d30] rounded-xl shadow-md flex items-center justify-center",}),
+          h("div", {id: "log",className:"w-[300px] h-[110px] bg-[#2b2d30] rounded-xl shadow-md flex items-center justify-center",children: "log",}),
+        ),
+        // pick/ban stack
+        h("div",{ className: "flex gap-4 h-[85%]" }, // flex-1 makes this fill the rest
+          h("div", { className: "flex flex-col gap-4 flex-1 " }, 
+            h("div", {id: "mappick",className:"h-[49%] bg-[#2b2d30] rounded-xl shadow-md flex items-center justify-center",}),
+            h("div", {id: "heroban",className:"h-[49%] bg-[#2b2d30] rounded-xl shadow-md flex items-center justify-center",children: "Hero Bans",}),
+          ),
+          h("div", {id: "MapcardsPrevis",className:"flex-1 h-[100%] bg-[#2b2d30] rounded-xl shadow-md flex items-center justify-center overflow-hidden",children: "Mapcard Previs",},
+            h("div",{id: "Mapcards", className: "h-[100%] w-[100%] bg-[#2b2d30] relative rounded-xl shadow-md items-center justify-center overflow-hidden"})
+          ),
+        ),
+      ),
+      // Right slot (fills height of left column)
+      h("div", {id: "chat",className:"w-[25%] h-[100%] bg-[#2b2d30] rounded-xl shadow-md flex items-center justify-center",children: "Chat",},
+        h("iframe",{id: "Twitchchat", src: "https://www.twitch.tv/embed/akgamingkempten/chat?parent=cast.robsizockt.de", className:"w-full h-full", style: {border: "none"}})
+      ),
+    ),
+  );
+}
 
 if (!window._root) {
   window._root = ReactDOM.createRoot(document.getElementById("root"));
@@ -134,5 +76,6 @@ window._root.render(React.createElement(ScriptLayout));
     <script src ="../js/herobanner.js"></script>
     <script src ="../js/header.js"></script>
     <script src ="../js/cards.js"></script>
+    <script src ="../js/green_timers.js"></script>
   </body>
 </html>
