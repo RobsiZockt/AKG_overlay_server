@@ -15,6 +15,8 @@ const maps = path.join(__dirname, "api", "maps.json");
 const heros = path.join(__dirname, "api", "heros.json");
 const players = path.join(__dirname, "api", "players.json");
 const rot_text = path.join(__dirname,"api", "rot_text.json");
+const sm_report = path.join(__dirname,"api","reports", "sm_report.json");
+
 
 let map_data;
 let ban_data;
@@ -518,7 +520,15 @@ app.get("/api/rot_text",[],async (req,res)=>{
 }
 })
 
-
+app.get("/api/reports/sm_report",[],async (req,res)=>{
+  try{
+  const data = await fs.readFile(sm_report, "utf8");
+  res.json(JSON.parse(data)); 
+}catch (error){
+  console.log(error);
+  res.status(500).json({error: "Could not read sm_report.json"})
+}
+})
 
 app.listen(PORT, () => console.log("Server is listening on ${PORT}"));
 console.log("Maps file path:", playedmaps);
