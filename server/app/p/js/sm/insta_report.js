@@ -12,6 +12,20 @@ function getH() {
 }
 const h = getH();
 
+const game_logo_lookup ={
+  LOL: "../img/icons/lol.svg",
+  OW: "../img/icons/overwatch_logo.svg",
+  CS2: "../img/icons/counter_strike_logo.webp",
+  VAL: "../img/icons/valorant_logo.png"
+};
+
+const game_name_lookup={
+  LOL: "League of Legends",
+  OW: "Overwatch2",
+  CS2: "Counter Strike 2",
+  VAL: "Valorant"
+}
+
   /**
  * Checkes for an react element until it exists and returns it
  * @param {string} id - The id name of the targeted container
@@ -54,9 +68,9 @@ const displayGame=(game, liga)=>{
 
 
 	return h("div",{className:"h-full w-full bg-transparent flex"},
-		h("img",{ src: "../img/icons/lol.svg", className: "h-auto aspect-square object-cover p-2",}),
-		h("span",{ className: "ml-2 font-arial text-5xl text-white items-center justify-center" }, game),
-		//h("img",{ src: "../img/icons/uniliga.png", className: "h-[50px] aspect-square object-cover", alt: "Right" }), //DO NOT USE due to unclear rules / requirements (as of 05.10.2025 18:25)
+		h("img",{ src: game_logo_lookup[game], className: "h-auto aspect-square object-cover p-2",}),
+		h("span",{ className: "ml-2 font-arial text-5xl text-white items-center justify-center" }, game_name_lookup[game]),
+		h("img",{ src: "../img/icons/uniliga_notext.png", className: "h-min-[50px] aspect-square object-cover p-2", alt: "Right" }), //DO NOT USE due to unclear rules / requirements (as of 05.10.2025 18:25)
 		h("span",{ className: "ml-2 font-arial text-5xl text-white items-center justify-center" }, liga),
 	)
 	
@@ -67,14 +81,18 @@ const displayGame=(game, liga)=>{
  * handels the render for the first named team
  */
 const displayFirst=(team,winner)=>{
-	let haswon= false
-	if (winner === 1)haswon = true;
+	let filter ="";
+	if (winner === 2)filter= "brightness-50";
 
-	return h("div",{className:"h-full w-full flex items-end filter brightness-50"},
-		h("div", {className:"h-full w-[5%] bg-blue-700"}),
-		h("img", { src: team.logo, className: "h-auto aspect-square object-cover", alt: "Right" }),
-		h("span",{ className: "ml-2 font-arial text-5xl text-white items-center justify-center" }, team.name),
-		h("span",{ className: "ml-2 font-arial text-8xl text-white items-center justify-center" }, team.score),
+	return h("div",{className:`h-full flex w-full items-center  filter ${filter}`},
+    h("div",{className:"h-full flex w-[90%] justify-start items-center"},
+		  h("div", {className:"h-full w-[2%] p-2 bg-blue-700"}),
+		  h("img", { src: team.logo, className: "h-[50%] aspect-square object-cover", alt: "Right" }),
+		  h("span",{ className: "ml-2 font-arial text-5xl text-white items-center justify-center" }, team.name),
+    ),
+    h("div",{className:"h-full w-[10%] flex flex-1 items-center justify-end"},
+		  h("span",{ className: "ml-2 font-arial text-8xl text-white" }, team.score),
+    ),
 	)
 
 
@@ -83,14 +101,23 @@ const displayFirst=(team,winner)=>{
  * handels the render for the second named team
  */
 const displaySecond=(team,winner)=>{
-	let haswon= false
-	if (winner === 2)haswon = true;
+	let filter="";
+	if (winner === 1)filter= "brightness-50";
 
-	return h("div",{className:"h-full w-full flex items-end justify-end"},
-		h("span",{ className: "ml-2 font-arial text-8xl text-white items-center justify-center" }, team.score),
-		h("span",{ className: "ml-2 font-arial text-5xl text-white text-right" }, team.name),
-		h("img", { src: team.logo, className: "h-auto aspect-square object-cover", alt: "Right" }),
-		h("div", {className:"h-full w-[5%] bg-red-700"}),
+
+let teamcolor="bg-red-700";
+  if(team.name.startsWith("HSK")) teamcolor="bg-[#35a653]";
+
+	return h("div",{className:`h-full flex w-full items-center filter ${filter}`},
+      h("div",{className:"h-full w-[10%] flex flex-1 items-center justify-start"},
+		    h("span",{ className: "ml-2 font-arial text-8xl text-white" }, team.score),
+      ),
+      h("div",{className:"h-full flex w-[90%] justify-end items-center"},
+		    h("span",{ className: "ml-2 font-arial text-5xl text-white items-center justify-center text-right" }, team.name),		 
+		    h("img", { src: team.logo, className: "h-[50%] aspect-square object-cover", alt: "Right" }),
+        h("div", {className:`h-full w-[2%] p-2 ${teamcolor}`}),
+      ),
+
 	)
 }
 
@@ -108,9 +135,9 @@ console.log(winner);
 
 return h("div",{className:"w-full h-full bg-[#000000aa] flex-col items-end"},
 	h("div",{className:"w-full h-[30%] bg-transparent flex items-end"},displayGame(report[id]?.game, report[id]?.liga)),
-	h("div",{className:"w-full h-[70%] flex items-end bg-[#000000aa]"},
-    h("div",{className:"h-full w-[49%] items-end"},displayFirst(report[id]?.firstnamed, winner)),
-		h("span",{ className: "ml-2 font-arial text-8xl text-white items-end justify-end" }, ":"),
+	h("div",{className:"w-full h-[70%] flex items-center "},
+    h("div",{className:"h-full w-[49%] items-end flex justify-start"},displayFirst(report[id]?.firstnamed, winner)),
+		h("span",{ className: "ml-2 font-arial text-8xl text-white flex items-center justify-center" }, ":"),
 		h("div",{className:"h-full w-[49%] items-end"},displaySecond(report[id]?.secondnamed, winner)),
 	)
 );
@@ -131,20 +158,23 @@ return h("div",{className:"w-full h-full bg-[#000000aa] flex-col items-end"},
         h("div",{className:"h-[14%] w-full bg-transparent relative "},
 					h("span",{ className: "ml-2 font-arial text-[100px] text-white items-center justify-center flex" }, "ERGEBNISSE KW XX"),
 				),
-        h("div",{className: " gap-3 h-[86%] w-full bg-blue-700"},
-					h("div",{className:"h-[2%] w-full bg-green-400"}),
+        h("div",{className: " gap-3 h-[86%] w-full bg-transparent"},
+					h("div",{className:"h-[2%] w-full bg-transparent"}),
             h("div",{className:"h-[12%] w-full bg-transparent flex"},renderMatchup(0)),
             
-            h("div",{className:"h-[2%] w-full bg-green-400"}),
-            h("div",{className:"h-[15%] w-full bg-red-700 flex"}),
+            h("div",{className:"h-[2%] w-full bg-transparent"}),
+            h("div",{className:"h-[12%] w-full bg-transparent flex"},renderMatchup(0)),
             
-                        h("div",{className:"h-[1%] w-full bg-green-400"}),
-            h("div",{className:"h-[15%] w-full bg-red-700 flex"}),
-                        h("div",{className:"h-[1%] w-full bg-green-400"}),
-            h("div",{className:"h-[15%] w-full bg-red-700 flex"}),
-                        h("div",{className:"h-[1%] w-full bg-green-400"}),
-            h("div",{className:"h-[15%] w-full bg-red-700 flex"}),
-                        h("div",{className:"h-[1%] w-full bg-green-400"}),
+            h("div",{className:"h-[2%] w-full bg-transparent"}),
+            h("div",{className:"h-[12%] w-full bg-transparent flex"},renderMatchup(1)),
+
+            h("div",{className:"h-[2%] w-full bg-transparent"}),
+            h("div",{className:"h-[12%] w-full bg-transparent flex"},renderMatchup(2)),
+            
+
+            h("div",{className:"h-[2%] w-full bg-transparent"}),
+            h("div",{className:"h-[12%] w-full bg-transparent flex"},renderMatchup(3)),
+
 
         )
     );
