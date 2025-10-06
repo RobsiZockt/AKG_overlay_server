@@ -1,14 +1,28 @@
 {
     "1":{
         "firstnamed":{"name": "404 Average Cookie Enjoyer", "logo":"https://play.toornament.com/media/file/8792040097717444627/logo_small","score":1},
-        "secondnamed":{"name": "404 Average Cookie Enjoyer", "logo":"https://play.toornament.com/media/file/8792040097717444627/logo_small","score":4},
+        "secondnamed":{"name": "HSK Average Cookie Enjoyer", "logo":"https://play.toornament.com/media/file/8792040097717444627/logo_small","score":4},
         "game": "LOL",
         "liga": "2. Liga"
     },
     "2":{
-        "firstnamed":{"name": "HSK TESTING", "logo":"","score":1},
-        "secondnamed":{"name": "HSK TESTING 2", "logo":"","score":4},
+        "firstnamed":{"name": "HSK TESTING", "logo":"https://play.toornament.com/media/file/8792040097717444627/logo_small","score":1},
+        "secondnamed":{"name": "HSK TESTING 2", "logo":"","score":0},
         "game": "OW",
+        "liga": "3. Liga"
+    }
+    ,
+    "3":{
+        "firstnamed":{"name": "HSK TESTING", "logo":"https://play.toornament.com/media/file/8792040097717444627/logo_small","score":1},
+        "secondnamed":{"name": "HSK TESTING 2", "logo":"","score":0},
+        "game": "CS2",
+        "liga": "3. Liga"
+    }
+    ,
+    "4":{
+        "firstnamed":{"name": "HSK TESTING", "logo":"https://play.toornament.com/media/file/8792040097717444627/logo_small","score":1},
+        "secondnamed":{"name": "HSK TESTING 2", "logo":"","score":0},
+        "game": "VAL",
         "liga": "3. Liga"
     }
 }
