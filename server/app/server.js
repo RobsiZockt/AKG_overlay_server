@@ -406,7 +406,12 @@ app.post("/api/new_matchup", [
 ], async (req, res) => {
   try {
     const data = req.body;
-    await fs.writeFile(matchup, JSON.stringify(data, null, 2), "utf8");
+    const update = { blue_score: 0, red_score: 0 };
+    const mdata = await fs.readFile(matchup, "utf8");
+    const json = JSON.parse(mdata);
+    const updated = { ...json, ...update };
+
+    await fs.writeFile(matchup, JSON.stringify(updated, null, 2), "utf8");
 
     //resets map cards
     try {
