@@ -3,26 +3,44 @@
         "firstnamed":{"name": "404 Average Cookie Enjoyer", "logo":"https://play.toornament.com/media/file/8792040097717444627/logo_small","score":1},
         "secondnamed":{"name": "HSK Average Cookie Enjoyer", "logo":"https://play.toornament.com/media/file/8792040097717444627/logo_small","score":4},
         "game": "LOL",
-        "liga": "2. Liga"
+        "liga": "2. Liga",
+        "live": false
     },
     "2":{
-        "firstnamed":{"name": "HSK TESTING", "logo":"https://play.toornament.com/media/file/8792040097717444627/logo_small","score":1},
-        "secondnamed":{"name": "HSK TESTING 2", "logo":"","score":0},
-        "game": "OW",
-        "liga": "3. Liga"
-    }
-    ,
+        "firstnamed":{"name": "404 Average Cookie Enjoyer", "logo":"https://play.toornament.com/media/file/8792040097717444627/logo_small","score":1},
+        "secondnamed":{"name": "HSK Average Cookie Enjoyer", "logo":"https://play.toornament.com/media/file/8792040097717444627/logo_small","score":4},
+        "game": "LOL",
+        "liga": "2. Liga",
+        "live": false
+    },
     "3":{
+        "firstnamed":{"name": "HSK Centauri", "logo":"https://play.toornament.com/media/file/2327743164456994795/logo_medium","score":3},
+        "secondnamed":{"name": "RUB Goats Venom", "logo":"https://play.toornament.com/media/file/2329777816283172846/logo_medium","score":1},
+        "game": "OW",
+        "liga": "2. Liga",
+        "live": true
+    },
+    "4":{
+        "firstnamed":{"name": "HSK Satyrus", "logo":"","score":0},
+        "secondnamed":{"name": "Purrfect Aim", "logo":"","score":3},
+        "game": "OW",
+        "liga": "4. Liga",
+        "live": false
+    },
+    
+    "5":{
         "firstnamed":{"name": "HSK TESTING", "logo":"https://play.toornament.com/media/file/8792040097717444627/logo_small","score":1},
-        "secondnamed":{"name": "HSK TESTING 2", "logo":"","score":0},
+        "secondnamed":{"name": "HSK TESTING 2", "logo":"","score":3},
         "game": "CS2",
-        "liga": "3. Liga"
+        "liga": "3. Liga",
+        "live": false
     }
     ,
-    "4":{
+    "6":{
         "firstnamed":{"name": "HSK TESTING", "logo":"https://play.toornament.com/media/file/8792040097717444627/logo_small","score":1},
         "secondnamed":{"name": "HSK TESTING 2", "logo":"","score":0},
         "game": "VAL",
-        "liga": "3. Liga"
+        "liga": "3. Liga",
+        "live": false
     }
 }

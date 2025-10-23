@@ -8,6 +8,50 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
+
+    .fade-left-to-right {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .fade-left-to-right::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, white 0%, transparent 100%);
+      opacity: 1;
+      animation: fadeSweep 2s ease-out forwards;
+    }
+
+    @keyframes fadeSweep {
+      0% {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      100% {
+        opacity: 0;
+        transform: translateX(100%);
+      }
+    }
+.fade-delay-200ms::before {
+    animation-delay: 200ms;
+  }
+
+    @keyframes slide-in {
+      from {
+        transform: translateX(-100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .animate-slide-in {
+      animation: slide-in 0.5s ease-out forwards;
+    }
+
     html, body {
   margin: 0;
   height: 100%;
@@ -28,5 +72,8 @@
   <div id="root"></div>
 
 <script src="../js/sm/insta_report.js"></script>
+
+
+
 </body>
 </html>
