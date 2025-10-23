@@ -62,9 +62,9 @@ function Report(){
   },[]);
 
 /**
- * handels the render for the different games
+ * handels the render for the different games + Liga + Live
  */
-const displayGame=(game, liga)=>{
+const displayGame=(game, liga, live)=>{
 
 
 	return h("div",{className:"h-full w-full bg-transparent flex"},
@@ -72,6 +72,7 @@ const displayGame=(game, liga)=>{
 		h("span",{ className: "ml-2 font-arial text-5xl text-white items-center justify-center" }, game_name_lookup[game]),
 		h("img",{ src: "../img/icons/uniliga_notext.png", className: "h-min-[50px] aspect-square object-cover p-2", alt: "Right" }), //DO NOT USE due to unclear rules / requirements (as of 05.10.2025 18:25)
 		h("span",{ className: "ml-2 font-arial text-5xl text-white items-center justify-center" }, liga),
+    live? h("span",{className:"ml-2 font-arial text-5xl text-red-600 items-center justify-center"},"LIVE") : null
 	)
 	
 }
@@ -84,9 +85,12 @@ const displayFirst=(team,winner)=>{
 	let filter ="";
 	if (winner === 2)filter= "brightness-50";
 
+let teamcolor="bg-blue-700";
+  if(team.name.startsWith("HSK")) teamcolor="bg-[#35a653]";
+
 	return h("div",{className:`h-full flex w-full items-center  filter ${filter}`},
     h("div",{className:"h-full flex w-[90%] justify-start items-center"},
-		  h("div", {className:"h-full w-[2%] p-2 bg-blue-700"}),
+		  h("div", {className:`h-full w-[2%] p-2 ${teamcolor}`}),
 		  h("img", { src: team.logo, className: "h-[50%] aspect-square object-cover", alt: "Right" }),
 		  h("span",{ className: "ml-2 font-arial text-5xl text-white items-center justify-center" }, team.name),
     ),
@@ -134,7 +138,7 @@ else if (report[id]?.firstnamed?.score == report[id]?.secondnamed?.score) winner
 console.log(winner);
 
 return h("div",{className:"w-full h-full bg-[#000000aa] flex-col items-end"},
-	h("div",{className:"w-full h-[30%] bg-transparent flex items-end"},displayGame(report[id]?.game, report[id]?.liga)),
+	h("div",{className:"w-full h-[30%] bg-transparent flex items-end"},displayGame(report[id]?.game, report[id]?.liga, report[id]?.live)),
 	h("div",{className:"w-full h-[70%] flex items-center "},
     h("div",{className:"h-full w-[49%] items-end flex justify-start"},displayFirst(report[id]?.firstnamed, winner)),
 		h("span",{ className: "ml-2 font-arial text-8xl text-white flex items-center justify-center" }, ":"),
@@ -154,26 +158,31 @@ return h("div",{className:"w-full h-full bg-[#000000aa] flex-col items-end"},
     }
 
 
-    return h("div",{className:"p-3 h-[1920px] w-[1080px] relative"},
+    return h("div",{className:" h-[1920px] w-[1080px] relative fade-diagonal"},
+      //h("img",{src:"../img/bg/9_16-sm_bg.png" ,className:"h-full w-full z-999 bg-no-repeat bg-contain fade-diagonal "}),
+      //h("div",{className:"h-full w-full z-999 bg-no-repeat bg-contain fade-diagonal bg-red-700"}),
         h("div",{className:"h-[14%] w-full bg-transparent relative "},
 					h("span",{ className: "ml-2 font-arial text-[100px] text-white items-center justify-center flex" }, "ERGEBNISSE KW XX"),
 				),
-        h("div",{className: " gap-3 h-[86%] w-full bg-transparent"},
+        h("div",{className: "p-3 gap-3 h-[86%] w-full bg-transparent"},
 					h("div",{className:"h-[2%] w-full bg-transparent"}),
-            h("div",{className:"h-[12%] w-full bg-transparent flex"},renderMatchup(0)),
+            h("div",{className:"h-[12%] w-full bg-transparent flex animate-slide-in"},renderMatchup(0)),
             
             h("div",{className:"h-[2%] w-full bg-transparent"}),
-            h("div",{className:"h-[12%] w-full bg-transparent flex"},renderMatchup(0)),
+            h("div",{className:"h-[12%] w-full bg-transparent flex "},renderMatchup(1)),
             
             h("div",{className:"h-[2%] w-full bg-transparent"}),
-            h("div",{className:"h-[12%] w-full bg-transparent flex"},renderMatchup(1)),
+            h("div",{className:"h-[12%] w-full bg-transparent flex animate-slide-in"},renderMatchup(2)),
+            
+            h("div",{className:"h-[2%] w-full bg-transparent"}),
+            h("div",{className:"h-[12%] w-full bg-transparent flex animate-slide-in"},renderMatchup(3)),
 
             h("div",{className:"h-[2%] w-full bg-transparent"}),
-            h("div",{className:"h-[12%] w-full bg-transparent flex"},renderMatchup(2)),
+            h("div",{className:"h-[12%] w-full bg-transparent flex animate-slide-in"},renderMatchup(4)),
             
 
             h("div",{className:"h-[2%] w-full bg-transparent"}),
-            h("div",{className:"h-[12%] w-full bg-transparent flex"},renderMatchup(3)),
+            h("div",{className:"h-[12%] w-full bg-transparent flex animate-slide-in"},renderMatchup(5)),
 
 
         )
