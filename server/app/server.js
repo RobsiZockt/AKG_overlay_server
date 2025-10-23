@@ -423,8 +423,8 @@ app.post("/api/new_matchup", [
           ban_red_name: "",
           ban_blue: "",
           ban_blue_name: "",
-          score_blue: "",
-          score_red: "",
+          score_blue: "0",
+          score_red: "0",
         },
       });
       await fs.writeFile(playedmaps, reset, null, 2);
