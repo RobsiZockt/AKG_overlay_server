@@ -135,7 +135,8 @@ let winner=0;
 if(report[id]?.firstnamed?.score > report[id]?.secondnamed?.score) winner =1;
 else if (report[id]?.firstnamed?.score < report[id]?.secondnamed?.score) winner =2;
 else if (report[id]?.firstnamed?.score == report[id]?.secondnamed?.score) winner =0;
-console.log(winner);
+console.log(id);
+console.log(report[id]?.firstnamed);
 
 return h("div",{className:"w-full h-full bg-[#000000aa] flex-col items-end"},
 	h("div",{className:"w-full h-[30%] bg-transparent flex items-end"},displayGame(report[id]?.game, report[id]?.liga, report[id]?.live)),
@@ -161,28 +162,42 @@ return h("div",{className:"w-full h-full bg-[#000000aa] flex-col items-end"},
     return h("div",{className:" h-[1920px] w-[1080px] relative fade-diagonal"},
       //h("img",{src:"../img/bg/9_16-sm_bg.png" ,className:"h-full w-full z-999 bg-no-repeat bg-contain fade-diagonal "}),
       //h("div",{className:"h-full w-full z-999 bg-no-repeat bg-contain fade-diagonal bg-red-700"}),
-        h("div",{className:"h-[14%] w-full bg-transparent relative "},
-					h("span",{ className: "ml-2 font-arial text-[100px] text-white items-center justify-center flex" }, "ERGEBNISSE KW XX"),
+        h("div",{className:"h-[14%] w-full bg-transparent relative items-center justify-center"},
+          h("div",{className:"h-[50%] w-full bg-transparent"}),
+					h("span",{ className: "ml-2 font-arial text-[100px] text-white items-center justify-center flex" }, "ERGEBNISSE KW 47-2"),
 				),
         h("div",{className: "p-3 gap-3 h-[86%] w-full bg-transparent"},
-					h("div",{className:"h-[2%] w-full bg-transparent"}),
-            h("div",{className:"h-[12%] w-full bg-transparent flex animate-slide-in"},renderMatchup(0)),
+					// h("div",{className:"h-[2%] w-full bg-transparent"}),
+          //   h("div",{className:"h-[12%] w-full bg-transparent flex "},renderMatchup(0)),
             
-            h("div",{className:"h-[2%] w-full bg-transparent"}),
-            h("div",{className:"h-[12%] w-full bg-transparent flex "},renderMatchup(1)),
+          //   h("div",{className:"h-[2%] w-full bg-transparent"}),
+          //   h("div",{className:"h-[12%] w-full bg-transparent flex "},renderMatchup(1)),
             
-            h("div",{className:"h-[2%] w-full bg-transparent"}),
-            h("div",{className:"h-[12%] w-full bg-transparent flex animate-slide-in"},renderMatchup(2)),
+          //   h("div",{className:"h-[2%] w-full bg-transparent"}),
+          //   h("div",{className:"h-[12%] w-full bg-transparent flex "},renderMatchup(2)),
             
-            h("div",{className:"h-[2%] w-full bg-transparent"}),
-            h("div",{className:"h-[12%] w-full bg-transparent flex animate-slide-in"},renderMatchup(3)),
+          //   h("div",{className:"h-[2%] w-full bg-transparent"}),
+          //   h("div",{className:"h-[12%] w-full bg-transparent flex "},renderMatchup(3)),
 
+          //   h("div",{className:"h-[2%] w-full bg-transparent"}),
+          //   h("div",{className:"h-[12%] w-full bg-transparent flex "},renderMatchup(4)),
+            
+          //   h("div",{className:"h-[2%] w-full bg-transparent"}),
+          //   h("div",{className:"h-[12%] w-full bg-transparent flex "},renderMatchup(5)),
+            
             h("div",{className:"h-[2%] w-full bg-transparent"}),
-            h("div",{className:"h-[12%] w-full bg-transparent flex animate-slide-in"},renderMatchup(4)),
+            h("div",{className:"h-[12%] w-full bg-transparent flex "},renderMatchup(6)),
+            
+            h("div",{className:"h-[2%] w-full bg-transparent"}),
+            h("div",{className:"h-[12%] w-full bg-transparent flex "},renderMatchup(7)),
+            
+            h("div",{className:"h-[2%] w-full bg-transparent"}),
+            h("div",{className:"h-[12%] w-full bg-transparent flex "},renderMatchup(8)),
+
+
             
 
-            h("div",{className:"h-[2%] w-full bg-transparent"}),
-            h("div",{className:"h-[12%] w-full bg-transparent flex animate-slide-in"},renderMatchup(5)),
+
 
 
         )

@@ -1,46 +1,65 @@
 {
     "1":{
-        "firstnamed":{"name": "404 Average Cookie Enjoyer", "logo":"https://play.toornament.com/media/file/8792040097717444627/logo_small","score":1},
-        "secondnamed":{"name": "HSK Average Cookie Enjoyer", "logo":"https://play.toornament.com/media/file/8792040097717444627/logo_small","score":4},
+        "firstnamed":{"name": "HSK Phoenix", "logo":"https://www.opleague.pro/styles/media/team/5811/Logo_200.webp?1745772733","score":2},
+        "secondnamed":{"name": "Potdsdam DIF", "logo":"https://www.opleague.pro/styles/media/game/LOL/icon_on_white_200.webp?1675757969","score":0},
         "game": "LOL",
         "liga": "2. Liga",
         "live": false
     },
     "2":{
-        "firstnamed":{"name": "404 Average Cookie Enjoyer", "logo":"https://play.toornament.com/media/file/8792040097717444627/logo_small","score":1},
-        "secondnamed":{"name": "HSK Average Cookie Enjoyer", "logo":"https://play.toornament.com/media/file/8792040097717444627/logo_small","score":4},
+        "firstnamed":{"name": "Hof University eSports", "logo":"https://www.opleague.pro/styles/media/team/5703/Logo_200.webp?1759284326","score":2},
+        "secondnamed": {"name": "HSK Phoenix", "logo":"https://www.opleague.pro/styles/media/team/5811/Logo_200.webp?1745772733","score":1},
         "game": "LOL",
         "liga": "2. Liga",
         "live": false
     },
     "3":{
-        "firstnamed":{"name": "HSK Centauri", "logo":"https://play.toornament.com/media/file/2327743164456994795/logo_medium","score":3},
-        "secondnamed":{"name": "RUB Goats Venom", "logo":"https://play.toornament.com/media/file/2329777816283172846/logo_medium","score":1},
-        "game": "OW",
+        "firstnamed":{"name": "Hailight", "logo":"https://www.opleague.pro/styles/media/team/5686/Logo_200.webp?1743896560","score":0},
+        "secondnamed": {"name": "HSK Dragon", "logo":"https://www.opleague.pro/styles/media/team/6034/Logo_100.webp?1698352115","score":2},
+        "game": "LOL",
         "liga": "2. Liga",
         "live": true
     },
-    "4":{
-        "firstnamed":{"name": "HSK Satyrus", "logo":"","score":0},
-        "secondnamed":{"name": "Purrfect Aim", "logo":"","score":3},
+        "4":{
+        "firstnamed":{"name": "HSK Dragon", "logo":"https://www.opleague.pro/styles/media/team/6034/Logo_100.webp?1698352115","score":2},
+        "secondnamed": {"name": "KIT SC Pink", "logo":"https://www.opleague.pro/styles/media/team/5706/Logo_200.webp?1700252959","score":0},
+        "game": "LOL",
+        "liga": "2. Liga",
+        "live": false
+    },
+    "5":{
+        "firstnamed":{"name": "HSK Satyrus", "logo":"https://akgaming.de/wp-content/uploads/2019/09/LogoPSEdgedcropped.png","score":1},
+        "secondnamed":{"name": "UEB SIGMANTATION", "logo":"https://play.toornament.com/media/file/2330026185132609518/logo_large","score":3},
         "game": "OW",
         "liga": "4. Liga",
         "live": false
     },
-    
-    "5":{
-        "firstnamed":{"name": "HSK TESTING", "logo":"https://play.toornament.com/media/file/8792040097717444627/logo_small","score":1},
-        "secondnamed":{"name": "HSK TESTING 2", "logo":"","score":3},
-        "game": "CS2",
-        "liga": "3. Liga",
-        "live": false
-    }
-    ,
     "6":{
-        "firstnamed":{"name": "HSK TESTING", "logo":"https://play.toornament.com/media/file/8792040097717444627/logo_small","score":1},
-        "secondnamed":{"name": "HSK TESTING 2", "logo":"","score":0},
+        "firstnamed":{"name": "HSK Centauri", "logo":"https://play.toornament.com/media/file/2327743164456994795/logo_medium","score":0},
+        "secondnamed": {"name": "DArmadillos", "logo":"https://play.toornament.com/media/file/2323350529141235696/logo_large","score":3},
+        "game": "OW",
+        "liga": "2. Liga",
+        "live": true
+    },
+    "7":{
+        "firstnamed":{"name": "HSK Demon", "logo":"https://www.opleague.pro/styles/media/team/9123/Logo_100.webp?1730058262","score":0},
+        "secondnamed":{"name": "DG ordon Ramsay", "logo":"https://www.opleague.pro/styles/media/team/10465/Logo_100.webp?1746743613","score":2},
         "game": "VAL",
         "liga": "3. Liga",
         "live": false
-    }
+     },
+    "8":{
+        "firstnamed":{"name": "HSK Eagle", "logo":"https://akgaming.de/wp-content/uploads/2019/09/LogoPSEdgedcropped.png","score":0},
+        "secondnamed":{"name": "OSGG Osnadrückt Green", "logo":"https://play.toornament.com/media/file/2334955502072709109/logo_large","score":2},
+        "game": "CS",
+        "liga": "3. Liga",
+        "live": false
+     },
+    "9":{
+        "firstnamed":{"name": "HSK Eagle", "logo":"https://akgaming.de/wp-content/uploads/2019/09/LogoPSEdgedcropped.png","score":2},
+        "secondnamed":{"name": "Hof University", "logo":"https://play.toornament.com/media/8597216805094416384/original","score":0},
+        "game": "CS",
+        "liga": "3. Liga",
+        "live": false
+     }
 }
