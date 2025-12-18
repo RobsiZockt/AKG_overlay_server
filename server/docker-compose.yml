@@ -34,7 +34,7 @@ services:
       --email ${EMAIL} --agree-tos --no-eff-email
       -d ${NODE_DOMAIN}"
 
-   rtmp:
+  rtmp:
     image: tiangolo/nginx-rtmp
     container_name: rtmp-server
     restart: unless-stopped
