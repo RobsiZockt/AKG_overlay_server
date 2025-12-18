@@ -11,17 +11,12 @@ services:
       - "${NODE_PORT}"
     restart: unless-stopped
 
-  nginx:
-    image: nginx:stable
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/conf.d:/etc/nginx/conf.d:ro
-      - ./certbot/webroot:/var/www/certbot
-      - ./fallback:/usr/share/nginx/nginx
-      - ./certbot/conf:/etc/letsencrypt
+  #nginx:
+  #  image: nginx:stable
+  #  ports:
+  #  volumes:
+  #    - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+
 
   certbot:
     image: certbot/certbot
@@ -40,6 +35,12 @@ services:
     restart: unless-stopped
     ports:
       - "1935:1935"
+      - "80:80"
+      - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./certbot/webroot:/var/www/certbot
+      - ./fallback:/usr/share/nginx/nginx
+      - ./certbot/conf:/etc/letsencrypt
 
