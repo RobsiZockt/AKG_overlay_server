@@ -57,7 +57,7 @@ function PlayerVS(){
 
   return h("div", { id:"full_container",className: "w-screen h-full absolute flex flex-col bg-[#000000aa]" },
     //header, logic is the exact same as in header.js just simplifed
-    h("div", {id:"Header", className: " h-[10%] flex bg-gray-200/30"},
+    h("div", {id:"Header", className: " h-[10%] flex bg-[#000000aa]"},
      //render red team name and logo
      h("div", {className:" flex h-full w-[42.5%] justify-end items-center"},
       h("span", { className: "text-white text-[40px] item-center justify-center font-arial pr-2" }, header.blue),

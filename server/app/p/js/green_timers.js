@@ -30,7 +30,7 @@ function waitForContainer(id, callback) {
 
 const colorMap={
   live: "red-700",
-  build_delay: "yellow-700",
+  build_delay: "yellow-400",
 
   default: "white"
 }
@@ -53,11 +53,11 @@ useEffect(()=>{
 
 
 if(slive.getHours()>=20 && slive.getHours() < 23)color_live = colorMap["live"];
-  else if(slive.getHours()===19 && slive.getMinutes() ===50)color_live = colorMap["build_delay"];
+  else if(slive.getHours()===19 && slive.getMinutes() >=50)color_live = colorMap["build_delay"];
     else color_live=colorMap["default"];
 
 if(sdelayed.getHours()>=20 && sdelayed.getHours() < 23)color_delay = colorMap["live"];
-  else if(sdelayed.getHours()===19 && sdelayed.getMinutes() ===50)color_delay = colorMap["build_delay"];
+  else if(sdelayed.getHours()===19 && sdelayed.getMinutes() >=50)color_delay = colorMap["build_delay"];
     else color_delay=colorMap["default"];
 
     }, 300);
