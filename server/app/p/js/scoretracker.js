@@ -160,6 +160,11 @@ const showPopupButton = document.createElement("button");
   switchheader.addEventListener("click",()=>swapHeader());
   othergrid.appendChild(switchheader);
 
+    const tmp_cardreset = document.createElement("button");
+  tmp_cardreset.textContent = "CARD RESET(tmp)";
+  createButton(tmp_cardreset, "red");
+  tmp_cardreset.addEventListener("click",()=>resetcards());
+  othergrid.appendChild(tmp_cardreset);
 
 
 
@@ -269,6 +274,20 @@ async function handleButtonClick(option) {
   
 }
 
+async function resetcards() {
+  try{
+    const response = await fetch("/api/new_matchup",{
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) throw new Error("Network response was not ok", response);
+  }catch(error){
+        console.error("Error resetting cards:", error);
+  }
+  
+}
 
 async function updatematchup(op) {
    try {
