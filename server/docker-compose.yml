@@ -42,7 +42,7 @@ services:
       - "1935:1935"      # RTMP
       - "9000:9000/udp"  # SRT
     volumes:
-      - ./mediamtx.yml:/etc/mediamtx.yml:ro
+      - ./nginx/mediamtx.yml:/etc/mediamtx.yml:ro
   
 
 
