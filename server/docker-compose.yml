@@ -43,4 +43,15 @@ services:
       - ./certbot/webroot:/var/www/certbot
       - ./fallback:/usr/share/nginx/nginx
       - ./certbot/conf:/etc/letsencrypt
+  
+  srt-server:
+    image: haivision/srt-live-server
+    container_name: srt-server
+    restart: unless-stopped
+    ports:
+      - "9000:9000/udp"   # SRT listener port
+    volumes:
+      - ./nginx/srt.conf:/etc/srt-live-server/srt-live-server.conf:ro
+
+
 
