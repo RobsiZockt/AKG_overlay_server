@@ -1,0 +1,15 @@
+server:
+  rtmp:
+    enabled: yes
+    listen: 1935
+
+  srt:
+    enabled: yes
+    listen: 0.0.0.0:9000
+
+paths:
+  all:
+    publish:
+      enabled: yes
+    read:
+      enabled: yes
