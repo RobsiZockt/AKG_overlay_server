@@ -8,7 +8,7 @@ services:
     working_dir: /app
     command: node server.js
     ports:
-      - "4000:4000"
+      - "4000"
     restart: unless-stopped
 
   nginx:
@@ -39,8 +39,13 @@ services:
     container_name: mediamtx
     restart: unless-stopped
     ports:
-      - "1935:1935"      # RTMP
-      - "9000:9000/udp"  # SRT
+      - "8554:8554"
+      - "1935:1935" #RTMP
+      - "8888:8888"
+      - "8889:8889"
+      - "8890:8890/udp" #SRT
+      - "8189:8189/udp"
+
     volumes:
       - ./nginx/mediamtx.yml:/etc/mediamtx.yml:ro
   
