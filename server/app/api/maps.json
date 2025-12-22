@@ -1,126 +1,126 @@
 {
   "1": {
     "name": "aatlis",
-    "path": "./../img/maps/aatlis.webp"
+    "path": "/img/maps/aatlis.webp"
   },
   "2": {
     "name": "antarctic peninsula",
-    "path": "./../img/maps/antarctic_peninsula.webp"
+    "path": "/img/maps/antarctic_peninsula.webp"
   },
   "3": {
     "name": "blizzard world",
-    "path": "./../img/maps/blizzard_world.webp"
+    "path": "/img/maps/blizzard_world.webp"
   },
   "4": {
     "name": "busan",
-    "path": "./../img/maps/busan.webp"
+    "path": "/img/maps/busan.webp"
   },
   "5": {
     "name": "circuit royal",
-    "path": "./../img/maps/circuit_royal.webp"
+    "path": "/img/maps/circuit_royal.webp"
   },
   "6": {
     "name": "colosseo",
-    "path": "./../img/maps/colosseo.webp"
+    "path": "/img/maps/colosseo.webp"
   },
   "7": {
     "name": "dorado",
-    "path": "./../img/maps/dorado.webp"
+    "path": "/img/maps/dorado.webp"
   },
   "8": {
     "name": "eichenwalde",
-    "path": "./../img/maps/eichenwalde.webp"
+    "path": "/img/maps/eichenwalde.webp"
   },
   "9": {
     "name": "esperanca",
-    "path": "./../img/maps/esperanca.webp"
+    "path": "/img/maps/esperanca.webp"
   },
   "10": {
     "name": "gibraltar",
-    "path": "./../img/maps/gibraltar.webp"
+    "path": "/img/maps/gibraltar.webp"
   },
   "11": {
     "name": "hanaoka",
-    "path": "./../img/maps/hanaoka.webp"
+    "path": "/img/maps/hanaoka.webp"
   },
   "12": {
     "name": "havana",
-    "path": "./../img/maps/havana.webp"
+    "path": "/img/maps/havana.webp"
   },
   "13": {
     "name": "hollywood",
-    "path": "./../img/maps/hollywood.webp"
+    "path": "/img/maps/hollywood.webp"
   },
   "14": {
     "name": "ilios",
-    "path": "./../img/maps/ilios.webp"
+    "path": "/img/maps/ilios.webp"
   },
   "15": {
     "name": "junkertown",
-    "path": "./../img/maps/junkertown.webp"
+    "path": "/img/maps/junkertown.webp"
   },
   "16": {
     "name": "kings row",
-    "path": "./../img/maps/kings_row.webp"
+    "path": "/img/maps/kings_row.webp"
   },
   "17": {
     "name": "lijiang tower",
-    "path": "./../img/maps/lijiang_tower.webp"
+    "path": "/img/maps/lijiang_tower.webp"
   },
   "18": {
     "name": "midtown",
-    "path": "./../img/maps/midtown.webp"
+    "path": "/img/maps/midtown.webp"
   },
   "19": {
     "name": "nepal",
-    "path": "./../img/maps/nepal.webp"
+    "path": "/img/maps/nepal.webp"
   },
   "20": {
     "name": "new junk city",
-    "path": "./../img/maps/new_junk_city.webp"
+    "path": "/img/maps/new_junk_city.webp"
   },
   "21": {
     "name": "new queen street",
-    "path": "./../img/maps/new_queen_street.webp"
+    "path": "/img/maps/new_queen_street.webp"
   },
   "22": {
     "name": "numbani",
-    "path": "./../img/maps/numbani.webp"
+    "path": "/img/maps/numbani.webp"
   },
   "23": {
     "name": "oasis",
-    "path": "./../img/maps/oasis.webp"
+    "path": "/img/maps/oasis.webp"
   },
   "24": {
     "name": "paraiso",
-    "path": "./../img/maps/paraiso.webp"
+    "path": "/img/maps/paraiso.webp"
   },
   "25": {
     "name": "rialto",
-    "path": "./../img/maps/rialto.webp"
+    "path": "/img/maps/rialto.webp"
   },
   "26": {
     "name": "route 66",
-    "path": "./../img/maps/route_66.webp"
+    "path": "/img/maps/route_66.webp"
   },
   "27": {
     "name": "runasapi",
-    "path": "./../img/maps/runasapi.webp"
+    "path": "/img/maps/runasapi.webp"
   },
   "28": {
     "name": "samoa",
-    "path": "./../img/maps/samoa.webp"
+    "path": "/img/maps/samoa.webp"
   },
   "29": {
     "name": "shambali monastery",
-    "path": "./../img/maps/shambali_monastery.webp"
+    "path": "/img/maps/shambali_monastery.webp"
   },
   "30": {
     "name": "suravasa",
-    "path": "./../img/maps/suravasa.webp"
+    "path": "/img/maps/suravasa.webp"
   },
   "31": {
     "name": "throne of anubis",
-    "path": "./../img/maps/throne_of_anubis.webp"
+    "path": "/img/maps/throne_of_anubis.webp"
   }
 }
