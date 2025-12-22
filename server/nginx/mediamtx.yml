@@ -1,0 +1,16 @@
+server:
+  rtmp:
+    enabled: no
+    listen: 1935
+
+  srt:
+    enabled: yes
+    listen: 0.0.0.0:9000
+    latency: 200
+
+paths:
+  all:
+    publish:
+      enabled: yes
+    read:
+      enabled: yes
