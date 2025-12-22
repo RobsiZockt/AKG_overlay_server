@@ -535,5 +535,8 @@ app.get("/api/reports/sm_report",[],async (req,res)=>{
 }
 })
 
-app.listen(PORT, () => console.log("Server is listening on ${PORT}"));
+
+
+
+app.listen(PORT, '0.0.0.0', () => console.log("Server is listening on ${PORT}"));
 console.log("Maps file path:", playedmaps);

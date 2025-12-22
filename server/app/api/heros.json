@@ -2,221 +2,221 @@
   "1": {
     "name": "ana",
     "extension": "png",
-    "path": "./../img/heros/ana.png"
+    "path": "/img/heros/ana.png"
   },
   "2": {
     "name": "ash",
     "extension": "png",
-    "path": "./../img/heros/ash.png"
+    "path": "/img/heros/ash.png"
   },
   "3": {
     "name": "baptiste",
     "extension": "png",
-    "path": "./../img/heros/baptiste.png"
+    "path": "/img/heros/baptiste.png"
   },
   "4": {
     "name": "bastion",
     "extension": "png",
-    "path": "./../img/heros/bastion.png"
+    "path": "/img/heros/bastion.png"
   },
   "5": {
     "name": "brigitte",
     "extension": "png",
-    "path": "./../img/heros/brigitte.png"
+    "path": "/img/heros/brigitte.png"
   },
   "6": {
     "name": "cassidy",
     "extension": "png",
-    "path": "./../img/heros/cassidy.png"
+    "path": "/img/heros/cassidy.png"
   },
   "7": {
     "name": "diva",
     "extension": "png",
-    "path": "./../img/heros/diva.png"
+    "path": "/img/heros/diva.png"
   },
   "8": {
     "name": "doomfist",
     "extension": "png",
-    "path": "./../img/heros/doomfist.png"
+    "path": "/img/heros/doomfist.png"
   },
   "9": {
     "name": "echo",
     "extension": "png",
-    "path": "./../img/heros/echo.png"
+    "path": "/img/heros/echo.png"
   },
   "10": {
     "name": "freja",
     "extension": "png",
-    "path": "./../img/heros/freja.png"
+    "path": "/img/heros/freja.png"
   },
   "11": {
     "name": "genji",
     "extension": "png",
-    "path": "./../img/heros/genji.png"
+    "path": "/img/heros/genji.png"
   },
   "12": {
     "name": "hanzo",
     "extension": "png",
-    "path": "./../img/heros/hanzo.png"
+    "path": "/img/heros/hanzo.png"
   },
   "13": {
     "name": "hazard",
     "extension": "png",
-    "path": "./../img/heros/hazard.png"
+    "path": "/img/heros/hazard.png"
   },
   "14": {
     "name": "illari",
     "extension": "png",
-    "path": "./../img/heros/illari.png"
+    "path": "/img/heros/illari.png"
   },
   "15": {
     "name": "junker_queen",
     "extension": "png",
-    "path": "./../img/heros/junker_queen.png"
+    "path": "/img/heros/junker_queen.png"
   },
   "16": {
     "name": "junkrat",
     "extension": "png",
-    "path": "./../img/heros/junkrat.png"
+    "path": "/img/heros/junkrat.png"
   },
   "17": {
     "name": "juno",
     "extension": "png",
-    "path": "./../img/heros/juno.png"
+    "path": "/img/heros/juno.png"
   },
   "18": {
     "name": "kiriko",
     "extension": "png",
-    "path": "./../img/heros/kiriko.png"
+    "path": "/img/heros/kiriko.png"
   },
   "19": {
     "name": "lifeweaver",
     "extension": "png",
-    "path": "./../img/heros/lifeweaver.png"
+    "path": "/img/heros/lifeweaver.png"
   },
   "20": {
     "name": "lucio",
     "extension": "png",
-    "path": "./../img/heros/lucio.png"
+    "path": "/img/heros/lucio.png"
   },
   "21": {
     "name": "mauga",
     "extension": "png",
-    "path": "./../img/heros/mauga.png"
+    "path": "/img/heros/mauga.png"
   },
   "22": {
     "name": "mei",
     "extension": "png",
-    "path": "./../img/heros/mei.png"
+    "path": "/img/heros/mei.png"
   },
   "23": {
     "name": "mercy",
     "extension": "png",
-    "path": "./../img/heros/mercy.png"
+    "path": "/img/heros/mercy.png"
   },
   "24": {
     "name": "moira",
     "extension": "png",
-    "path": "./../img/heros/moira.png"
+    "path": "/img/heros/moira.png"
   },
   "25": {
     "name": "orisa",
     "extension": "png",
-    "path": "./../img/heros/orisa.png"
+    "path": "/img/heros/orisa.png"
   },
   "26": {
     "name": "pharah",
     "extension": "png",
-    "path": "./../img/heros/pharah.png"
+    "path": "/img/heros/pharah.png"
   },
   "27": {
     "name": "ramatra",
     "extension": "png",
-    "path": "./../img/heros/ramatra.png"
+    "path": "/img/heros/ramatra.png"
   },
   "28": {
     "name": "reaper",
     "extension": "png",
-    "path": "./../img/heros/reaper.png"
+    "path": "/img/heros/reaper.png"
   },
   "29": {
     "name": "reinhart",
     "extension": "png",
-    "path": "./../img/heros/reinhart.png"
+    "path": "/img/heros/reinhart.png"
   },
   "30": {
     "name": "roadhog",
     "extension": "png",
-    "path": "./../img/heros/roadhog.png"
+    "path": "/img/heros/roadhog.png"
   },
   "31": {
     "name": "sigma",
     "extension": "png",
-    "path": "./../img/heros/sigma.png"
+    "path": "/img/heros/sigma.png"
   },
   "32": {
     "name": "soilder_76",
     "extension": "png",
-    "path": "./../img/heros/soilder_76.png"
+    "path": "/img/heros/soilder_76.png"
   },
   "33": {
     "name": "sojourn",
     "extension": "png",
-    "path": "./../img/heros/sojourn.png"
+    "path": "/img/heros/sojourn.png"
   },
   "34": {
     "name": "sombra",
     "extension": "png",
-    "path": "./../img/heros/sombra.png"
+    "path": "/img/heros/sombra.png"
   },
   "35": {
     "name": "symmetra",
     "extension": "png",
-    "path": "./../img/heros/symmetra.png"
+    "path": "/img/heros/symmetra.png"
   },
   "36": {
     "name": "torbjörn",
     "extension": "png",
-    "path": "./../img/heros/torbjörn.png"
+    "path": "/img/heros/torbjörn.png"
   },
   "37": {
     "name": "tracer",
     "extension": "png",
-    "path": "./../img/heros/tracer.png"
+    "path": "/img/heros/tracer.png"
   },
   "38": {
     "name": "venture",
     "extension": "png",
-    "path": "./../img/heros/venture.png"
+    "path": "/img/heros/venture.png"
   },
   "39": {
     "name": "widowmaker",
     "extension": "png",
-    "path": "./../img/heros/widowmaker.png"
+    "path": "/img/heros/widowmaker.png"
   },
   "40": {
     "name": "winston",
     "extension": "png",
-    "path": "./../img/heros/winston.png"
+    "path": "/img/heros/winston.png"
   },
   "41": {
     "name": "wrecking_ball",
     "extension": "png",
-    "path": "./../img/heros/wrecking_ball.png"
+    "path": "/img/heros/wrecking_ball.png"
   },
   "42": {
     "name": "zarya",
     "extension": "png",
-    "path": "./../img/heros/zarya.png"
+    "path": "/img/heros/zarya.png"
   },
   "43": {
     "name": "zenyatta",
     "extension": "png",
-    "path": "./../img/heros/zenyatta.png"
+    "path": "/img/heros/zenyatta.png"
   },
   "44": {
     "name": "wuyang",
     "extension": "png",
-    "path": "./../img/heros/wuyang.png"
+    "path": "/img/heros/wuyang.png"
   }
 }
