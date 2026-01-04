@@ -29,7 +29,7 @@
 
  async function update(id,data) {
   try {
-    const response = await fetch(`/api/played_maps/${id}`, {
+    const response = await fetch(`/api/api/played_maps/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -75,7 +75,7 @@
 
     useEffect(() => {
       // Fetch JSON from backend
-      fetch("/api/maps") 
+      fetch("/api/api/maps") 
         .then((res) => res.json())
         .then((json) => {
           const arrayData = Object.entries(json).map(([id, value]) => ({

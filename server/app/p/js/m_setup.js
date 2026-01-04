@@ -29,7 +29,7 @@
   waitForContainer("##setup", (container) => {
     (async function fetchData() {
       try {
-        const response = await fetch("/api/matchup");
+        const response = await fetch("/api/api/matchup");
         if (!response.ok)
           throw new Error(`HTTP error! Status: ${response.status}`);
         matchup_data = await response.json();
@@ -127,7 +127,7 @@
 
       async function newMatchup(data) {
         try {
-          const response = await fetch("/api/new_matchup", {
+          const response = await fetch("/api/api/new_matchup", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),

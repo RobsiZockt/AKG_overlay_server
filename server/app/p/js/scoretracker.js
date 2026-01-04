@@ -276,7 +276,7 @@ async function handleButtonClick(option) {
 
 async function resetcards() {
   try{
-    const response = await fetch("/api/new_matchup",{
+    const response = await fetch("/api/api/new_matchup",{
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -291,7 +291,7 @@ async function resetcards() {
 
 async function updatematchup(op) {
    try {
-    const response = await fetch(`/api/matchup?op=${op}`, {
+    const response = await fetch(`/api/api/matchup?op=${op}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -310,7 +310,7 @@ async function updatematchup(op) {
 
 async function addMap() {
   try {
-    const response = await fetch("/api/played_maps/new",{
+    const response = await fetch("/api/api/played_maps/new",{
       method: "POST",
       headers: {"Content-Type": "application/json",},
     });
@@ -326,7 +326,7 @@ async function addMap() {
 
 async function update(id,data) {
   try {
-    const response = await fetch(`/api/played_maps/${id}`, {
+    const response = await fetch(`/api/api/played_maps/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

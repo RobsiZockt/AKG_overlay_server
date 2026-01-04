@@ -57,7 +57,7 @@ useEffect(()=>{
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch("/api/matchup");
+        const response = await fetch("/api/api/matchup");
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
         const data = await response.json();
 
