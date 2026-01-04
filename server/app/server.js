@@ -8,6 +8,7 @@ const { json } = require("stream/consumers");
 const { body, validationResult } = require("express-validator");
 const app = express();
 const PORT = 4000;
+const cors = require("cors");
 
 const playedmaps = path.join(__dirname, "api", "played_maps.json");
 const matchup = path.join(__dirname, "api", "matchup.json");
@@ -29,6 +30,10 @@ let lastMtime_players = 0;
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "p")));
+
+const corsOptions={
+  origin: ["https://overlay.robsizockt.de", "https://cast.robsizockt.de", "http://cast.localhost", "http://overlay.localhost"]
+};
 
 // Keep track of all connected SSE clients
 const clients = new Set();
@@ -105,13 +110,14 @@ setInterval(pollPlayedMaps, 200);
 
 // SSE endpoint just sends cached data
 // SSE endpoint just sends cached data
-app.get("/api/update/stream", (req, res) => {
+app.get("/api/update/stream",cors(corsOptions), (req, res) => {
   // SSE headers
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Connection", "keep-alive");
   res.flushHeaders();
 
+  res.write(":\n\n");
   clients.add(res);
 
   // Send initial data

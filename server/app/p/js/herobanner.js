@@ -44,7 +44,7 @@ if(setHighlight_red_Ext)
 
 async function update(id,data) {
   try {
-    const response = await fetch(`/api/played_maps/${id}`, {
+    const response = await fetch(`/api/api/played_maps/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -105,7 +105,7 @@ sel_team = "2";
 
     useEffect(() => {
       // Fetch JSON from backend
-      fetch("/api/heros") // adjust this URL to your backend
+      fetch("/api/api/heros") // adjust this URL to your backend
         .then((res) => res.json())
         .then((json) => {
           const arrayData = Object.entries(json).map(([id, value]) => ({

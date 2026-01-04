@@ -63,7 +63,7 @@ SetMatchup_EXT=SetMatchup;
 
 useEffect(() => {
       // Fetch JSON from backend
-      fetch("/api/heros") 
+      fetch("/api/api/heros") 
         .then((res) => res.json())
         .then((json) => {
           const arrayData = Object.entries(json).map(([id, value]) => ({
@@ -80,7 +80,7 @@ useEffect(() => {
 useEffect(() => {
   async function fetchData() {
     try {
-      const response = await fetch("/api/players");
+      const response = await fetch("/api/api/players");
       if (!response.ok)
         throw new Error(`HTTP error! Status: ${response.status}`);
       const data = await response.json();
@@ -96,7 +96,7 @@ useEffect(() => {
 useEffect(()=>{
   async function fetchData() {
     try {
-      const response = await fetch("/api/matchup");
+      const response = await fetch("/api/api/matchup");
       if (!response.ok)
         throw new Error(`HTTP error! Status: ${response.status}`);
       const data = await response.json();
@@ -147,7 +147,7 @@ const UpdatePlayers=async (team, player_id,item,val)=>{
 
   const data = {[item]:val}
 
-  const response = await fetch(`/api/players/${team}/${player_id}`, {
+  const response = await fetch(`/api/api/players/${team}/${player_id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -165,7 +165,7 @@ else console.error("Manipulation Detected");
 }
 
  async function addPlayer(id){
-  const response = await fetch(`/api/players/${team}/${id}`, {
+  const response = await fetch(`/api/api/players/${team}/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -174,7 +174,7 @@ else console.error("Manipulation Detected");
 }
 
 async function deletePlayer(id) {
-  const response = await fetch(`/api/players/${team}/${id}`, {
+  const response = await fetch(`/api/api/players/${team}/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -341,7 +341,7 @@ const renderTeam = (team)=>{
 const UpdateMatchup= async (property,value)=>{
   const data = {[property]: value};
  try {
-    const response = await fetch(`/api/matchup?op=up`, {
+    const response = await fetch(`/api/api/matchup?op=up`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
