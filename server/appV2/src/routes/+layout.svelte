@@ -27,9 +27,7 @@
 		<h2>Public Layout</h2><slot></slot>
 	</div>
 {:else if data.isOverlay}
-	<div style="border: 3px solid blue; padding: 1rem;">
-		<h2>Overlay Layout</h2><slot></slot>
-	</div>
+<div><slot></slot></div>
 {:else}
 	<div style="border: 3px solid gray; padding: 1rem;">
 		<h2>Unknown host</h2><slot></slot>
