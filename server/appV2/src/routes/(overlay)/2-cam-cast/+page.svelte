@@ -1,6 +1,10 @@
 <script>
-  // Any page-specific logic here
+ import Facecam from "$lib/assets/Facecam.svelte";
 </script>
 
-<h3>Overlay — 2 cam cast Page</h3>
-<p>This is a public read-only page.</p>
+<div class="h-[100vh] w-full p-10 flex items-center justify-center bg-transparent">
+<Facecam name="RobsiZockt" social="robsizockt" img="" no_vid={false}></Facecam> 
+<!--SPACER-->
+<div class="w-[7%] h-full"></div>
+<Facecam name="AHAB" social="ahabini" img="" no_vid={false}></Facecam>
+</div>
