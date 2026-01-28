@@ -27,9 +27,20 @@
 
 
 <div bind:this={container} class="w-full h-full">
-  {#if width > 500}
+  {#if width >= 500}
   <div class="absolute bottom-0 inset-x-0 z-20 bg-[#0a0a0add] h-[116px] text-white">
-    <div class="max-w-6xl mx-auto py-6 px-8 text-center">
+    <div class="max-w-8xl mx-auto py-6 px-8 text-center">
+      <p class="text-5xl tracking-wide">
+          {Map_name} 
+      </p>
+      <p class="text-2xl tracking-wide">
+          {Map_type}
+      </p>
+    </div>
+  </div>
+  {:else if width >= 300}
+<div class="absolute bottom-0 inset-x-0 z-20 bg-[#0a0a0add] h-[116px] text-white">
+    <div class="max-w-6xl mx-auto py-6 px-6 text-center">
       <p class="text-4xl tracking-wide">
           {Map_name} 
       </p>
@@ -38,24 +49,13 @@
       </p>
     </div>
   </div>
-  {:else if width >= 300}
-<div class="absolute bottom-0 inset-x-0 z-20 bg-[#0a0a0add] h-[116px] text-white">
-    <div class="max-w-6xl mx-auto py-6 px-6 text-center">
-      <p class="text-3xl tracking-wide">
-          {Map_name} 
-      </p>
-      <p class="text-l tracking-wide">
-          {Map_type}
-      </p>
-    </div>
-  </div>
   {:else}
   <div class="absolute bottom-0 inset-x-0 z-20 bg-[#0a0a0add] h-[116px] text-white">
       <div class="max-w-6xl mx-auto py-6 px-6 text-center">
-      <p class="text-xl tracking-wide">
+      <p class="text-2xl tracking-wide">
           {Map_name} 
       </p>
-      <p class="text-xs tracking-wide">
+      <p class="text-l tracking-wide">
           {Map_type}
       </p>
     </div>
