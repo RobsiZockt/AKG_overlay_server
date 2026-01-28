@@ -21,13 +21,14 @@ $: latest = entries.at(-1);
 
 </script>
 
-<div class="relative flex gap-1 items-center justify-center w-[1500px] h-[600px] overflow-hidden">
+<div class=" flex h-[100vh] w-full items-center justify-center overflow-hidden">
+  <div class="relative flex gap-1 w-[2000px] h-[900px] items-center justify-center">
 
   {#if entries && entries.length}
 {#each entries as item}
   {#if item.id === latest.id }
   {#if item.name !=""}
-  <div class="relative w-[1000px] h-[600px] overflow-hidden">
+  <div class="relative w-[1500px] h-full overflow-hidden">
   <!-- z-0 -->
   <Background Map_url={item.image} />
 
@@ -47,7 +48,7 @@ $: latest = entries.at(-1);
   {:else}
     {#if item.name !=""}
     <!-- normal rendering -->
-    <div class="relative w-[300px] h-[600px] overflow-hidden">
+    <div class="relative w-[450px] h-full overflow-hidden">
       <Background Map_url={item.image}/>
       <ForegroundBlock position="" Team_logo={item.blue_score > item.red_score ? $matchupData.blue_logo : $matchupData.red_logo} Team_kurz="TEST"/>
       <Score red_score={item.score_red} blue_score={item.score_blue} />
@@ -59,4 +60,5 @@ $: latest = entries.at(-1);
 {:else}
   <p>Waiting for data…</p>
 {/if}
+</div>
 </div>
