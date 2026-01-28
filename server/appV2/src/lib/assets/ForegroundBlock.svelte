@@ -24,11 +24,11 @@
   });
 </script>
 
-<div bind:this={container} class="absolute flex justify-center w-full h-[172px] top-1/4 z-10">
+<div bind:this={container} class="absolute flex justify-center w-full h-[172px] top-1/5 z-10">
   <div
   class={`absolute
     ${position === 'left' ? `left-[50px]` : position === 'right' ? 'right-[50px]' : `left-[${(width-200)/2}px]`}
-    w-[200px]`}
+    w-[256px]`}
 >
   <!-- Content wrapper -->
   <div class="flex flex-col items-center">
@@ -37,11 +37,11 @@
     <img
       src={Team_logo}
       alt=""
-      class="w-[128px] h-[128px] object-contain"
+      class="w-[256px] h-[256px] object-contain"
     />
 
     <!-- Team short name -->
-    <p class="mt-2 text-2xl text-center drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)] font-[teko] text-white items-center justify-center">
+    <p class="mt-2 text-5xl text-center drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)] font-[teko] text-white items-center justify-center">
       {Team_kurz}
     </p>
 
