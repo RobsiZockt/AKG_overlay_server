@@ -1,222 +1,227 @@
 {
   "1": {
     "name": "ana",
-    "extension": "png",
+    "role": "Support",
     "path": "/img/heros/ana.png"
   },
   "2": {
     "name": "ash",
-    "extension": "png",
+    "role": "DPS",
     "path": "/img/heros/ash.png"
   },
   "3": {
     "name": "baptiste",
-    "extension": "png",
+    "role": "Support",
     "path": "/img/heros/baptiste.png"
   },
   "4": {
     "name": "bastion",
-    "extension": "png",
+    "role": "DPS",
     "path": "/img/heros/bastion.png"
   },
   "5": {
     "name": "brigitte",
-    "extension": "png",
+    "role": "Support",
     "path": "/img/heros/brigitte.png"
   },
   "6": {
     "name": "cassidy",
-    "extension": "png",
+    "role": "DPS",
     "path": "/img/heros/cassidy.png"
   },
   "7": {
     "name": "diva",
-    "extension": "png",
+    "role": "Tank",
     "path": "/img/heros/diva.png"
   },
   "8": {
     "name": "doomfist",
-    "extension": "png",
+    "role": "Tank",
     "path": "/img/heros/doomfist.png"
   },
   "9": {
     "name": "echo",
-    "extension": "png",
+    "role": "DPS",
     "path": "/img/heros/echo.png"
   },
   "10": {
     "name": "freja",
-    "extension": "png",
+    "role": "DPS",
     "path": "/img/heros/freja.png"
   },
   "11": {
     "name": "genji",
-    "extension": "png",
+    "role": "DPS",
     "path": "/img/heros/genji.png"
   },
   "12": {
     "name": "hanzo",
-    "extension": "png",
+    "role": "DPS",
     "path": "/img/heros/hanzo.png"
   },
   "13": {
     "name": "hazard",
-    "extension": "png",
+    "role": "Tank",
     "path": "/img/heros/hazard.png"
   },
   "14": {
     "name": "illari",
-    "extension": "png",
+    "role": "Support",
     "path": "/img/heros/illari.png"
   },
   "15": {
     "name": "junker_queen",
-    "extension": "png",
+    "role": "Tank",
     "path": "/img/heros/junker_queen.png"
   },
   "16": {
     "name": "junkrat",
-    "extension": "png",
+    "role": "DPS",
     "path": "/img/heros/junkrat.png"
   },
   "17": {
     "name": "juno",
-    "extension": "png",
+    "role": "Support",
     "path": "/img/heros/juno.png"
   },
   "18": {
     "name": "kiriko",
-    "extension": "png",
+    "role": "Support",
     "path": "/img/heros/kiriko.png"
   },
   "19": {
     "name": "lifeweaver",
-    "extension": "png",
+    "role": "Support",
     "path": "/img/heros/lifeweaver.png"
   },
   "20": {
     "name": "lucio",
-    "extension": "png",
+    "role": "Support",
     "path": "/img/heros/lucio.png"
   },
   "21": {
     "name": "mauga",
-    "extension": "png",
+    "role": "Tank",
     "path": "/img/heros/mauga.png"
   },
   "22": {
     "name": "mei",
-    "extension": "png",
+    "role": "DPS",
     "path": "/img/heros/mei.png"
   },
   "23": {
     "name": "mercy",
-    "extension": "png",
+    "role": "Support",
     "path": "/img/heros/mercy.png"
   },
   "24": {
     "name": "moira",
-    "extension": "png",
+    "role": "Support",
     "path": "/img/heros/moira.png"
   },
   "25": {
     "name": "orisa",
-    "extension": "png",
+    "role": "Tank",
     "path": "/img/heros/orisa.png"
   },
   "26": {
     "name": "pharah",
-    "extension": "png",
+    "role": "DPS",
     "path": "/img/heros/pharah.png"
   },
   "27": {
     "name": "ramatra",
-    "extension": "png",
+    "role": "Tank",
     "path": "/img/heros/ramatra.png"
   },
   "28": {
     "name": "reaper",
-    "extension": "png",
+    "role": "DPS",
     "path": "/img/heros/reaper.png"
   },
   "29": {
     "name": "reinhart",
-    "extension": "png",
+    "role": "Tank",
     "path": "/img/heros/reinhart.png"
   },
   "30": {
     "name": "roadhog",
-    "extension": "png",
+    "role": "Tank",
     "path": "/img/heros/roadhog.png"
   },
   "31": {
     "name": "sigma",
-    "extension": "png",
+    "role": "Tank",
     "path": "/img/heros/sigma.png"
   },
   "32": {
     "name": "soilder_76",
-    "extension": "png",
+    "role": "DPS",
     "path": "/img/heros/soilder_76.png"
   },
   "33": {
     "name": "sojourn",
-    "extension": "png",
+    "role": "DPS",
     "path": "/img/heros/sojourn.png"
   },
   "34": {
     "name": "sombra",
-    "extension": "png",
+    "role": "DPS",
     "path": "/img/heros/sombra.png"
   },
   "35": {
     "name": "symmetra",
-    "extension": "png",
+    "role": "DPS",
     "path": "/img/heros/symmetra.png"
   },
   "36": {
     "name": "torbjörn",
-    "extension": "png",
+    "role": "DPS",
     "path": "/img/heros/torbjörn.png"
   },
   "37": {
     "name": "tracer",
-    "extension": "png",
+    "role": "DPS",
     "path": "/img/heros/tracer.png"
   },
   "38": {
     "name": "venture",
-    "extension": "png",
+    "role": "DPS",
     "path": "/img/heros/venture.png"
   },
   "39": {
     "name": "widowmaker",
-    "extension": "png",
+    "role": "DPS",
     "path": "/img/heros/widowmaker.png"
   },
   "40": {
     "name": "winston",
-    "extension": "png",
+    "role": "Tank",
     "path": "/img/heros/winston.png"
   },
   "41": {
     "name": "wrecking_ball",
-    "extension": "png",
+    "role": "Tank",
     "path": "/img/heros/wrecking_ball.png"
   },
   "42": {
     "name": "zarya",
-    "extension": "png",
+    "role": "Tank",
     "path": "/img/heros/zarya.png"
   },
   "43": {
     "name": "zenyatta",
-    "extension": "png",
+    "role": "Support",
     "path": "/img/heros/zenyatta.png"
   },
   "44": {
     "name": "wuyang",
-    "extension": "png",
+    "role": "Support",
     "path": "/img/heros/wuyang.png"
+  },
+  "45": {
+    "name": "Vendetta",
+    "role": "DPS",
+    "path": "/img/heros/vendetta.png"
   }
 }
