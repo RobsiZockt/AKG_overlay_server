@@ -5,8 +5,14 @@
     export let img;
 
     import Background from "./Background.svelte";
+    import SplitRevealBox from "./animations/SplitRevealBox.svelte";
+
+    let open = false;
+
+  setTimeout(() => open = true, 400);
 </script>
 
+<SplitRevealBox {open} width={1213} height={720} color="#348333">
 <div class="h-[720px] w-[1213px] flex justify-center">
   <!-- Shared width wrapper -->
   <div class="h-full w-fit flex flex-col">
@@ -32,4 +38,4 @@
 
   </div>
 </div>
-
+</SplitRevealBox>
