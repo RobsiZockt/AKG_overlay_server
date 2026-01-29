@@ -1,12 +1,23 @@
 {
   "1": {
-    "name": "colosseo",
-    "image": "./../img/maps/colosseo.webp",
+    "name": "dorado",
+    "image": "/img/maps/dorado.webp",
     "ban_red": "./../img/heros/wuyang.png",
     "ban_red_name": "wuyang",
     "ban_blue": "./../img/heros/wuyang.png",
     "ban_blue_name": "wuyang",
     "score_blue": "",
     "score_red": ""
+  },
+  "2": {
+    "name": "Eichenwalde",
+    "image": "/img/maps/eichenwalde.webp",
+    "ban_red": "/img/heros/cassidy.png",
+    "ban_red_name": "cassidy",
+    "ban_blue": "/img/heros/baptiste.png",
+    "ban_blue_name": "baptiste",
+    "score_blue": "0",
+    "score_red": "0",
+    "type": "Hybrid"
   }
 }

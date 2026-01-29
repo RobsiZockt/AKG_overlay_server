@@ -38,7 +38,7 @@ $: latest = entries.at(-1);
   <ForegroundBlock position="right" Team_logo={$matchupData.red_logo} Team_kurz="HSKC" />
 
   <!-- z-2 -->
-  <FooterBar Map_name={item.name} Map_type="Push"/>
+  <FooterBar Map_name={item.name} Map_type={item.type}/>
 
   <!-- z-4 (optically overlaps footer) -->
   <SvgOverlay position="left" hero={item.ban_blue}/>
@@ -52,7 +52,7 @@ $: latest = entries.at(-1);
       <Background Map_url={item.image}/>
       <ForegroundBlock position="" Team_logo={item.blue_score > item.red_score ? $matchupData.blue_logo : $matchupData.red_logo} Team_kurz="TEST"/>
       <Score red_score={item.score_red} blue_score={item.score_blue} />
-      <FooterBar Map_name={item.name} Map_type="Push"/>
+      <FooterBar Map_name={item.name} Map_type={item.type}/>
     </div>
     {/if}
   {/if}

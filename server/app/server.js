@@ -164,6 +164,7 @@ app.post("/api/played_maps/new", async (req, res) => {
       key: entryKey,
       name: "",
       image: "",
+      type: "",
       ban_red: "",
       ban_red_name: "",
       ban_blue: "",
@@ -261,6 +262,7 @@ app.put(
 
         playedMapsCache[entryKey].name = lookupdata.name;
         playedMapsCache[entryKey].image = lookupdata.path;
+        playedMapsCache[entryKey].type = lookupdata.type;
       } else if (key === "ban") {
         // checks "ban" for regex pattern, if correct and team is either 1 = blue or 2 = red it will look up the given data
         const regex = /^team:\s*(\d+)\s+hero:\s*(\d+)$/;
