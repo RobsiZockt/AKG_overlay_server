@@ -1,5 +1,37 @@
 <script>
   import { matchupData } from '$lib/stores/matchupData';
+
+
+  //Left displayed Team
+  $: l_logo = "";
+  $: l_name = "";
+  $: l_score = "";
+  $: l_ban= "";
+  //Right displayed Team
+  $: r_logo= "";
+  $: r_name= "";
+  $: r_score= "";
+  $: r_ban= "";
+
+  $: if($matchupData.switched == 0){
+    l_logo = $matchupData.blue_logo; 
+    l_name = $matchupData.blue;
+    l_score = $matchupData.blue_score;
+
+    r_logo = $matchupData.red_logo;
+    r_name = $matchupData.red;
+    r_score = $matchupData.red_score;
+
+  } else if($matchupData.switched == 1){
+    r_logo = $matchupData.blue_logo; 
+    r_name = $matchupData.blue;
+    r_score = $matchupData.blue_score;
+
+    l_logo = $matchupData.red_logo;
+    l_name = $matchupData.red;
+    l_score = $matchupData.red_score;
+  }
+
 </script>
 
 <div class="w-screen h-[68px] relative flex">
@@ -10,7 +42,7 @@
   >
     <div class="h-full aspect-square bg-transparent flex items-center justify-center p-1">
       <img
-        src="{$matchupData.blue_logo}"
+        src="{l_logo}"
         class="h-auto aspect-square object-cover"
         alt="Left"
       />
@@ -19,7 +51,7 @@
     <div class="h-full w-[2px] bg-black flex"></div>
 
     <span class="font-arial text-white w-full text-[40px] pl-2">
-      {$matchupData.blue}
+      {l_name}
     </span>
   </div>
 
@@ -29,7 +61,7 @@
     style="clip-path: polygon(0 0, 100% 0, 60% 100%, 0 100%); background-color: #00a2d9;"
   >
     <span class="ml-2 font-arial text-[50px] text-white items-center justify-center">
-      {$matchupData.blue_score}
+      {l_score}
     </span>
   </div>
 
@@ -42,7 +74,7 @@
     style="clip-path: polygon(0 0, 100% 0, 100% 100%, 40% 100%); background-color: #ca4b5d;"
   >
     <span class="mr-2 font-arial text-[50px] text-white items-center justify-center">
-      {$matchupData.red_score}
+      {r_score}
     </span>
   </div>
 
@@ -52,14 +84,14 @@
     style="clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); background-color: #000000ee;"
   >
     <span class="text-white text-[40px] font-arial pr-2">
-      {$matchupData.red}
+      {r_name}
     </span>
 
     <div class="h-full w-[2px] bg-black flex"></div>
 
     <div class="h-full aspect-square bg-transparent flex items-center justify-center p-1">
       <img
-        src="{$matchupData.red_logo}"
+        src="{r_logo}"
         class="h-auto aspect-square object-cover"
         alt="Right"
       />
