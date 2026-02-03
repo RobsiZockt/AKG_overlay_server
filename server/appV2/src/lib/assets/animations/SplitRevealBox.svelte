@@ -33,7 +33,7 @@
   overflow: hidden;
 }
 
-/* Content underneath */
+
 .content {
   position: absolute;
   inset: 0;
@@ -43,7 +43,7 @@
   background: transparent;
 }
 
-/* Covers that split */
+
 .cover {
   position: absolute;
   top: 0;
