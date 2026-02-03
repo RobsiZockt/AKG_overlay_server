@@ -1,13 +1,14 @@
 <script>
   export let position = 'left';
   export let hero;
+  export let size = 160;
   import banned from "./img/banned.svg"
 </script>
 
 <div
   class={`absolute z-40 -bottom-6
     ${position === 'left' ? 'left-8' : 'right-8'}
-    w-40 h-40`}
+    w-[160px] h-[160px]`}
 >
 {#if hero!==""}
   <!-- PNG base -->
