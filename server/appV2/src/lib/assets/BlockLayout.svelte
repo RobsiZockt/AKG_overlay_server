@@ -2,7 +2,7 @@
   import Background from './Background.svelte';
   import ForegroundBlock from './ForegroundBlock.svelte';
   import FooterBar from './FooterBar.svelte';
-  import SvgOverlay from './SvgOverlay.svelte';
+  import Bans from './SvgOverlay.svelte';
   import SmallBlock from './SmallBlocks.svelte';
 
   export let block;
@@ -27,8 +27,8 @@
 
     <FooterBar />
 
-    <SvgOverlay position="left" />
-    <SvgOverlay position="right" />
+    <Bans position="left" />
+    <Bans position="right" />
   {:else}
     <SmallBlock {block} />
   {/if}

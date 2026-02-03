@@ -1,6 +1,6 @@
 <script>
   import ForegroundBlock from './ForegroundBlock.svelte';
-  import SvgOverlay from './SvgOverlay.svelte';
+  import Bans from './SvgOverlay.svelte';
 
   export let block;
 </script>
@@ -18,8 +18,8 @@
 
   <!-- SVG overlays stacked -->
   <div class="absolute bottom-6 right-4 flex flex-col gap-3 scale-75 origin-bottom-right">
-    <SvgOverlay />
-    <SvgOverlay />
+    <Bans />
+    <Bans />
   </div>
 
 </div>
