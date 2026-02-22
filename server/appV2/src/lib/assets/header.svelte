@@ -1,6 +1,7 @@
 <script>
   import { matchupData } from '$lib/stores/matchupData';
-
+  import { playedMaps } from '$lib/stores/playedMapsUpdate';
+  import Bans from './Bans.svelte';
 
   //Left displayed Team
   $: l_logo = "";
@@ -13,23 +14,40 @@
   $: r_score= "";
   $: r_ban= "";
 
+ $: entries = Object.entries($playedMaps ?? {})
+    .map(([key, value]) => ({
+      id: Number(key),
+      ...value
+    }))
+    .sort((a, b) => a.id - b.id);
+
+$: count = entries.length;
+$: latestIndex = count - 1;
+$: latest = entries.at(-1);
+
+$: console.log(latest);
+
   $: if($matchupData.switched == 0){
     l_logo = $matchupData.blue_logo; 
     l_name = $matchupData.blue;
     l_score = $matchupData.blue_score;
+    l_ban = latest.ban_blue;
 
     r_logo = $matchupData.red_logo;
     r_name = $matchupData.red;
     r_score = $matchupData.red_score;
+    r_ban = latest.ban_red;
 
   } else if($matchupData.switched == 1){
     r_logo = $matchupData.blue_logo; 
     r_name = $matchupData.blue;
     r_score = $matchupData.blue_score;
+    r_ban = latest.ban_blue;
 
     l_logo = $matchupData.red_logo;
     l_name = $matchupData.red;
     l_score = $matchupData.red_score;
+    l_ban = latest.ban_red;
   }
 
 </script>
@@ -54,6 +72,7 @@
       {l_name}
     </span>
   </div>
+  <Bans hero={l_ban} size={68} mode={"header"} />
 
   <!-- Blue Score -->
   <div
@@ -77,7 +96,7 @@
       {r_score}
     </span>
   </div>
-
+ <Bans hero={r_ban} size={68} mode={"header"} />
   <!-- Right Gray Section -->
   <div
     class="flex-1 flex items-center justify-end pr-2"
