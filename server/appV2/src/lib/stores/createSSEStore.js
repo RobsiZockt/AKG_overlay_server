@@ -17,14 +17,13 @@ export function createSSEStore({ type, snapshotUrl, initial }) {
 
     // 1️⃣ Fetch snapshot
     if (snapshotUrl) {
-      console.log(snapshotUrl);
       try {
         console.log("snapshot fetching");
         const res = await fetch(snapshotUrl);
         if (res.ok) {
           const snapshot = await res.json();
           store.set(snapshot);
-          console.log("snapshot fetched", res);
+          console.log("snapshot fetched");
         } else {
           console.warn('Snapshot fetch failed: non-OK status', res.status);
         }

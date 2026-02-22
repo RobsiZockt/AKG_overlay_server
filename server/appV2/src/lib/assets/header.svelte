@@ -25,7 +25,6 @@ $: count = entries.length;
 $: latestIndex = count - 1;
 $: latest = entries.at(-1);
 
-$: console.log(latest);
 
   $: if($matchupData.switched == 0){
     l_logo = $matchupData.blue_logo; 

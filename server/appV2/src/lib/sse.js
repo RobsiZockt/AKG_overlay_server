@@ -4,21 +4,16 @@ class SSERouter {
   handlers = new Map();
 
   connect() {
-    console.log("SEE connected");
+    console.log("SSE connected");
     if (this.source) return;
 
     this.source = new EventSource('/api/api/update/stream');
 
 
     this.source.onmessage = (e) => {
-  console.log('RAW SSE:', e.data);
 
   const parsed = JSON.parse(e.data);
-  console.log('PARSED SSE:', parsed);
-
   const { type, payload } = parsed;
-  console.log('TYPE:', type, 'HAS HANDLERS:', this.handlers.has(type));
-
   this.handlers.get(type)?.forEach(fn => fn(payload));
 };
 
