@@ -15,7 +15,6 @@
     }))
     .sort((a, b) => a.id - b.id);
 
-  $: console.log('entries:', entries);
 $: count = entries.length;
 $: latestIndex = count - 1;
 $: latest = entries.at(-1);
