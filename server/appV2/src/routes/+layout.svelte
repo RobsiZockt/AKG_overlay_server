@@ -19,9 +19,7 @@
 <!-- src/routes/+layout.svelte -->
 
 {#if data.isCaster}
-	<div style="border: 3px solid red; padding: 1rem;">
-		<h2>Admin Layout</h2><slot></slot>
-	</div>
+	<div><slot></slot></div>
 {:else if data.isPublic}
 	<div style="border: 3px solid green; padding: 1rem;">
 		<h2>Public Layout</h2><slot></slot>
