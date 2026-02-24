@@ -11,7 +11,7 @@
   }
 </script>
 
-<div class="w-full h-[100vh] bg-[#2b2d30]">
+<div class="w-full h-[100vh] bg-[#2b2d30] overflow-hidden">
   <div class ="w-full h-[68px] relative">
     <div class="absolute inset-0">
       <Header/>
@@ -27,7 +27,9 @@
 />
 
 {#if current_tag === "Live"}
+<div class="flex h-[90%] w-full object-contain">
 <LiveControl/>
+</div>
 {:else if current_tag === "Setup"}
   <p>Products content</p>
 {:else if current_tag ==="Teams"}
