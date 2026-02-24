@@ -5,11 +5,14 @@ import Fuse from "fuse.js"
   export let items = [];           // [{ id, name, image }]
   export let selectedItem={};
   export let target="";
+  export let mode ="";
+  export let team ="";
+  export let title ="";
   
 
   let query = "";
   let selectedId = null;
-  let pickedmap =  {};
+  let payload =  {};
 
   //mark current selected maps
   $: console.log(selectedItem)
@@ -30,7 +33,6 @@ import Fuse from "fuse.js"
       : fuse.search(query).map(r => r.item);
 
 
-
   //updates played maps
   async function update(id,data) {
   try {
@@ -45,7 +47,6 @@ import Fuse from "fuse.js"
     if (!response.ok) throw new Error("Network response was not ok");
 
     const result = await response.json();
-    console.log("JSON updated successfully:", result);
   } catch (error) {
     console.error("Error updating JSON:", error);
   }
@@ -56,8 +57,12 @@ import Fuse from "fuse.js"
 //kick item event
   function selectItem(item) {
     selectedId = item.id;
-    pickedmap={[target]: item.id};
-    update(selectedItem.id, pickedmap);
+    if(mode =="ban"){
+      payload={[target]: `team: ${team} hero: ${item.id}`};
+    } else if(mode=="mappick"){
+    payload={[target]: item.id};
+    }
+    update(selectedItem.id, payload);
   }
 
 </script>
