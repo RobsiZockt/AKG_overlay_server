@@ -2,6 +2,8 @@
     import Timer from "$lib/assets/cast/timer.svelte";
     import Header from "$lib/assets/header.svelte";
     import Navbar from "$lib/assets/cast/navbar.svelte";
+
+    import LiveControl from "$lib/assets/cast/sub_pages/LiveControl.svelte";
     
   let current_tag = "Live";
   let updateData = (newData) => {
@@ -25,7 +27,7 @@
 />
 
 {#if current_tag === "Live"}
-  <p>Home content</p>
+<LiveControl/>
 {:else if current_tag === "Setup"}
   <p>Products content</p>
 {:else if current_tag ==="Teams"}
