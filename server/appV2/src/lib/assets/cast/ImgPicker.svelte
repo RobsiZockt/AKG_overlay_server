@@ -2,41 +2,64 @@
 
 import Fuse from "fuse.js"
 
-
-
-
-
-
   export let items = [];           // [{ id, name, image }]
-  export let onSelect = () => {};  // callback to parent
-
   export let selectedItem={};
+  export let target="";
   
 
   let query = "";
   let selectedId = null;
-  
-  $: if (selectedItem.name != ""){
-    selectedId= selectedItem.id;
-  }
+  let pickedmap =  {};
 
+  //mark current selected maps
+  $: console.log(selectedItem)
+  $: if (selectedItem.name != ""){
+    for(let i=0; i<items.length;i++){
+      if(items[i].name == selectedItem.name) {selectedId=items[i].id; break;}
+    }
+  }
+// fuse search parameters
   const fuse = new Fuse(items, {
     keys: ["name"],
     threshold: 0.4
   });
-
-
-  $: filteredItems =
+//fuse search
+    $: filteredItems =
     query.trim() === ""
       ? items
       : fuse.search(query).map(r => r.item);
 
+
+
+  //updates played maps
+  async function update(id,data) {
+  try {
+    const response = await fetch(`/api/api/played_maps/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) throw new Error("Network response was not ok");
+
+    const result = await response.json();
+    console.log("JSON updated successfully:", result);
+  } catch (error) {
+    console.error("Error updating JSON:", error);
+  }
+}
+
+
+
+//kick item event
   function selectItem(item) {
     selectedId = item.id;
-    onSelect(item); // send to parent / backend later
+    pickedmap={[target]: item.id};
+    update(selectedItem.id, pickedmap);
   }
 
- 
 </script>
 
 <style>
@@ -49,7 +72,7 @@ import Fuse from "fuse.js"
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(205px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
     gap: 1rem;
   }
 
