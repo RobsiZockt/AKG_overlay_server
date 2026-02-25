@@ -16,22 +16,45 @@ import Fuse from "fuse.js"
 
   //mark current selected maps
   $: console.log(selectedItem)
-  $: if (selectedItem.name != ""){
+  $: if (mode=="mappick"){
+    if (selectedItem.name != ""){
     for(let i=0; i<items.length;i++){
       if(items[i].name == selectedItem.name) {selectedId=items[i].id; break;}
     }
   }
+} else if(mode=="ban"){
+  if(team== "1"){
+  if (selectedItem.ban_blue_name != ""){
+    for(let i=0; i<items.length;i++){
+      if(items[i].name == selectedItem.ban_blue_name) {selectedId=items[i].id; break;}
+    }
+  }
+}
+  else if(team== "2"){
+  if (selectedItem.ban_red_name != ""){
+    for(let i=0; i<items.length;i++){
+      if(items[i].name == selectedItem.ban_red_name) {selectedId=items[i].id; break;}
+    }
+  }
+}
+}
 // fuse search parameters
-  const fuse = new Fuse(items, {
+let fuse;
+$: if (items?.length) {
+  fuse = new Fuse(items, {
     keys: ["name"],
     threshold: 0.4
   });
+}
+
 //fuse search
     $: filteredItems =
-    query.trim() === ""
+     query.trim() === ""
       ? items
       : fuse.search(query).map(r => r.item);
 
+
+      $: if(items[0] != undefined) console.log(typeof items[0].name);
 
   //updates played maps
   async function update(id,data) {
