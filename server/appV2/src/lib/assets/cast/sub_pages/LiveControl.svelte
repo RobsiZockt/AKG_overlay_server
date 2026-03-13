@@ -8,7 +8,7 @@
   import { playedMaps } from '$lib/stores/playedMapsUpdate';
   import { matchupData } from "$lib/stores/matchupData";
 
-  let blue_team, blue_name, red_team , red_name;
+  let blue_team, blue_name, red_team , red_name, current_map;
 
  $: if ($matchupData.switched == 0){
     blue_name = $matchupData.blue;
@@ -30,8 +30,11 @@ $: entries = Object.entries($playedMaps ?? {})
     }))
     .sort((a, b) => a.id - b.id);
 
-$: latest = entries.at(-1);
+$: latest = entries?.[current_map] || entries.at(-1);
 
+let update_sel_map = (newData) => {
+    current_map =newData;
+  }
 
   onMount(()=>{maps.load(); heros.load();});
 
@@ -50,7 +53,7 @@ $: latest = entries.at(-1);
 
  <div class="w-[50%] h-[90%] ">
 
-  <div class="w-full h-[20%] bg-green-200"><ScoreControl/> </div>
+  <div class="w-full h-[20%] bg-green-700"><ScoreControl selected_map ={update_sel_map}/> </div>
   <div class="flex  w-full h-[80%]">
     <div class="flex h-full w-full object-contain bg-blue-200">
     {#if $heros.length == 0}

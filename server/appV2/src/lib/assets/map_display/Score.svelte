@@ -2,6 +2,14 @@
     //@ts-nocheck
     export let blue_score;
     export let red_score;
+    export let mode = "lowered";
+
+    let pos;
+if(mode == "lowered"){
+pos ="top-2/3";
+} else{
+    pos="";
+};
 
     $: red = Number(red_score);
     $: blue = Number(blue_score);
@@ -14,7 +22,7 @@
     
     </script>
 
-    <div class="relative h-[100px] flex items-center justify-center w-full top-2/3">
+    <div class='relative h-[100px] flex items-center justify-center w-full {pos}'>
         <div class=" flex items-center justify-center rounded-lg"><!--bg-[#000000aa] pr-2 pt-2-->
             <span class="ml-2 drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] font-[teko] text-7xl text-white items-center justify-center filter {winner === "red" ? "brightness-50" : ""}">{blue}</span>
             <span class="ml-2 drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] font-[teko] text-7xl text-white items-center justify-center">:</span>
