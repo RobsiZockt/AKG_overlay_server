@@ -1,6 +1,7 @@
 <script>
-
+//@ts-nocheck
   import ImgPicker from "$lib/assets/cast/ImgPicker.svelte";
+  import ScoreControl from "../ScoreControl.svelte";
   import { onMount } from "svelte";
   import { maps } from "$lib/stores/maps";
   import { heros } from "$lib/stores/heros";
@@ -42,20 +43,28 @@ $: latest = entries.at(-1);
 {#if $maps.length == 0}
   <p>Loading…</p>
 {:else if $maps.length != 0}
-<div class="h-full w-[25%] overflow-y-auto">
+<div class="flex h-[90%] w-[25%] object-contain">
  <ImgPicker items={$maps} selectedItem={latest} target={"map"} mode={"mappick"}/>
 </div>
  {/if}
 
  <div class="w-[50%] h-[90%] ">
 
-  <div class="w-full h-[20%] bg-green-200"></div>
-  <div class="flex w-full h-[80%]">
-    <div class="w-[50%] bg-blue-200">
+  <div class="w-full h-[20%] bg-green-200"><ScoreControl/> </div>
+  <div class="flex  w-full h-[80%]">
+    <div class="flex h-full w-full object-contain bg-blue-200">
+    {#if $heros.length == 0}
+  <p>Loading…</p>
+{:else if $heros.length != 0}
         <ImgPicker items={$heros} selectedItem={latest} target={"ban"} mode={"ban"} team={blue_team} title={blue_name}/>
+        {/if}
     </div>
-    <div class="w-[50%] bg-red-700">
+    <div class="flex h-full w-full object-contain bg-red-700">
+    {#if $heros.length == 0}
+  <p>Loading…</p>
+{:else if $heros.length != 0}
        <ImgPicker items={$heros} selectedItem={latest} target={"ban"} mode={"ban"} team={red_team} title={red_name}/>
+       {/if}
     </div>
   </div>
 </div>
