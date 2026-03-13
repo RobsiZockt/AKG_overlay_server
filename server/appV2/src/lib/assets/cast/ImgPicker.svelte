@@ -1,5 +1,5 @@
 <script>
-
+//@ts-nocheck
 import Fuse from "fuse.js"
 
   export let items = [];           // [{ id, name, image }]
@@ -13,6 +13,8 @@ import Fuse from "fuse.js"
   let query = "";
   let selectedId = null;
   let payload =  {};
+
+  $: minSize = mode === "ban" ? "80px" : "170px";
 
   //mark current selected maps
   $: console.log(selectedItem)
@@ -100,7 +102,7 @@ $: if (items?.length) {
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(var(--min-col-size), 5fr));
     gap: 1rem;
   }
 
@@ -115,19 +117,6 @@ $: if (items?.length) {
     overflow: hidden;
   }
 
-  .card.selected {
-    border-color: #4f46e5;
-  }
-
-  /* =======================
-     ANIMATION TRIGGER
-     ======================= */
-  .animate {
-    animation-name: shutter-in-left;
-    animation-duration: 1s;
-    animation-timing-function: linear;
-    animation-fill-mode: forwards;
-  }
 
   
 
@@ -143,7 +132,7 @@ $: if (items?.length) {
 </style>
 
 
-
+<div class="flex flex-col w-full h-full">
 <input
   class="search"
   placeholder="Search..."
@@ -153,15 +142,18 @@ $: if (items?.length) {
 <!-- =======================
      GRID
      ======================= -->
-<div class="grid">
-  {#each filteredItems as item, index}
-    <button
-      type="button"
-      onclick={() => selectItem(item)}
+  <div class="flex-1 overflow-y-scroll">
+    <div class="grid" style={`--min-col-size:${minSize}`}>
+      {#each filteredItems as item, index}
+        <button
+          type="button"
+          onclick={() => selectItem(item)}
      
-      class="card block w-full text-left cursor-pointer bg-transparent border-0 p-1 m-0 focus:outline-none">
-      <img src={item.path} alt={item.name} class="{item.id === selectedId ? 'ring-4 ring-blue-500' : ''} w-full h-auto object-cover rounded shadow "/>
-      <div class="text-xl p-1 text-center text-white">{item.name}</div>
-    </button>
-  {/each}
+          class="card block w-full text-left cursor-pointer bg-transparent border-0 p-1 m-0 focus:outline-none">
+          <img src={item.path} alt={item.name} class="{item.id === selectedId ? 'ring-4 ring-blue-500' : ''} w-full h-auto object-cover rounded shadow "/>
+          <div class="text-xl p-1 text-center text-white">{item.name}</div>
+        </button>
+      {/each}
+    </div>
+  </div>
 </div>
