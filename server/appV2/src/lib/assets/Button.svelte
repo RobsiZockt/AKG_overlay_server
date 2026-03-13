@@ -32,9 +32,5 @@
   disabled={loading}
   class={`px-4 py-2 text-white font-medium ${color} rounded-lg shadow hover:opacity-90 active:scale-95 transition`}
 >
-  {#if loading}
-    Loading...
-  {:else}
-    {text}
-  {/if}
+  {text}
 </button>
