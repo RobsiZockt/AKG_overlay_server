@@ -300,6 +300,51 @@ app.put(
   }
 );
 
+// POST: add or sustract 1 from the given team score on a given map (legacy: put played_maps:/id)
+app.post("/api/played_maps/:id/:team/:action", [],async(req,res)=>{
+  try{
+    const entryKey = req.params.id;
+    const op = req.params.action;
+    const team = req.params.team;
+
+    if (!parseInt(entryKey))
+      return res.status(403).json({ error: "recived id is NaN" });
+
+    if(op == "add"){
+      if(team == "blue") {
+        let tmp = parseInt(playedMapsCache[entryKey].score_blue) + 1;
+        playedMapsCache[entryKey].score_blue = tmp.toString(10);
+      } else if (team == "red"){
+           let tmp = parseInt(playedMapsCache[entryKey].score_red) + 1;
+        playedMapsCache[entryKey].score_red = tmp.toString(10);
+      }
+    }
+        if(op == "sub"){
+      if(team == "blue") {
+        let tmp = parseInt(playedMapsCache[entryKey].score_blue) - 1;
+         if(tmp < 0) tmp = 0;
+        playedMapsCache[entryKey].score_blue = tmp.toString(10);
+      } else if (team == "red"){
+        let tmp = parseInt(playedMapsCache[entryKey].score_red) - 1;
+        if(tmp < 0) tmp = 0;
+        playedMapsCache[entryKey].score_red = tmp.toString(10);
+      }
+    }
+
+    await fs.writeFile(
+      playedmaps,
+      JSON.stringify(playedMapsCache, null, 2),
+      "utf8"
+    );
+
+    res.status(201).json({status:"ok"});
+  } 
+  catch(err){
+      console.error(err);
+      res.status(500).json({ error: "Operation Failed" });
+  };
+});
+
 // GET: maps.json asynchronously
 app.get("/api/maps", async (req, res) => {
   try {
