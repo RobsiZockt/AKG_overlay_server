@@ -35,9 +35,9 @@ $: latest = entries.at(-1);
   <Background Map_url={item.image} />
 
   <!-- z-1 -->
-  <ForegroundBlock position="left" Team_logo={$matchupData.blue_logo} Team_kurz="HSKS"/>
+  <ForegroundBlock position="left" Team_logo={$matchupData.blue_logo} Team_kurz={$matchupData.blue_short}/>
   <!--MISSING CURRENT SCORE-->
-  <ForegroundBlock position="right" Team_logo={$matchupData.red_logo} Team_kurz="THMK" />
+  <ForegroundBlock position="right" Team_logo={$matchupData.red_logo} Team_kurz={$matchupData.red_short}/>
 
   <!-- z-2 -->
   <FooterBar Map_name={item.name} Map_type={item.type}/>
