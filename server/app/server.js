@@ -180,7 +180,33 @@ app.post("/api/played_maps/new", async (req, res) => {
       "utf8"
     );
 
-    res.status(201).json({ status: "ok", latest: playedMapsCache[entryKey] });
+ //calculates the new score of the matchup
+    let blue = 0;let red = 0;
+    for (key in playedMapsCache) {
+
+      let s1 = parseInt(playedMapsCache[key].score_blue);
+      let s2 = parseInt(playedMapsCache[key].score_red);
+
+      if (s1 == s2) {
+        console.log("Map result: Draw, skippin calculation");
+      }
+      if (s1 > s2) {
+        blue++;
+      }
+      if (s1 < s2) {
+        red++;
+      }
+    }
+    let update = { blue_score: blue, red_score: red };
+
+
+    const data = await fs.readFile(matchup, "utf8");
+    const json = JSON.parse(data);
+    const updated = { ...json, ...update };
+
+    await fs.writeFile(matchup, JSON.stringify(updated, null, 2), "utf8");
+
+    res.status(201).json({ status: "ok", latest: playedMapsCache[entryKey] + updated });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Could not update played_maps.json" });
