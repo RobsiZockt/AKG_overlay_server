@@ -30,7 +30,7 @@
 <button
   on:click={handleClick}
   disabled={loading}
-  class={`px-4 py-2 text-white font-medium ${color} rounded-lg shadow hover:opacity-90 active:scale-95 transition`}
+  class={`px-4 py-1 text-white font-medium ${color} rounded-lg shadow hover:opacity-90 active:scale-95 transition`}
 >
   {text}
 </button>
