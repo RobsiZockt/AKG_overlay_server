@@ -70,7 +70,7 @@ $effect(() => {
 {#if entries?.length == 0}
   <p>Loading…</p>
 {:else if entries?.length != 0}
-<div class="flex w-full h-full">
+<div class="flex w-full h-full pl-1">
 	<div class="flex flex-col w-[33%] items-start justify-end h-full">
 		<button onclick={()=>handleClick("negativ")} title="MINUS" class={`px-4 py-2 text-white font-medium rounded-lg hover:opacity-90 active:scale-95 transition`}>
 			<img src={arrow_left} alt="" class="w-[70px] object-square"/>
@@ -94,7 +94,7 @@ $effect(() => {
   				<div class="z-0 pb-9">
     				<Score mode={""} blue_score={entries?.[curr_map-1]?.score_blue} red_score={entries?.[curr_map-1]?.score_red}/>
   				</div>
-  				<div class="absolute flex justify-end z-20">
+  				<div class="absolute flex justify-end pl-2 z-20">
     				<button onclick={()=>handleClick("swap")} title="swap" class="rounded-lg hover:opacity-90 active:scale-95 transition">
       				<img src={switch_arrow} alt="" class="w-[50px] aspect-square"/>
     				</button>
