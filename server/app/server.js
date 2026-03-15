@@ -1,11 +1,11 @@
 const { error } = require("console");
 const e = require("express");
 const express = require("express");
-const { readFile, writeFile, chownSync, lstatSync } = require("fs");
+const { readFileSync, writeFile, chownSync, lstatSync, copyFile } = require("fs");
 const fs = require("fs").promises;
 const path = require("path");
 const { json } = require("stream/consumers");
-const { body, validationResult } = require("express-validator");
+const { body, validationResult, param } = require("express-validator");
 const app = express();
 const PORT = 4000;
 const cors = require("cors");
@@ -17,6 +17,7 @@ const heros = path.join(__dirname, "api", "heros.json");
 const players = path.join(__dirname, "api", "players.json");
 const rot_text = path.join(__dirname,"api", "rot_text.json");
 const sm_report = path.join(__dirname,"api","reports", "sm_report.json");
+const team_dir = path.join(__dirname, "api", "teams");
 
 
 let map_data;
@@ -613,6 +614,130 @@ app.get("/api/reports/sm_report",[],async (req,res)=>{
   res.status(500).json({error: "Could not read sm_report.json"})
 }
 })
+
+
+//START TEAM API
+/* 
+* Returns all json files (Teams) inside of team_dir
+* strips the .json file ending
+*/
+app.get("/teams",[],async (req,res)=>{
+  try{
+    const files = await fs.readdir(team_dir);
+    const data = files.filter(f=>f.endsWith(".json")).map(f=> path.parse(f).name);
+
+    res.json(data);
+  } catch(error){
+      res.status(500).json({error: "Something went terrible wrong, check if folder exists."});
+  }
+})
+
+/**
+* Tries to create a New team file
+* will error if the file allready exists (which should not be possible / safeguard only)
+*/
+app.post("/teams/new",[],async(req,res)=>{
+  try{
+     const files = await fs.readdir(team_dir);
+     const id = parseInt( await JSON.parse(await fs.readFile(path.join(team_dir, files.at(-1)))).id) + 1;
+     const name = id + "_NewTeam.json";
+
+
+
+    try{
+      await fs.access( path.join(team_dir, name), fs.constants.F_OK, (err)=>{throw err});
+    } catch (err){
+      if(err.code!== "ENOENT"){ throw err}
+
+    }
+    let data = await JSON.parse(await fs.readFile(path.join(team_dir, "0_PREFAB.json")));
+    data.id = id;
+    
+    await fs.writeFile(path.join(team_dir, name), JSON.stringify(data, null, 2),"utf8");
+
+
+    
+
+     res.status(201).json({status: "ok"});
+    
+  } catch(err){
+    res.status(500).json({error: `could not create team`, reason:  err });
+  }
+})
+
+/**
+ * Replaces the given team data, does check for any not allowed params
+ * does not edit 0_PREFAB
+ */
+app.put("/team/:id",[
+
+param("id").isInt({min:1}),
+
+body().custom(items=>{
+  const allowedFiles = ["id", "name", "name_short", "logo", "players"];
+    const invalid = Object.keys(items).filter(k=>!allowedFiles.includes(k));
+    if(invalid.length) throw new Error(`Unexpected Fields ${invalid.join(", ")}`);
+  return true;
+}),
+
+body("id").exists().isInt({min:1}),
+body("name").exists().isString(),
+body("name_short").exists().isString(),
+body("logo").exists().isURL(),
+body("players").isArray({min:5, max: 10}).withMessage("Amount of Players may only be between 5 and 10"),
+body("players.*.id").exists().isInt({min:1}),
+body("players.*.name").exists().isString(),
+body("players.*.main").exists().isString(),
+body("players.*.role").exists().isString(),
+body("players.*.extra").exists().isString(),
+
+body("players").custom(items=>{
+  const allowedFiles = ["id", "name", "main", "role", "extra"];
+  for(const item of items){
+    const invalid = Object.keys(item).filter(k=>!allowedFiles.includes(k));
+    if(invalid.length) throw new Error(`Unexpected Fields ${invalid.join(", ")}`);
+  }
+  return true;
+})
+
+],async(req,res)=>{
+//error check
+  const errors = validationResult(req);
+  if(!errors.isEmpty()){
+    return res.status(400).json(errors.array());
+  }
+
+  async function fileExists(path) {
+    try {
+      await fs.access(path.join(team_dir, path));
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  try{
+    const id = parseInt(req.params.id);
+    const rec_data = req.body;
+    const files = await fs.readdir(team_dir);
+    const filepath = path.join(team_dir, files[id]);
+
+    if(fileExists(filepath)){
+      let team_cache = await JSON.parse( await fs.readFile(filepath, "utf8"));
+      console.log("a", req.body);
+      
+      if(team_cache.id != rec_data.id) throw {code: 409, message: "recived tampered file"};
+      await fs.writeFile(filepath, JSON.stringify(rec_data, null, 2), "utf8");
+
+    } 
+
+    res.status(200).json({status: "ok"});
+  }catch (err){
+    res.status(err.code || 500).json({error: err.message || "Internal Server Error: Something went wrong"});
+  }
+})
+
+//END TEAM API
 
 
 
