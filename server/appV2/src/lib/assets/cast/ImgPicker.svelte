@@ -19,6 +19,7 @@ import Fuse from "fuse.js"
   //mark current selected maps
   $: console.log(selectedItem)
   $: if (mode=="mappick"){
+    if(selectedItem.name == "") selectedId = null;
     if (selectedItem.name != ""){
     for(let i=0; i<items.length;i++){
       if(items[i].name == selectedItem.name) {selectedId=items[i].id; break;}
@@ -26,6 +27,7 @@ import Fuse from "fuse.js"
   }
 } else if(mode=="ban"){
   if(team== "1"){
+  if(selectedItem.ban_blue_name == "") selectedId = null;
   if (selectedItem.ban_blue_name != ""){
     for(let i=0; i<items.length;i++){
       if(items[i].name == selectedItem.ban_blue_name) {selectedId=items[i].id; break;}
@@ -33,6 +35,7 @@ import Fuse from "fuse.js"
   }
 }
   else if(team== "2"){
+  if(selectedItem.ban_red_name == "") selectedId = null;
   if (selectedItem.ban_red_name != ""){
     for(let i=0; i<items.length;i++){
       if(items[i].name == selectedItem.ban_red_name) {selectedId=items[i].id; break;}

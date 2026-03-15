@@ -27,6 +27,7 @@ $effect(() => {
 		 console.log("effect run", entries.length);
     latest = entries?.length;
     curr_map = entries?.length;
+	selected_map(curr_map);
   }
 });
 
@@ -34,31 +35,32 @@ $effect(() => {
 		if(tag=="positiv") curr_map++;
 		if(tag=="negativ") curr_map>1? curr_map-- : curr_map=1;
 		if(tag=="new") {
-			 try {
-      	const res = await fetch("/api/api/played_maps/new", {
-        	method: "POST",
-        	headers: {
-          	"Content-Type": "application/json"
-        	}
-      	});
-      	const data = await res.json();
-    	} catch (err) {
-      	console.error("Request failed:", err);
-  		}
+			try {
+      			const res = await fetch("/api/api/played_maps/new", {
+        			method: "POST",
+        			headers: {
+          			"Content-Type": "application/json"
+        			}
+      			});
+      			const data = await res.json();
+    		} catch (err) {
+      		console.error("Request failed:", err);
+  			}
 		}
 		if(tag=="swap"){
-			 try {
-    const res = await fetch(`/api/api/matchup?op=swap`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-      	const data = await res.json();
-    	} catch (err) {
-      	console.error("Request failed:", err);
-  		}
+			try {
+    			const res = await fetch(`/api/api/matchup?op=swap`, {
+      				method: "PUT",
+      				headers: {
+        				"Content-Type": "application/json",
+      				},
+    			});
+      			const data = await res.json();
+    		} catch (err) {
+      		console.error("Request failed:", err);
+  			}
 		}
+
 		selected_map(curr_map-1);
 		console.log(curr_map);
 
