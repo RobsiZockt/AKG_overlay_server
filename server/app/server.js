@@ -624,6 +624,7 @@ app.get("/api/reports/sm_report",[],async (req,res)=>{
 app.get("/teams",[],async (req,res)=>{
   try{
     const files = await fs.readdir(team_dir);
+    files.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
     const data = files.filter(f=>f.endsWith(".json")).map(f=> path.parse(f).name);
 
     res.json(data);
@@ -636,12 +637,12 @@ app.get("/teams",[],async (req,res)=>{
 * Tries to create a New team file
 * will error if the file allready exists (which should not be possible / safeguard only)
 */
-app.post("/teams/new",[],async(req,res)=>{
+app.post("/team/new",[],async(req,res)=>{
   try{
      const files = await fs.readdir(team_dir);
+     files.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
      const id = parseInt( await JSON.parse(await fs.readFile(path.join(team_dir, files.at(-1)))).id) + 1;
      const name = id + "_NewTeam.json";
-
 
 
     try{
@@ -720,6 +721,7 @@ body("players").custom(items=>{
     const id = parseInt(req.params.id);
     const rec_data = req.body;
     const files = await fs.readdir(team_dir);
+    files.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
     const filepath = path.join(team_dir, files[id]);
 
     if(fileExists(filepath)){
@@ -730,10 +732,42 @@ body("players").custom(items=>{
       await fs.writeFile(filepath, JSON.stringify(rec_data, null, 2), "utf8");
 
     } 
+    try{
+      let team_cache = await JSON.parse( await fs.readFile(filepath, "utf8"));
+      let name_cach = `${req.params.id}_${team_cache.name_short}.json`;
+      await fs.rename(filepath, path.join(team_dir, name_cach));
+    }catch{}
 
     res.status(200).json({status: "ok"});
   }catch (err){
     res.status(err.code || 500).json({error: err.message || "Internal Server Error: Something went wrong"});
+  }
+})
+
+app.get("/team/:id",[
+  param("id").isInt({min: 1})
+],async(req,res)=>{
+  const errors = validationResult(req);
+  if(!errors.isEmpty()){
+    return res.status(400).json(errors.array());
+  }
+async function fileExists(path) {
+    try {
+      await fs.access(path.join(team_dir, path));
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  try{
+    const id = parseInt(req.params.id);
+    const files = await fs.readdir(team_dir);
+    const filepath = path.join(team_dir, files[id]);
+
+if(fileExists(filepath))res.status(200).json(await fs.readFile(filepath,"utf8"));
+  }catch (err){
+    res.status(500).json({error: err});
   }
 })
 
