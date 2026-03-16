@@ -1,6 +1,6 @@
 import { writable } from "svelte/store";
 
-export function createFetchStore(url) {
+export function createFetchStore(url, raw = false) {
   const data = writable([]);
   const loading = writable(false);
   const error = writable(null);
@@ -15,13 +15,15 @@ export function createFetchStore(url) {
 
       const json = await res.json();
 
-      
+      if(raw){data.set(json)}
+      else{
       const array = Object.entries(json).map(([id, value]) => ({
         id,
         ...value
       }));
 
       data.set(array);
+    }
     } catch (e) {
       error.set(e);
     } finally {
@@ -31,6 +33,7 @@ export function createFetchStore(url) {
 
   // alias
   const refresh = load;
+
 
   return {
     subscribe: data.subscribe,
