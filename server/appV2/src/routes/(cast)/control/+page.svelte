@@ -4,6 +4,7 @@
     import Navbar from "$lib/assets/cast/navbar.svelte";
 
     import LiveControl from "$lib/assets/cast/sub_pages/LiveControl.svelte";
+    import TeamSetup from "$lib/assets/cast/sub_pages/TeamSetup.svelte";
     
   let current_tag = "Live";
   let updateData = (newData) => {
@@ -31,9 +32,9 @@
 <LiveControl/>
 </div>
 {:else if current_tag === "Setup"}
-  <p>Products content</p>
+  <p>Site under Construction UwU</p>
 {:else if current_tag ==="Teams"}
-  <p>Contact content</p>
+  <TeamSetup/>
 {/if}
 
 </div>
