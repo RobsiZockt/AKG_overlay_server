@@ -53,7 +53,9 @@ let update_sel_map = (newData) => {
 
  <div class="w-[50%] h-[90%] ">
 
-  <div class="w-full h-[20%] bg-green-700"><ScoreControl selected_map ={update_sel_map}/> </div>
+  <div class="w-full h-[20%] bg-green-700">
+    <ScoreControl selected_map ={update_sel_map}/> 
+  </div>
   <div class="flex  w-full h-[80%]">
     <div class="flex h-full w-full object-contain bg-blue-200">
     {#if $heros.length == 0}
