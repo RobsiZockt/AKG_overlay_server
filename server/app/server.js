@@ -688,12 +688,12 @@ body("logo").exists().isURL(),
 body("players").isArray({min:5, max: 10}).withMessage("Amount of Players may only be between 5 and 10"),
 body("players.*.id").exists().isInt({min:1}),
 body("players.*.name").exists().isString(),
-body("players.*.main").exists().isString(),
+body("players.*.main_id").exists().isInt({min:0}),
 body("players.*.role").exists().isString(),
 body("players.*.extra").exists().isString(),
 
 body("players").custom(items=>{
-  const allowedFiles = ["id", "name", "main", "role", "extra"];
+  const allowedFiles = ["id", "name", "main_id", "role", "extra"];
   for(const item of items){
     const invalid = Object.keys(item).filter(k=>!allowedFiles.includes(k));
     if(invalid.length) throw new Error(`Unexpected Fields ${invalid.join(", ")}`);
