@@ -1,8 +1,13 @@
 <script>
+  import { heros } from "$lib/stores/heros";
+  import { onMount } from "svelte";
+  import DropdownMenu from "../DropdownMenu.svelte";
     import Textfield from "./Textfield.svelte";
     export let id;
     export let filename;
     let team = null;
+
+    onMount(()=>heros.load());
 
     async function fetchTeam(id) {
 	    try {
@@ -32,10 +37,19 @@ $: if(team !=null && team.id != id) fetchTeam(id);
             }
         }
         if(op=="new"){
-            let tmpdat={"id": team.players.at(-1).id + 1,"name": "","main": "","role": "","extra": ""}
-           team.players.push(tmpdat);
-           team.players.at(-1).name = "";
+            let tmpdat={"id": team.players.at(-1).id + 1,"name": "","main_id": "","role": "","extra": ""}
+           team.players =[...team.players, tmpdat];
         }
+    }
+    async function deleteEntry(id) {
+        let tmpdat= team.players;
+        tmpdat.splice(id-1,1);
+        let p_id = 1;
+        for(const player of tmpdat){
+            player.id = p_id;
+            p_id++;
+        }
+        team.players = [...tmpdat];
     }
 
 
@@ -63,6 +77,10 @@ $: if(team !=null && team.id != id) fetchTeam(id);
         <Textfield placeholdertxt="Spieler Name" width={400} height={50} bind:value={player.name}></Textfield>
         <Textfield placeholdertxt="Spieler extra info" width={400} height={50} bind:value={player.extra}></Textfield>
         <Textfield placeholdertxt="Spieler Roles" width={400} height={50} bind:value={player.role}></Textfield>
+        <DropdownMenu list={$heros} nulltext="Select a Hero" bind:value={player.main_id} width={100} height={50}></DropdownMenu>
+        {#if player.id > 5}
+        <button class="w-[40px] h-[40px] text-white bg-[#35a653] rounded-lg " onclick={()=>deleteEntry(player.id)}> Delete </button>
+        {/if}
     </div>
 
     </div>
