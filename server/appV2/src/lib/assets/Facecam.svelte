@@ -1,15 +1,15 @@
 <script>
-    export let name;
-    export let social;
+    export let name ="";
+    export let social="";
     export let no_vid=false;
-    export let img;
+    export let img="";
 
     import Background from "./Background.svelte";
     import SplitRevealBox from "./animations/SplitRevealBox.svelte";
 
     let open = false;
 
-  setTimeout(() => open = true, 400);
+ $:if(name != "") setTimeout(() => open = true, 400);
 </script>
 
 <SplitRevealBox {open} width={1213} height={720} color="#348333">
@@ -31,10 +31,12 @@
     </div>
 
     <!-- Cam Footer -->
+     {#if name != ""}
     <div class="h-[12%] w-full text-center bg-[#000000ee] flex flex-col justify-center">
       <p class="text-5xl text-white tracking-wide">{name}</p>
       <p class="text-2xl text-white tracking-wide">{social}</p>
     </div>
+    {/if}
 
   </div>
 </div>

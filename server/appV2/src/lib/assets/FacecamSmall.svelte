@@ -1,6 +1,6 @@
 <script>
-    export let name;
-    export let social;
+    export let name = "";
+    export let social= "";
     export let no_vid=false;
     export let img;
 
@@ -9,7 +9,7 @@
 
     let open = false;
 
-  setTimeout(() => open = true, 400);
+  $: if(name!="") setTimeout(() => open = true, 400);
 </script>
 <SplitRevealBox {open} width={1031} height={612} color="#348333">
 <div class="h-[612px] w-[1031px] flex justify-center">
@@ -30,11 +30,12 @@
     </div>
 
     <!-- Cam Footer -->
+     {#if name != ""}
     <div class="h-[12%] w-full text-center bg-[#000000ee] flex flex-col justify-center">
       <p class="text-4xl text-white tracking-wide">{name}</p>
       <p class="text-xl text-white tracking-wide">{social}</p>
     </div>
-
+      {/if}
   </div>
 </div>
 </SplitRevealBox>
