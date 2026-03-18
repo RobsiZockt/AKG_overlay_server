@@ -7,7 +7,11 @@
 
   {#each list as item}
     <option value={item.id}>
-      {item.name}
+    {#if typeof(item)=="string"}
+        {item}
+    {:else}
+        {item.name}
+    {/if}
     </option>
   {/each}
 </select>
