@@ -1,18 +1,30 @@
 <script>
- import Facecam from "$lib/assets/Facecam.svelte";
   import FacecamSmall from "$lib/assets/FacecamSmall.svelte";
+   import { casters } from "$lib/stores/casters";
+  import { onMount } from "svelte";
+ onMount(()=>casters.load());
+
+  let cast1={name:"",social:"",social_ico: null};
+ let cast2={name:"",social:"",social_ico: null};
+ let cast3={name:"",social:"",social_ico: null};
+
+ $: if($casters.length){
+    cast1 = $casters[0];
+    cast2 = $casters[1];
+    cast3 = $casters[2];
+ }
 </script>
 
 <div class="h-[100vh] w-full px-10 flex-col items-center justify-center bg-transparent">
   <div class="h-[5%]"></div>
   <div class="flex items-center justify-center">
-<FacecamSmall name="RobsiZockt" social="robsizockt" img="" no_vid={false}></FacecamSmall> 
+<FacecamSmall name={cast1.name} social={cast1.social} img="" no_vid={false}></FacecamSmall> 
 <!--SPACER-->
 <div class="w-[7%] h-full"></div>
-<FacecamSmall name="AHAB" social="ahabini" img="" no_vid={false}></FacecamSmall>
+<FacecamSmall name={cast2.name} social={cast2.social} img="" no_vid={false}></FacecamSmall>
 </div>
 <div class="h-[5%]"></div>
 <div class="w-full flex items-center justify-center">
-<FacecamSmall name="S4ltyWulf" social="s4altywulf" img="" no_vid={false}></FacecamSmall>
+<FacecamSmall name={cast3.name} social={cast3.social} img="" no_vid={false}></FacecamSmall>
 </div>
 </div>

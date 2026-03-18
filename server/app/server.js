@@ -18,6 +18,8 @@ const players = path.join(__dirname, "api", "players.json");
 const rot_text = path.join(__dirname,"api", "rot_text.json");
 const sm_report = path.join(__dirname,"api","reports", "sm_report.json");
 const team_dir = path.join(__dirname, "api", "teams");
+const caster = path.join(__dirname,"api","caster.json");
+const stream_conf = path.join(__dirname,"api","stream_config.json");
 
 
 let map_data;
@@ -625,8 +627,8 @@ app.get("/teams",[],async (req,res)=>{
   try{
     const files = await fs.readdir(team_dir);
     files.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
-    const data = files.filter(f=>f.endsWith(".json")).map(f=> path.parse(f).name);
-
+    let data = files.filter(f=>f.endsWith(".json")).map(f=> path.parse(f).name);
+    data.splice(0,1);
     res.json(data);
   } catch(error){
       res.status(500).json({error: "Something went terrible wrong, check if folder exists."});
@@ -636,6 +638,7 @@ app.get("/teams",[],async (req,res)=>{
 /**
 * Tries to create a New team file
 * will error if the file allready exists (which should not be possible / safeguard only)
+* wont return 0_Prefab
 */
 app.post("/team/new",[],async(req,res)=>{
   try{
@@ -744,6 +747,9 @@ body("players").custom(items=>{
   }
 })
 
+/**
+ * returns the actuall data of a requested team as long as it exists
+ */
 app.get("/team/:id",[
   param("id").isInt({min: 1})
 ],async(req,res)=>{
@@ -773,6 +779,39 @@ if(fileExists(filepath))res.status(200).json(await fs.readFile(filepath,"utf8"))
 
 //END TEAM API
 
+//START CASTER API
+app.get("/casters",[],async(req,res)=>{
+
+    try {
+    const content = await fs.readFile(caster, "utf8");
+    res.json(JSON.parse(content));
+  } catch (err) {
+    res.status(500).json({ error: "Could not read caster.json" });
+  }
+
+})
+
+app.put("/caster/:id",[
+  param("id").isInt({min:1, max:3}),
+  body("name").exists().isString(),
+  body("social").exists().isString(),
+  body("social_ico").exists().isString()
+],async(res,req)=>{
+  const errors = validationResult(req);
+  if(!errors.isEmpty()){
+    return res.status(400).json(errors.array());
+  }
+
+  try{
+    let data = await fs.readFile(caster, "utf8");
+    data[res.params.id] = res.body;
+    await fs.writeFile(caster, data);
+  }catch (err){
+    res.status(500).json({error: err});
+  }
+})
+
+//END CASTER API
 
 
 
