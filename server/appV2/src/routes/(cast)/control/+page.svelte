@@ -5,6 +5,7 @@
 
     import LiveControl from "$lib/assets/cast/sub_pages/LiveControl.svelte";
     import TeamSetup from "$lib/assets/cast/sub_pages/TeamSetup.svelte";
+    import Setup from "$lib/assets/cast/sub_pages/Setup.svelte";
     
   let current_tag = "Live";
   let updateData = (newData) => {
@@ -32,7 +33,7 @@
 <LiveControl/>
 </div>
 {:else if current_tag === "Setup"}
-  <p>Site under Construction UwU</p>
+  <Setup/>
 {:else if current_tag ==="Teams"}
   <TeamSetup/>
 {/if}
