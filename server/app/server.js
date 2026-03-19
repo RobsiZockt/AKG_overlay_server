@@ -793,19 +793,23 @@ app.get("/casters",[],async(req,res)=>{
 
 app.put("/caster/:id",[
   param("id").isInt({min:1, max:3}),
+  body("id").exists().isInt({min:1}),
   body("name").exists().isString(),
   body("social").exists().isString(),
   body("social_ico").exists().isString()
-],async(res,req)=>{
+],async(req,res)=>{
   const errors = validationResult(req);
   if(!errors.isEmpty()){
     return res.status(400).json(errors.array());
   }
-
   try{
-    let data = await fs.readFile(caster, "utf8");
-    data[res.params.id] = res.body;
-    await fs.writeFile(caster, data);
+    const data = await fs.readFile(caster, "utf8");
+    let newdata = JSON.parse(data);
+    console.log(req.body);
+    newdata[req.params.id] = req.body;
+    console.log(newdata);
+    await fs.writeFile(caster, JSON.stringify(newdata, null, 2), "utf8");
+    res.status(201);
   }catch (err){
     res.status(500).json({error: err});
   }
