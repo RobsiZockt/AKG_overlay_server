@@ -4,4 +4,4 @@
 
 </script>
 
-<input class="flex p-3 text-base" style="width: {width}px; height: {height}px;" placeholder={placeholdertxt.toString()} bind:value/>
+<input class="flex shrink-0 p-3 text-base" style="width: {width}px; height: {height}px;" placeholder={placeholdertxt.toString()} bind:value/>
