@@ -2,7 +2,7 @@
     import DropdownMenu from "$lib/assets/DropdownMenu.svelte";
   import { casters } from "$lib/stores/casters";
     import { teamdata } from "$lib/stores/TeamData";
-  import { onMount } from "svelte";
+  import { onMount, settled } from "svelte";
   import Textfield from "../Textfield.svelte";
   import TimeField from "../TimeField.svelte";
   import BoxText from "$lib/assets/wrapper/BoxText.svelte";
@@ -45,9 +45,8 @@
 			}
 		}
 	$effect(()=>{ casters_local = $casters;});
-	$effect(()=>{setTeam("first_team",first_team);
-
-	})
+	$effect(()=>{setTeam("first_team",first_team)});
+  $effect(()=>{setTeam("second_team",second_team)});
 </script>
 
 <div class="flex flex-col w-full h-full items-center">

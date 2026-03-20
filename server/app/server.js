@@ -847,9 +847,12 @@ const id = parseInt(req.params.id);
   };
 
 
-if(target=="first_team"){
+if(target=="first_team"||target=="second_team"){
   //set streamconfig to id
   try{
+    let side;
+    if(target=="first_team") side="blue";
+    if(target=="second_team") side="red";
     let conf =  JSON.parse(await fs.readFile(stream_conf,"utf8"));
 
     conf[target] = id;
@@ -864,19 +867,22 @@ if(target=="first_team"){
     const filepath = path.join(team_dir, files[id]);
     let team;
     if(fileExists(filepath)){ team= JSON.parse(await fs.readFile(filepath,"utf8"));
-      players_data["blue"] = team["players"];
-      for(let player of players_data["blue"]){
-        console.log(player);
-        console.log(ban_data[0], "loged");
+      players_data[side] = team["players"];
+      for(let player of players_data[side]){
         const mainid = player.main_id;
         if(mainid==0) continue;
         player.main = ban_data[mainid].path;
-        console.log(player);
       }
+      if(target=="first_team"){
       matchup_data.blue = team.name;
       matchup_data.blue_logo = team.logo;
       matchup_data.blue_short = team.name_short;
-
+      }
+      else if(target=="second_team"){
+      matchup_data.red = team.name;
+      matchup_data.red_logo = team.logo;
+      matchup_data.red_short = team.name_short;
+      }
       await fs.writeFile(players, JSON.stringify(players_data,null,2),"utf8");
       await fs.writeFile(matchup, JSON.stringify(matchup_data,null,2),"utf8");
 
