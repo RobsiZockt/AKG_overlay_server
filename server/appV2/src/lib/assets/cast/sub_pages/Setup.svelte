@@ -13,6 +13,22 @@
     let first_team = $state(0);
     let second_team = $state(0);
 
+		async function setTeam(target,id) {
+      if(id==0) return;
+			try{
+					const res = await fetch(`/api/stconf/set/${target}/${id}`, {
+            method: "POST",
+						headers: { "Content-Type": "application/json"}
+        });
+				const rec = await res.json();
+				console.log(rec);
+			} catch (err){
+				console.warn(err);
+			}
+			
+			
+		}
+
 		async function saveCaster(id) {
 			try{
 				let data = casters_local[id];
@@ -29,6 +45,9 @@
 			}
 		}
 	$effect(()=>{ casters_local = $casters;});
+	$effect(()=>{setTeam("first_team",first_team);
+
+	})
 </script>
 
 <div class="flex flex-col w-full h-full items-center">

@@ -814,9 +814,85 @@ app.put("/caster/:id",[
     res.status(500).json({error: err});
   }
 })
-
 //END CASTER API
 
+//START STREAM CONFIG API
+app.post("/stconf/set/:target/:id",[
+  param("id").isInt(),
+  param("target").isString(),
+  body().custom((value, { req }) => {
+    if (req.body && Object.keys(req.body).length > 0) {
+      throw new Error('Request body is not allowed');
+    }
+    return true;
+  })
+],async(req,res)=>{
+const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+
+const target = req.params.target;
+const id = parseInt(req.params.id);
+
+
+  async function fileExists(path) {
+    try {
+      await fs.access(path.join(team_dir, path));
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+
+if(target=="first_team"){
+  //set streamconfig to id
+  try{
+    let conf =  JSON.parse(await fs.readFile(stream_conf,"utf8"));
+
+    conf[target] = id;
+
+    await fs.writeFile(stream_conf, JSON.stringify(conf,null,2), "utf8");
+
+  let players_data =  JSON.parse(await fs.readFile(players,"utf8"));
+  let matchup_data =  JSON.parse(await fs.readFile(matchup,"utf8"));
+
+    
+    const files = await fs.readdir(team_dir);
+    const filepath = path.join(team_dir, files[id]);
+    let team;
+    if(fileExists(filepath)){ team= JSON.parse(await fs.readFile(filepath,"utf8"));
+      players_data["blue"] = team["players"];
+      for(let player of players_data["blue"]){
+        console.log(player);
+        console.log(ban_data[0], "loged");
+        const mainid = player.main_id;
+        if(mainid==0) continue;
+        player.main = ban_data[mainid].path;
+        console.log(player);
+      }
+      matchup_data.blue = team.name;
+      matchup_data.blue_logo = team.logo;
+      matchup_data.blue_short = team.name_short;
+
+      await fs.writeFile(players, JSON.stringify(players_data,null,2),"utf8");
+      await fs.writeFile(matchup, JSON.stringify(matchup_data,null,2),"utf8");
+
+      return res.status(201).json({status: "ok"});
+    }
+return res.status(500).json({error: "Team could not be loaded"});
+    
+
+
+  }catch (err){
+    res.status(500).json({error: "something went terrible wrong", code: err});
+  }
+}
+})
+
+// END STREAM CONFIG API
 
 
 app.listen(PORT, '0.0.0.0', () => console.log("Server is listening on ${PORT}"));

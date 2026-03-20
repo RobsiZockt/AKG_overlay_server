@@ -9,7 +9,7 @@ onMount(()=>teamdata.load());
 $: console.log($teamdata);
 
 function handleclick(id){
-selected = id;
+selected = id-1;
 console.log(selected);
 }
 
@@ -41,6 +41,6 @@ async function newteam() {
             </button>
     </div>
     <div class="flex flex-col w-[85%] h-full">
-        <TeamEdit id={selected} filename={$teamdata[selected]}/>
+        <TeamEdit id={selected+1} filename={$teamdata[selected]}/>
     </div>
 </div>
