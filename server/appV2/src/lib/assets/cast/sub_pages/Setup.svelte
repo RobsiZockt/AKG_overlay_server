@@ -1,17 +1,42 @@
 <script>
-    import DropdownMenu from "$lib/assets/DropdownMenu.svelte";
+  import DropdownMenu from "$lib/assets/DropdownMenu.svelte";
   import { casters } from "$lib/stores/casters";
-    import { teamdata } from "$lib/stores/TeamData";
+  import { teamdata } from "$lib/stores/TeamData";
+  import { stream_config } from "$lib/stores/stream_config";
   import { onMount, settled } from "svelte";
   import Textfield from "../Textfield.svelte";
   import TimeField from "../TimeField.svelte";
   import BoxText from "$lib/assets/wrapper/BoxText.svelte";
+  import TeamEdit from "../TeamEdit.svelte";
 
 
-    onMount(()=> {teamdata.load();casters.load()});
+    onMount(()=> {teamdata.load();casters.load();stream_config.load()});
 		let casters_local=$state([]);
     let first_team = $state(0);
     let second_team = $state(0);
+    let delaytime= $state("s");
+    let starttime = $state(["",""]);
+
+    async function setSTconf(target) {
+      let data={};
+
+      if(target=="starttime"){
+        data={"starttime":`${starttime[0]}:${starttime[1]}`};
+      } else if(target=="preptime"){
+        data={"preptime":delaytime};
+      }
+      else{return;}
+      try{
+      const res = await fetch(`/api/stconf/update`, {
+            method: "PUT",
+						headers: { "Content-Type": "application/json"},
+            body: JSON.stringify(data)
+        });
+				const rec = await res.json();
+      } catch (err){
+        console.warn(err);
+      }
+    }
 
 		async function setTeam(target,id) {
       if(id==0) return;
@@ -21,12 +46,9 @@
 						headers: { "Content-Type": "application/json"}
         });
 				const rec = await res.json();
-				console.log(rec);
 			} catch (err){
 				console.warn(err);
 			}
-			
-			
 		}
 
 		async function saveCaster(id) {
@@ -46,7 +68,16 @@
 		}
 	$effect(()=>{ casters_local = $casters;});
 	$effect(()=>{setTeam("first_team",first_team)});
-  $effect(()=>{setTeam("second_team",second_team)});
+  $effect(()=>{setTeam("second_team",second_team)});;
+  $effect(()=>{ if($stream_config.starttime==null) return;
+    let tmp = "";
+  tmp =  $stream_config.starttime;
+    starttime= tmp.split(":");
+  })
+  $effect(()=>{
+    if($stream_config.preptime == null) return;
+    delaytime = $stream_config.preptime;
+  })
 </script>
 
 <div class="flex flex-col w-full h-full items-center">
@@ -73,7 +104,9 @@
 <BoxText title="Timer Setup">
   <div class="flex">
  		<p>Start Time:</p>
-    <TimeField hours="" minutes=""></TimeField>
+    <TimeField bind:hours={starttime[0]} bind:minutes={starttime[1]} onBlur={()=>setSTconf("starttime")}></TimeField>
+    <p>Prep Time</p>
+    <TimeField hours="00" bind:minutes={delaytime} onBlur={()=>setSTconf("preptime")}></TimeField>
  	</div>
 </BoxText>
 <BoxText title="Ruleset (very WIP)">

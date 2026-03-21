@@ -898,6 +898,29 @@ return res.status(500).json({error: "Team could not be loaded"});
 }
 })
 
+app.put("/stconf/update",[],async(req,res)=>{
+  try{
+  const data = req.body;
+  const stconf = JSON.parse(await fs.readFile(stream_conf,"utf8"));
+
+  let stfconf_new = {...stconf, ...data};
+  await fs.writeFile(stream_conf,JSON.stringify(stfconf_new,null,2),"utf8");
+  res.status(201).json({status:"ok"}); 
+  }catch (err){
+    res.status(500).json({error:err});
+  }
+})
+
+
+app.get("/stconf",[],async(req,res)=>{
+   try {
+    const content = await fs.readFile(stream_conf, "utf8");
+    res.json(JSON.parse(content));
+  } catch (err) {
+    res.status(500).json({ error: err });
+  }
+});
+
 // END STREAM CONFIG API
 
 
