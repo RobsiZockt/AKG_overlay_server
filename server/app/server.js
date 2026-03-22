@@ -424,7 +424,6 @@ app.post("/api/matchup", [], async (req, res) => {
 //Safe Call for calculating map score, does not require any body
 app.put("/api/matchup", [], async (req, res) => {
   const op = req.query.op;
-  console.log(op);
   try {
 
     let update = {};
@@ -455,7 +454,6 @@ app.put("/api/matchup", [], async (req, res) => {
       }
     }
     update = { blue_score: blue, red_score: red };
-    console.log(update);
   }
   else{
     update = req.body;
@@ -541,7 +539,6 @@ app.post("/api/players", [], async (req, res) => {
 
 app.put("/api/players/:team/:id", [], async (req, res) =>{
    const key = Object.keys(req.body);
-  console.log(req.body);
 try{
 const {team,id} = req.params;
 const update = req.body;
@@ -729,7 +726,6 @@ body("players").custom(items=>{
 
     if(fileExists(filepath)){
       let team_cache = await JSON.parse( await fs.readFile(filepath, "utf8"));
-      console.log("a", req.body);
       
       if(team_cache.id != rec_data.id) throw {code: 409, message: "recived tampered file"};
       await fs.writeFile(filepath, JSON.stringify(rec_data, null, 2), "utf8");
@@ -805,9 +801,7 @@ app.put("/caster/:id",[
   try{
     const data = await fs.readFile(caster, "utf8");
     let newdata = JSON.parse(data);
-    console.log(req.body);
     newdata[req.params.id] = req.body;
-    console.log(newdata);
     await fs.writeFile(caster, JSON.stringify(newdata, null, 2), "utf8");
     res.status(201);
   }catch (err){
@@ -924,5 +918,5 @@ app.get("/stconf",[],async(req,res)=>{
 // END STREAM CONFIG API
 
 
-app.listen(PORT, '0.0.0.0', () => console.log("Server is listening on ${PORT}"));
-console.log("Maps file path:", playedmaps);
+app.listen(PORT, '0.0.0.0', () => console.log(`Server is listening on ${PORT}`));
+

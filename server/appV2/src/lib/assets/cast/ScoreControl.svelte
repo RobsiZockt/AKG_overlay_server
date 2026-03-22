@@ -24,7 +24,6 @@ let entries = $derived(
 
 $effect(() => {
   if (latest !== entries?.length) {
-		 console.log("effect run", entries.length);
     latest = entries?.length;
     curr_map = entries?.length;
 	selected_map(curr_map);
@@ -62,7 +61,6 @@ $effect(() => {
 		}
 
 		selected_map(curr_map-1);
-		console.log(curr_map);
 
 	}
 </script>

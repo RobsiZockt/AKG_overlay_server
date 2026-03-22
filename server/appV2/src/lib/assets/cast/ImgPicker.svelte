@@ -17,7 +17,6 @@ import Fuse from "fuse.js"
   $: minSize = mode === "ban" ? "80px" : "170px";
 
   //mark current selected maps
-  $: console.log(selectedItem)
   $: if (mode=="mappick"){
     if(selectedItem.name == "") selectedId = null;
     if (selectedItem.name != ""){

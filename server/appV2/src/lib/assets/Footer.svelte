@@ -25,7 +25,6 @@ function rmdtxt(){
 
     const n = Math.floor(Math.random()*($rot_text.length - 1))+1;
     toptext = $rot_text[n].toUpperCase();
-    console.log(toptext);
 }
 
 const rotate = setInterval(rmdtxt,7000);

@@ -6,11 +6,9 @@ import { teamdata } from "$lib/stores/TeamData";
   let selected = 1;
 
 onMount(()=>teamdata.load());
-$: console.log($teamdata);
 
 function handleclick(id){
 selected = id-1;
-console.log(selected);
 }
 
 async function newteam() {
