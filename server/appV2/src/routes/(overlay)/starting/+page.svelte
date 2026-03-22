@@ -1,7 +1,5 @@
 <script>
-  import Countdown from "$lib/assets/Countdown.svelte";
-
-
+    import Footer from "$lib/assets/Footer.svelte";
 </script>
 
-<Countdown></Countdown>
+<Footer cd_mode={"starting"} cd_text={"STARTING IN"}></Footer>
