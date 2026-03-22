@@ -2,15 +2,24 @@
     import { stream_config } from "$lib/stores/stream_config";
     import { onMount } from "svelte";
 
+    let {mode=""} = $props();
     onMount(()=>stream_config.load());
     const target = $state(new Date());
     let finished = $state(false);
     let timer = $state([0,0,0]);
 
+
     $effect(()=>{
         if($stream_config.starttime==null) return;
-        const time = $stream_config.starttime.split(":");
-        target.setHours(parseInt(time[0]),parseInt(time[1]),0,0);
+        if(finished==true)return;
+        if(mode=="starting"){
+            const time = $stream_config.starttime.split(":");
+            target.setHours(parseInt(time[0]),parseInt(time[1]),0,0);
+        }
+        else if(mode=="pause"){
+            const time = $stream_config.pausetime;
+            target.setMinutes(target.getMinutes() + parseInt(time));
+        }
     })
 
     function update(){
@@ -31,21 +40,23 @@
 
     }
     const calc =setInterval(update,500);
+
+    const classconf="text-white text-8xl";
 </script>
 
 <div class="flex">
     {#if timer[0] !=0}
-    <p>{timer[0]}</p>
-    <p>:</p>
+    <span class={classconf}>{timer[0]}</span>
+    <span class={classconf}>:</span>
     {/if}
 
     {#if timer[1]<10}
-    <p>0</p>
+    <span class={classconf}>0</span>
     {/if}
-    <p>{timer[1]}</p>
-    <p>:</p>
+    <span class={classconf}>{timer[1]}</span>
+    <span class={classconf}>:</span>
     {#if timer[2]<10}
-    <p>0</p>
+    <span class={classconf}>0</span>
     {/if}
-    <p>{timer[2]}</p>
+    <span class={classconf}>{timer[2]}</span>
 </div>
