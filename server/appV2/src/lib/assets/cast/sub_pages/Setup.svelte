@@ -54,14 +54,12 @@
 		async function saveCaster(id) {
 			try{
 				let data = casters_local[id];
-				console.log(id, data);
 				const res = await fetch(`/api/caster/${id+1}`, {
             method: "PUT",
 						headers: { "Content-Type": "application/json"},
             body: JSON.stringify(data)
         });
 				const rec = await res.json();
-				console.log(rec);
 			} catch (err){
 				console.warn(err);
 			}

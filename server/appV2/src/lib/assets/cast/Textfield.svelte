@@ -2,9 +2,7 @@
     let { placeholdertxt = "", value = $bindable(""), width=100, height=50, onBlur=()=>{}} = $props();
 
 function test(){
-    console.log("try to trigger save flag");
     onBlur();
-    console.log("triggered");
 }
 </script>
 
