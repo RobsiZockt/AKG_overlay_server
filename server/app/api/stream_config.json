@@ -1,7 +1,8 @@
 {
   "first_team": 1,
-  "second_team": 0,
-  "starttime": null,
-  "preptime": null,
+  "second_team": 2,
+  "starttime": "18:01",
+  "preptime": "15",
+  "pausetime": "3",
   "ruleset": null
 }
