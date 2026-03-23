@@ -46,7 +46,7 @@ onDestroy(()=>clearInterval(rotate));
     <div class="w-[4px] h-full bg-black"></div>
     {/if}
     <div class={textconf}>
-        <span class="text-white text-7xl font-bold pb-1 pr-2">{toptext}</span>
+        <span class="text-white text-7xl text-nowrap font-bold pb-1 pr-2">{toptext}</span>
         <div class="w-full h-[2px] bg-black"></div>
         <InfiniteScrollText content={scrolltext} speed={60}></InfiniteScrollText>
     </div>
