@@ -20,6 +20,7 @@ const sm_report = path.join(__dirname,"api","reports", "sm_report.json");
 const team_dir = path.join(__dirname, "api", "teams");
 const caster = path.join(__dirname,"api","caster.json");
 const stream_conf = path.join(__dirname,"api","stream_config.json");
+const past_matchups = path.join(__dirname,"api","past_matchups");
 
 
 let map_data;
@@ -485,11 +486,19 @@ app.post("/api/new_matchup", [
 
 ], async (req, res) => {
   try {
-    const data = req.body;
+    const mdata = JSON.parse( await fs.readFile(matchup, "utf8"));
+    const pdata = JSON.parse(await fs.readFile(playedmaps,"utf8"));
+    const old_data = {"matchup": mdata,"playedmaps":pdata};
+    const date = new Date();
+    const sdate = date.toString();
+    let name = sdate.split(" GMT");
+    name[0] = name[0].replaceAll(" ","_").replaceAll(":","_");
+    const file = path.join(past_matchups,name[0]+".json");
+    await fs.writeFile(file,JSON.stringify(old_data, null, 2),"utf8");
+
     const update = { blue_score: 0, red_score: 0 };
-    const mdata = await fs.readFile(matchup, "utf8");
-    const json = JSON.parse(mdata);
-    const updated = { ...json, ...update };
+    
+    const updated = { ...mdata, ...update };
 
     await fs.writeFile(matchup, JSON.stringify(updated, null, 2), "utf8");
 

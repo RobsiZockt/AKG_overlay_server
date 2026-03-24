@@ -7,7 +7,6 @@
   import Textfield from "../Textfield.svelte";
   import TimeField from "../TimeField.svelte";
   import BoxText from "$lib/assets/wrapper/BoxText.svelte";
-  import TeamEdit from "../TeamEdit.svelte";
 
 
     onMount(()=> {teamdata.load();casters.load();stream_config.load()});
@@ -64,6 +63,19 @@
 				console.warn(err);
 			}
 		}
+
+async function reset() {
+  	try{
+				const res = await fetch(`/api/api/new_matchup`, {
+            method: "POST",
+						headers: { "Content-Type": "application/json"},
+        });
+				const rec = await res.json();
+			} catch (err){
+				console.warn(err);
+			}
+}
+
 	$effect(()=>{ casters_local = $casters;});
 	$effect(()=>{setTeam("first_team",first_team)});
   $effect(()=>{setTeam("second_team",second_team)});;
@@ -109,5 +121,10 @@
 </BoxText>
 <BoxText title="Ruleset (very WIP)">
 	<p>The Ruleset system will come soonTM</p>
+</BoxText>
+<BoxText title="Reset Played Maps">
+        <button class="w-full h-[50px] text-white rounded-lg bg-red-700" onclick={()=>reset()}>
+                RESET MAPS      
+            </button>
 </BoxText>
 </div>
