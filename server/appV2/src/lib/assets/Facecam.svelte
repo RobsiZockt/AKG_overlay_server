@@ -3,13 +3,19 @@
     export let social="";
     export let no_vid=false;
     export let img="";
+    export let trigger=false;
+    let open = false;
 
     import Background from "./Background.svelte";
     import SplitRevealBox from "./animations/SplitRevealBox.svelte";
 
-    let open = false;
+    
 
- $:if(name != "") setTimeout(() => open = true, 400);
+ $:if(name != ""){ 
+  if(trigger==true)
+  setTimeout(() => open = true, 400);
+ if(trigger==false) open = false;
+ }
 </script>
 
 <SplitRevealBox {open} width={1213} height={720} color="#348333">
