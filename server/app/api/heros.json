@@ -223,5 +223,30 @@
     "name": "Vendetta",
     "role": "DPS",
     "path": "/img/heros/vendetta.png"
+  },
+  "46": {
+    "name": "Anran",
+    "role": "DPS",
+    "path": "/img/heros/anran.png"
+  },
+  "47": {
+    "name": "Domina",
+    "role": "Tank",
+    "path": "/img/heros/domina.png"
+  },
+  "48": {
+    "name": "Emre",
+    "role": "DPS",
+    "path": "/img/heros/emre.png"
+  },
+  "49": {
+    "name": "Jetpack Cat",
+    "role": "Support",
+    "path": "/img/heros/jetpack_cat.png"
+  },
+  "50": {
+    "name": "Mizuki",
+    "role": "Support",
+    "path": "/img/heros/mizuki.png"
   }
 }
