@@ -3,7 +3,11 @@
   import VSHeader from "$lib/assets/VSHeader.svelte";
   import { stream_config } from "$lib/stores/stream_config";
   import { onMount } from "svelte";
-onMount(()=>stream_config.load);
+ onMount(()=>{stream_config.load();
+        document.addEventListener("visibilitychange",()=>{
+          if(!document.hidden) stream_config.refresh();
+        })
+      });
 </script>
 
 <div class="flex flex-col w-full h-[100vh] items-center">
