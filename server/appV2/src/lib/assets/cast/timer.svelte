@@ -49,6 +49,12 @@
       liveColor = colorMap.live;
     else if(live.getHours() == starttime[0] && live.getMinutes() >= starttime[1])
       liveColor = colorMap.live;
+    else if(live.getHours() == starttime[0] && live.getMinutes() == starttime[1]-1 && live.getSeconds() <=50 && live.getSeconds()%2 ==1)
+      liveColor=colorMap.live;
+    else if(live.getHours() == starttime[0] && live.getMinutes() == starttime[1]-1 && live.getSeconds() >=50 && live.getSeconds() <55 && live.getMilliseconds()>=500)
+      liveColor=colorMap.live;
+    else if(live.getHours() == starttime[0] && live.getMinutes() == starttime[1]-1 && live.getSeconds() >=55 && parseInt(((live.getMilliseconds()/100)%4)%2) ==1)
+      liveColor=colorMap.live;
     else if (live.getHours() > preptime[0])
       liveColor = colorMap.build_delay;
     else if(live.getHours() == preptime[0] && live.getMinutes() >=preptime[1])
@@ -57,7 +63,7 @@
       liveColor = colorMap.default;
 
     if (delayed.getHours() > starttime[0] && delayed.getHours() < 23)
-      delayColor = colorMap.live;
+    delayColor = colorMap.live;
     else if(delayed.getHours() == starttime[0] && delayed.getMinutes() >= starttime[1])
       delayColor = colorMap.live;
     else if(delayed.getHours() >preptime[0])
