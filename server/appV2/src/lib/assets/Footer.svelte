@@ -12,6 +12,7 @@ import { rot_text } from "$lib/stores/rottext";
   let toptext=$state("BUILDING DELAY");
 let end = $state(false);
 let textconf = $state("w-[1700px] flex flex-col");
+let rot_text_cache = $derived($rot_text);
 
 onMount(()=>rot_text.load());
 
@@ -23,11 +24,13 @@ textconf="w-[2010px] flex flex-col";
 
 function rmdtxt(){
 
-    const n = Math.floor(Math.random()*($rot_text.length - 1))+1;
-    toptext = $rot_text[n].toUpperCase();
+    const n = Math.floor(Math.random()*(rot_text_cache.length - 1))+1;
+    toptext = rot_text_cache[n].toUpperCase();
+    rot_text_cache.splice(n,1);
+    if(rot_text_cache.length < 5) rot_text_cache=$rot_text;
 }
 
-const rotate = setInterval(rmdtxt,7000);
+const rotate = setInterval(rmdtxt,13000);
 if(end==true) clearInterval(rotate);
 onDestroy(()=>clearInterval(rotate));
 
