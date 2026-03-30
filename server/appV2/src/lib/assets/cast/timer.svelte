@@ -1,7 +1,8 @@
 <script>
 //@ts-nocheck
   import { onMount, onDestroy } from "svelte";
-  import { stream_config } from "$lib/stores/stream_config";
+  import { stream_config_static } from "$lib/stores/stream_config";
+  import { streamConfData } from "$lib/stores/streamConfData";
 
   let delayMinutes = $state(3);
   let intervalMs = $state(50); // faster so ms actually change
@@ -21,13 +22,13 @@
   let delayColor = $state(colorMap.default);
 
   $effect(()=>{
-    if($stream_config.starttime == null) return;
-    const tmp = $stream_config.starttime.split(":");
+    if($streamConfData.starttime == null) return;
+    const tmp = $streamConfData.starttime.split(":");
     starttime[0]=parseInt(tmp[0]);
     starttime[1]=parseInt(tmp[1]);
 
     preptime[0]=parseInt(tmp[0]);
-    let comp= parseInt(tmp[1])- parseInt($stream_config.preptime);
+    let comp= parseInt(tmp[1])- parseInt($streamConfData.preptime);
     preptime[1] = comp;
     if(comp<0){
       preptime[1] = comp+60;
@@ -77,7 +78,7 @@
   let interval;
 
   onMount(() => {
-    stream_config.load();
+    stream_config_static.load();
     interval = setInterval(() => {
       const now = new Date();
 

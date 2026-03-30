@@ -2,14 +2,14 @@
   import DropdownMenu from "$lib/assets/DropdownMenu.svelte";
   import { casters } from "$lib/stores/casters";
   import { teamdata } from "$lib/stores/TeamData";
-  import { stream_config } from "$lib/stores/stream_config";
+  import { stream_config_static } from "$lib/stores/stream_config";
   import { onMount, settled } from "svelte";
   import Textfield from "../Textfield.svelte";
   import TimeField from "../TimeField.svelte";
   import BoxText from "$lib/assets/wrapper/BoxText.svelte";
 
 
-    onMount(()=> {teamdata.load();casters.load();stream_config.load()});
+    onMount(()=> {teamdata.load();casters.load();stream_config_static.load()});
 		let casters_local=$state([]);
     let first_team = $state(0);
     let second_team = $state(0);
@@ -79,14 +79,14 @@ async function reset() {
 	$effect(()=>{ casters_local = $casters;});
 	$effect(()=>{setTeam("first_team",first_team)});
   $effect(()=>{setTeam("second_team",second_team)});;
-  $effect(()=>{ if($stream_config.starttime==null) return;
+  $effect(()=>{ if($stream_config_static.starttime==null) return;
     let tmp = "";
-  tmp =  $stream_config.starttime;
+  tmp =  $stream_config_static.starttime;
     starttime= tmp.split(":");
   })
   $effect(()=>{
-    if($stream_config.preptime == null) return;
-    delaytime = $stream_config.preptime;
+    if($stream_config_static.preptime == null) return;
+    delaytime = $stream_config_static.preptime;
   })
 </script>
 

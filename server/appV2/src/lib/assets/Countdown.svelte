@@ -1,23 +1,23 @@
 <script>
-    import { stream_config } from "$lib/stores/stream_config";
+    import { stream_config_static } from "$lib/stores/stream_config";
     import { onMount } from "svelte";
 
     let {mode=""} = $props();
-    onMount(()=>stream_config.load());
+    onMount(()=>stream_config_static.load());
     const target = $state(new Date());
     let finished = $state(false);
     let timer = $state([0,0,0]);
 
 
     $effect(()=>{
-        if($stream_config.starttime==null) return;
+        if($stream_config_static.starttime==null) return;
         if(finished==true)return;
         if(mode=="starting"){
-            const time = $stream_config.starttime.split(":");
+            const time = $stream_config_static.starttime.split(":");
             target.setHours(parseInt(time[0]),parseInt(time[1]),0,0);
         }
         else if(mode=="pause"){
-            const time = $stream_config.pausetime;
+            const time = $stream_config_static.pausetime;
             target.setMinutes(target.getMinutes() + parseInt(time));
         }
     })

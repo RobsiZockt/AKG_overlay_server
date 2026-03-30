@@ -28,9 +28,11 @@ let ban_data;
 let matchupCache ={};
 let playedMapsCache = {};
 let playersCache ={};
+let streamConfCache;
 let lastMtime_playedMaps = 0;
 let lastMtime_matchup = 0;
 let lastMtime_players = 0;
+let lastMtime_streamConf = 0;
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "p")));
@@ -61,6 +63,22 @@ const broadcast = (data) => {
   }
 };
 
+
+const pollStreamConf = async ()=>{
+  try{
+    const stats = await fs.stat(stream_conf);
+    if(stats.mtimeMs !== lastMtime_matchup && stats.size > 0){
+      const content = await fs.readFile(stream_conf,"utf8");
+      streamConfCache = JSON.parse(content);
+      lastMtime_streamConf = stats.mtimeMs;
+      broadcast({type: "streamConfUpdate", payload: streamConfCache});
+    }
+  }catch (err){
+console.error("Error reading matchup.json: ". err)
+  }
+
+};
+setInterval(pollStreamConf, 300);
 
 const pollMatchup = async ()=>{
   try{
