@@ -2,7 +2,7 @@
     import { stream_config_static } from "$lib/stores/stream_config";
     import { onMount } from "svelte";
 
-    let {mode=""} = $props();
+    let {mode="", time=""} = $props();
     onMount(()=>stream_config_static.load());
     const target = $state(new Date());
     let finished = $state(false);
@@ -10,15 +10,15 @@
 
 
     $effect(()=>{
-        if($stream_config_static.starttime==null) return;
+        if(time=="") return;
         if(finished==true)return;
         if(mode=="starting"){
-            const time = $stream_config_static.starttime.split(":");
-            target.setHours(parseInt(time[0]),parseInt(time[1]),0,0);
+            const set_time = time.split(":");
+            target.setHours(parseInt(set_time[0]),parseInt(set_time[1]),0,0);
         }
         else if(mode=="pause"){
-            const time = $stream_config_static.pausetime;
-            target.setMinutes(target.getMinutes() + parseInt(time));
+            const set_time = time;
+            target.setMinutes(target.getMinutes() + parseInt(set_time));
         }
     })
 

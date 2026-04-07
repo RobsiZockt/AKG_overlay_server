@@ -1,13 +1,14 @@
 <script>
   import Countdown from "$lib/assets/Countdown.svelte";
   import InfiniteScrollText from "$lib/assets/InfiniteScrollText.svelte";
+  
 import akg_logo from "$lib/assets/logos/akgaming_logo.png"
 import soloplan from "$lib/assets/logos/soloplan-square.svg"
 import uniliga from "$lib/assets/logos/Uniliga-TeilnehmerLogo-weiss.png"
 import { rot_text } from "$lib/stores/rottext";
   import { onDestroy, onMount } from "svelte";
 
-  let {cd_mode ="", cd_text="", scrolltext=[]}=$props();
+  let {cd_mode ="", cd_text="", scrolltext=[],time=""}=$props();
 
   let toptext=$state("BUILDING DELAY");
 let end = $state(false);
@@ -44,7 +45,7 @@ onDestroy(()=>clearInterval(rotate));
     {#if !end}
     <div class="flex flex-col h-full w-[310px] items-center justify-center">
     <span class="text-white text-2xl font-thin pb-1 pr-2">{cd_text.toUpperCase()}</span>
-<Countdown mode={cd_mode}></Countdown>
+<Countdown mode={cd_mode} time={time}></Countdown>
     </div>
     <div class="w-[4px] h-full bg-black"></div>
     {/if}
