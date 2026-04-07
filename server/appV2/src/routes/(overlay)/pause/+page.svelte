@@ -18,7 +18,7 @@
 {/if}
 </div>
     <div class="flex items-end h-full w-full">
-        <Footer cd_mode={"pause"} cd_text={"PAUSE"} scrolltext={$stream_config_static.inf_txt!=null?$stream_config_static.inf_txt:""}></Footer>
+        <Footer cd_mode={"pause"} cd_text={"PAUSE"} time={$stream_config_static.pausetime!=null?$stream_config_static.pausetime:""} scrolltext={$stream_config_static.inf_txt!=null?$stream_config_static.inf_txt:""}></Footer>
     </div>
 </div>
 

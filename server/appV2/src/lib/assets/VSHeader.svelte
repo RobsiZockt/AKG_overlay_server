@@ -1,6 +1,6 @@
 <script>
 let {matchData} = $props();
-$effect(()=>console.log(matchData));
+
 
 </script>
 
