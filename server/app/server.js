@@ -1,13 +1,15 @@
-const { error } = require("console");
+const { error, timeStamp } = require("console");
 const e = require("express");
 const express = require("express");
-const { readFile, writeFile, chownSync, lstatSync } = require("fs");
+const { readFileSync, writeFile, chownSync, lstatSync, copyFile } = require("fs");
 const fs = require("fs").promises;
 const path = require("path");
 const { json } = require("stream/consumers");
-const { body, validationResult } = require("express-validator");
+const { body, validationResult, param } = require("express-validator");
 const app = express();
 const PORT = 4000;
+const cors = require("cors");
+const { match } = require("assert");
 
 const playedmaps = path.join(__dirname, "api", "played_maps.json");
 const matchup = path.join(__dirname, "api", "matchup.json");
@@ -16,19 +18,34 @@ const heros = path.join(__dirname, "api", "heros.json");
 const players = path.join(__dirname, "api", "players.json");
 const rot_text = path.join(__dirname,"api", "rot_text.json");
 const sm_report = path.join(__dirname,"api","reports", "sm_report.json");
+const team_dir = path.join(__dirname, "api", "teams");
+const caster = path.join(__dirname,"api","caster.json");
+const stream_conf = path.join(__dirname,"api","stream_config.json");
+const past_matchups = path.join(__dirname,"api","past_matchups");
 
+//Univeral paths
+const uv_matchup = path.join(__dirname,"api","universal","uv_matchup.json");
 
 let map_data;
 let ban_data;
 let matchupCache ={};
 let playedMapsCache = {};
 let playersCache ={};
+let matchupLog=[];
+let streamConfCache;
+let uv_matchupCache ={};
 let lastMtime_playedMaps = 0;
 let lastMtime_matchup = 0;
 let lastMtime_players = 0;
+let lastMtime_streamConf = 0;
+let lastMtime_uv_matchup =0;
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "p")));
+
+const corsOptions={
+  origin: ["https://overlay.robsizockt.de", "https://cast.robsizockt.de", "http://cast.localhost", "http://overlay.localhost"]
+};
 
 // Keep track of all connected SSE clients
 const clients = new Set();
@@ -52,6 +69,47 @@ const broadcast = (data) => {
   }
 };
 
+async function log(origin,event,value) {
+  let now = new Date();
+  let next_id=0;
+ if(matchupLog.length!=0) next_id = 1 + matchupLog.at(-1).id;
+
+ const entry = {id:next_id,origin:origin,event:event,value:value,timeStamp:now};
+matchupLog = [...matchupLog,...entry];
+
+}
+
+const pollUVmatchup = async ()=>{
+  try{
+    const stats = await fs.stat(uv_matchup);
+    if(stats.mtimeMs !== lastMtime_uv_matchup && stats.size > 0){
+      const content = await fs.readFile(uv_matchup,"utf8");
+      uv_matchupCache = JSON.parse(content);
+      lastMtime_uv_matchup = stats.mtimeMs;
+      broadcast({type: "UVmatchupUpdate", payload: uv_matchupCache});
+    }
+  }catch (err){
+console.error("Error reading matchup.json: ". err)
+  }
+
+};
+setInterval(pollUVmatchup, 500);
+
+const pollStreamConf = async ()=>{
+  try{
+    const stats = await fs.stat(stream_conf);
+    if(stats.mtimeMs !== lastMtime_streamConf && stats.size > 0){
+      const content = await fs.readFile(stream_conf,"utf8");
+      streamConfCache = JSON.parse(content);
+      lastMtime_streamConf = stats.mtimeMs;
+      broadcast({type: "streamConfUpdate", payload: streamConfCache});
+    }
+  }catch (err){
+console.error("Error reading matchup.json: ". err)
+  }
+
+};
+setInterval(pollStreamConf, 300);
 
 const pollMatchup = async ()=>{
   try{
@@ -105,13 +163,14 @@ setInterval(pollPlayedMaps, 200);
 
 // SSE endpoint just sends cached data
 // SSE endpoint just sends cached data
-app.get("/api/update/stream", (req, res) => {
+app.get("/api/update/stream",cors(corsOptions), (req, res) => {
   // SSE headers
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Connection", "keep-alive");
   res.flushHeaders();
 
+  res.write(":\n\n");
   clients.add(res);
 
   // Send initial data
@@ -158,6 +217,7 @@ app.post("/api/played_maps/new", async (req, res) => {
       key: entryKey,
       name: "",
       image: "",
+      type: "",
       ban_red: "",
       ban_red_name: "",
       ban_blue: "",
@@ -173,7 +233,33 @@ app.post("/api/played_maps/new", async (req, res) => {
       "utf8"
     );
 
-    res.status(201).json({ status: "ok", latest: playedMapsCache[entryKey] });
+ //calculates the new score of the matchup
+    let blue = 0;let red = 0;
+    for (key in playedMapsCache) {
+
+      let s1 = parseInt(playedMapsCache[key].score_blue);
+      let s2 = parseInt(playedMapsCache[key].score_red);
+
+      if (s1 == s2) {
+        console.log("Map result: Draw, skippin calculation");
+      }
+      if (s1 > s2) {
+        blue++;
+      }
+      if (s1 < s2) {
+        red++;
+      }
+    }
+    let update = { blue_score: blue, red_score: red };
+
+
+    const data = await fs.readFile(matchup, "utf8");
+    const json = JSON.parse(data);
+    const updated = { ...json, ...update };
+
+    await fs.writeFile(matchup, JSON.stringify(updated, null, 2), "utf8");
+
+    res.status(201).json({ status: "ok", latest: playedMapsCache[entryKey] + updated });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Could not update played_maps.json" });
@@ -255,6 +341,8 @@ app.put(
 
         playedMapsCache[entryKey].name = lookupdata.name;
         playedMapsCache[entryKey].image = lookupdata.path;
+        playedMapsCache[entryKey].type = lookupdata.type;
+        log("","pickedMap",value); //how do i detect wich team picked or where??????
       } else if (key === "ban") {
         // checks "ban" for regex pattern, if correct and team is either 1 = blue or 2 = red it will look up the given data
         const regex = /^team:\s*(\d+)\s+hero:\s*(\d+)$/;
@@ -265,9 +353,11 @@ app.put(
         if (Number(match[1]) === 1) {
           playedMapsCache[entryKey].ban_blue = ban_data[match[2]].path;
           playedMapsCache[entryKey].ban_blue_name = ban_data[match[2]].name;
+          log("blue","banHero",match[2]);
         } else if (Number(match[1]) === 2) {
           playedMapsCache[entryKey].ban_red = ban_data[match[2]].path;
           playedMapsCache[entryKey].ban_red_name = ban_data[match[2]].name;
+          log("red","banHero",match[2]);
         } else {
           return res.status(400).json({ error: "Recived invalid team id" });
         }
@@ -291,6 +381,51 @@ app.put(
     }
   }
 );
+
+// POST: add or sustract 1 from the given team score on a given map (legacy: put played_maps:/id)
+app.post("/api/played_maps/:id/:team/:action", [],async(req,res)=>{
+  try{
+    const entryKey = req.params.id;
+    const op = req.params.action;
+    const team = req.params.team;
+
+    if (!parseInt(entryKey))
+      return res.status(403).json({ error: "recived id is NaN" });
+
+    if(op == "add"){
+      if(team == "blue") {
+        let tmp = parseInt(playedMapsCache[entryKey].score_blue) + 1;
+        playedMapsCache[entryKey].score_blue = tmp.toString(10);
+      } else if (team == "red"){
+           let tmp = parseInt(playedMapsCache[entryKey].score_red) + 1;
+        playedMapsCache[entryKey].score_red = tmp.toString(10);
+      }
+    }
+        if(op == "sub"){
+      if(team == "blue") {
+        let tmp = parseInt(playedMapsCache[entryKey].score_blue) - 1;
+         if(tmp < 0) tmp = 0;
+        playedMapsCache[entryKey].score_blue = tmp.toString(10);
+      } else if (team == "red"){
+        let tmp = parseInt(playedMapsCache[entryKey].score_red) - 1;
+        if(tmp < 0) tmp = 0;
+        playedMapsCache[entryKey].score_red = tmp.toString(10);
+      }
+    }
+
+    await fs.writeFile(
+      playedmaps,
+      JSON.stringify(playedMapsCache, null, 2),
+      "utf8"
+    );
+
+    res.status(201).json({status:"ok"});
+  } 
+  catch(err){
+      console.error(err);
+      res.status(500).json({ error: "Operation Failed" });
+  };
+});
 
 // GET: maps.json asynchronously
 app.get("/api/maps", async (req, res) => {
@@ -342,7 +477,6 @@ app.post("/api/matchup", [], async (req, res) => {
 //Safe Call for calculating map score, does not require any body
 app.put("/api/matchup", [], async (req, res) => {
   const op = req.query.op;
-  console.log(op);
   try {
 
     let update = {};
@@ -373,7 +507,6 @@ app.put("/api/matchup", [], async (req, res) => {
       }
     }
     update = { blue_score: blue, red_score: red };
-    console.log(update);
   }
   else{
     update = req.body;
@@ -405,11 +538,19 @@ app.post("/api/new_matchup", [
 
 ], async (req, res) => {
   try {
-    const data = req.body;
+    const mdata = JSON.parse( await fs.readFile(matchup, "utf8"));
+    const pdata = JSON.parse(await fs.readFile(playedmaps,"utf8"));
+    const old_data = {"matchup": mdata,"playedmaps":pdata};
+    const date = new Date();
+    const sdate = date.toString();
+    let name = sdate.split(" GMT");
+    name[0] = name[0].replaceAll(" ","_").replaceAll(":","_");
+    const file = path.join(past_matchups,name[0]+".json");
+    await fs.writeFile(file,JSON.stringify(old_data, null, 2),"utf8");
+
     const update = { blue_score: 0, red_score: 0 };
-    const mdata = await fs.readFile(matchup, "utf8");
-    const json = JSON.parse(mdata);
-    const updated = { ...json, ...update };
+    
+    const updated = { ...mdata, ...update };
 
     await fs.writeFile(matchup, JSON.stringify(updated, null, 2), "utf8");
 
@@ -459,7 +600,6 @@ app.post("/api/players", [], async (req, res) => {
 
 app.put("/api/players/:team/:id", [], async (req, res) =>{
    const key = Object.keys(req.body);
-  console.log(req.body);
 try{
 const {team,id} = req.params;
 const update = req.body;
@@ -535,5 +675,387 @@ app.get("/api/reports/sm_report",[],async (req,res)=>{
 }
 })
 
-app.listen(PORT, () => console.log("Server is listening on ${PORT}"));
-console.log("Maps file path:", playedmaps);
+
+//START TEAM API
+/* 
+* Returns all json files (Teams) inside of team_dir
+* strips the .json file ending
+*/
+app.get("/teams",[],async (req,res)=>{
+  try{
+    const files = await fs.readdir(team_dir);
+    files.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+    let data = files.filter(f=>f.endsWith(".json")).map(f=> path.parse(f).name);
+    data.splice(0,1);
+    res.json(data);
+  } catch(error){
+      res.status(500).json({error: "Something went terrible wrong, check if folder exists."});
+  }
+})
+
+/**
+* Tries to create a New team file
+* will error if the file allready exists (which should not be possible / safeguard only)
+* wont return 0_Prefab
+*/
+app.post("/team/new",[],async(req,res)=>{
+  try{
+     const files = await fs.readdir(team_dir);
+     files.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+     const id = parseInt( await JSON.parse(await fs.readFile(path.join(team_dir, files.at(-1)))).id) + 1;
+     const name = id + "_NewTeam.json";
+
+
+    try{
+      await fs.access( path.join(team_dir, name), fs.constants.F_OK, (err)=>{throw err});
+    } catch (err){
+      if(err.code!== "ENOENT"){ throw err}
+
+    }
+    let data = await JSON.parse(await fs.readFile(path.join(team_dir, "0_PREFAB.json")));
+    data.id = id;
+    
+    await fs.writeFile(path.join(team_dir, name), JSON.stringify(data, null, 2),"utf8");
+
+
+    
+
+     res.status(201).json({status: "ok"});
+    
+  } catch(err){
+    res.status(500).json({error: `could not create team`, reason:  err });
+  }
+})
+
+/**
+ * Replaces the given team data, does check for any not allowed params
+ * does not edit 0_PREFAB
+ */
+app.put("/team/:id",[
+
+param("id").isInt({min:1}),
+
+body().custom(items=>{
+  const allowedFiles = ["id", "name", "name_short", "logo", "players"];
+    const invalid = Object.keys(items).filter(k=>!allowedFiles.includes(k));
+    if(invalid.length) throw new Error(`Unexpected Fields ${invalid.join(", ")}`);
+  return true;
+}),
+
+body("id").exists().isInt({min:1}),
+body("name").exists().isString(),
+body("name_short").exists().isString(),
+body("logo").exists().isURL(),
+body("players").isArray({min:5, max: 10}).withMessage("Amount of Players may only be between 5 and 10"),
+body("players.*.id").exists().isInt({min:1}),
+body("players.*.name").exists().isString(),
+body("players.*.main_id").exists().isInt({min:0}),
+body("players.*.role").exists().isString(),
+body("players.*.extra").exists().isString(),
+
+body("players").custom(items=>{
+  const allowedFiles = ["id", "name", "main_id", "role", "extra"];
+  for(const item of items){
+    const invalid = Object.keys(item).filter(k=>!allowedFiles.includes(k));
+    if(invalid.length) throw new Error(`Unexpected Fields ${invalid.join(", ")}`);
+  }
+  return true;
+})
+
+],async(req,res)=>{
+//error check
+  const errors = validationResult(req);
+  if(!errors.isEmpty()){
+    return res.status(400).json(errors.array());
+  }
+
+  async function fileExists(path) {
+    try {
+      await fs.access(path.join(team_dir, path));
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  try{
+    const id = parseInt(req.params.id);
+    const rec_data = req.body;
+    const files = await fs.readdir(team_dir);
+    files.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+    const filepath = path.join(team_dir, files[id]);
+
+    if(fileExists(filepath)){
+      let team_cache = await JSON.parse( await fs.readFile(filepath, "utf8"));
+      
+      if(team_cache.id != rec_data.id) throw {code: 409, message: "recived tampered file"};
+      await fs.writeFile(filepath, JSON.stringify(rec_data, null, 2), "utf8");
+
+    } 
+    try{
+      let team_cache = await JSON.parse( await fs.readFile(filepath, "utf8"));
+      let name_cach = `${req.params.id}_${team_cache.name_short}.json`;
+      await fs.rename(filepath, path.join(team_dir, name_cach));
+    }catch{}
+
+    res.status(200).json({status: "ok"});
+  }catch (err){
+    res.status(err.code || 500).json({error: err.message || "Internal Server Error: Something went wrong"});
+  }
+})
+
+/**
+ * returns the actuall data of a requested team as long as it exists
+ */
+app.get("/team/:id",[
+  param("id").isInt({min: 1})
+],async(req,res)=>{
+  const errors = validationResult(req);
+  if(!errors.isEmpty()){
+    return res.status(400).json(errors.array());
+  }
+async function fileExists(path) {
+    try {
+      await fs.access(path.join(team_dir, path));
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  try{
+    const id = parseInt(req.params.id);
+    const files = await fs.readdir(team_dir);
+    const filepath = path.join(team_dir, files[id]);
+
+if(fileExists(filepath))res.status(200).json(await fs.readFile(filepath,"utf8"));
+  }catch (err){
+    res.status(500).json({error: err});
+  }
+})
+
+//END TEAM API
+
+//START CASTER API
+app.get("/casters",[],async(req,res)=>{
+
+    try {
+    const content = await fs.readFile(caster, "utf8");
+    res.json(JSON.parse(content));
+  } catch (err) {
+    res.status(500).json({ error: "Could not read caster.json" });
+  }
+
+})
+
+app.put("/caster/:id",[
+  param("id").isInt({min:1, max:3}),
+  body("id").exists().isInt({min:1}),
+  body("name").exists().isString(),
+  body("social").exists().isString(),
+  body("social_ico").exists().isString()
+],async(req,res)=>{
+  const errors = validationResult(req);
+  if(!errors.isEmpty()){
+    return res.status(400).json(errors.array());
+  }
+  try{
+    const data = await fs.readFile(caster, "utf8");
+    let newdata = JSON.parse(data);
+    newdata[req.params.id] = req.body;
+    await fs.writeFile(caster, JSON.stringify(newdata, null, 2), "utf8");
+    res.status(201);
+  }catch (err){
+    res.status(500).json({error: err});
+  }
+})
+//END CASTER API
+
+//START STREAM CONFIG API
+app.post("/stconf/set/:target/:id",[
+  param("id").isInt(),
+  param("target").isString(),
+  body().custom((value, { req }) => {
+    if (req.body && Object.keys(req.body).length > 0) {
+      throw new Error('Request body is not allowed');
+    }
+    return true;
+  })
+],async(req,res)=>{
+const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+
+const target = req.params.target;
+const id = parseInt(req.params.id);
+
+
+  async function fileExists(path) {
+    try {
+      await fs.access(path.join(team_dir, path));
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+
+if(target=="first_team"||target=="second_team"){
+  //set streamconfig to id
+  try{
+    let side;
+    if(target=="first_team") side="blue";
+    if(target=="second_team") side="red";
+    let conf =  JSON.parse(await fs.readFile(stream_conf,"utf8"));
+
+    conf[target] = id;
+
+    await fs.writeFile(stream_conf, JSON.stringify(conf,null,2), "utf8");
+
+  let players_data =  JSON.parse(await fs.readFile(players,"utf8"));
+  let matchup_data =  JSON.parse(await fs.readFile(matchup,"utf8"));
+
+    
+    const files = await fs.readdir(team_dir);
+    const filepath = path.join(team_dir, files[id]);
+    let team;
+    if(fileExists(filepath)){ team= JSON.parse(await fs.readFile(filepath,"utf8"));
+      players_data[side] = team["players"];
+      for(let player of players_data[side]){
+        const mainid = player.main_id;
+        if(mainid==0) continue;
+        player.main = ban_data[mainid].path;
+      }
+      if(target=="first_team"){
+      matchup_data.blue = team.name;
+      matchup_data.blue_logo = team.logo;
+      matchup_data.blue_short = team.name_short;
+      }
+      else if(target=="second_team"){
+      matchup_data.red = team.name;
+      matchup_data.red_logo = team.logo;
+      matchup_data.red_short = team.name_short;
+      }
+      await fs.writeFile(players, JSON.stringify(players_data,null,2),"utf8");
+      await fs.writeFile(matchup, JSON.stringify(matchup_data,null,2),"utf8");
+
+      return res.status(201).json({status: "ok"});
+    }
+return res.status(500).json({error: "Team could not be loaded"});
+    
+
+
+  }catch (err){
+    res.status(500).json({error: "something went terrible wrong", code: err});
+  }
+}
+})
+
+app.put("/stconf/update",[],async(req,res)=>{
+  try{
+  const data = req.body;
+  const stconf = JSON.parse(await fs.readFile(stream_conf,"utf8"));
+
+  let stfconf_new = {...stconf, ...data};
+  await fs.writeFile(stream_conf,JSON.stringify(stfconf_new,null,2),"utf8");
+  res.status(201).json({status:"ok"}); 
+  }catch (err){
+    res.status(500).json({error:err});
+  }
+})
+
+
+app.get("/stconf",[],async(req,res)=>{
+   try {
+    const content = await fs.readFile(stream_conf, "utf8");
+    res.json(JSON.parse(content));
+  } catch (err) {
+    res.status(500).json({ error: err });
+  }
+});
+
+// END STREAM CONFIG API
+
+// START UNIVERSAL API
+
+app.get("/uv/matchup",[],async(req,res)=>{
+  try{
+    const content = await fs.readFile(uv_matchup,"utf8");
+    res.json(JSON.parse(content));
+  }catch (err){
+    res.status(500).json({error: err});
+  }
+});
+
+app.put("/uv/matchup/:op/:target",[],async(req,res)=>{
+
+  const target = req.params.target;
+  const op = req.params.op;
+  const data = req.body;
+
+
+  switch (op) {
+    case "add":
+      if(target == "blue"){
+        uv_matchupCache["blue_score"]++;
+      } else if(target =="red"){
+        uv_matchupCache["red_score"]++;
+      } 
+    break;
+    
+    case "sub":
+      if(target == "blue"){
+        uv_matchupCache["blue_score"]>0 ? uv_matchupCache["blue_score"]--: uv_matchupCache["blue_score"]=0;
+        
+      } else if(target =="red"){
+        uv_matchupCache["red_score"]>0 ? uv_matchupCache["red_score"]--: uv_matchupCache["red_score"]=0;
+      } 
+    break;
+    
+    case "setlogo":
+      if(target == "blue"){
+        uv_matchupCache["blue_logo"]=data.payload;
+      } else if(target =="red"){
+        uv_matchupCache["red_logo"]=data.payload;
+      } 
+    break;
+    
+    case "setshort":
+      if(target == "blue"){
+        uv_matchupCache["blue_short"]=data.payload;
+      } else if(target =="red"){
+        uv_matchupCache["red_short"]=data.payload;
+      } 
+    break;
+
+    case "setname":
+      if(target == "blue"){
+        uv_matchupCache["blue"]=data.payload;
+      } else if(target =="red"){
+        uv_matchupCache["red"]=data.payload;
+      } 
+    break;
+    
+    case "swap":
+      uv_matchupCache["switched"]==1 ? uv_matchupCache["switched"]=0 : uv_matchupCache["switched"]=1;
+    break;
+    
+  
+    default:
+      res.status(500).json({error: "incorrect request"});
+      break;
+  }
+  try{
+     await fs.writeFile(uv_matchup, JSON.stringify(uv_matchupCache,null,2),"utf8");
+  } catch (err){ res.status(500).json({error: err})};
+  res.status(201).json({status: "ok"});
+})
+
+
+// END UNIVERSAL API
+
+
+app.listen(PORT, '0.0.0.0', () => console.log(`Server is listening on ${PORT}`));
+

@@ -1,0 +1,25 @@
+{
+  "matchup": {
+    "blue": "HSK Centauri",
+    "red": "HSK Satyrus",
+    "blue_score": 0,
+    "red_score": 0,
+    "blue_logo": "https://play.toornament.com/media/file/2327743164456994795/logo_large",
+    "red_logo": "https://play.toornament.com/media/file/2385695205573847020/logo_large",
+    "blue_short": "HSKC",
+    "red_short": "HSKS",
+    "switched": 0
+  },
+  "playedmaps": {
+    "1": {
+      "name": "",
+      "image": "",
+      "ban_red": "",
+      "ban_red_name": "",
+      "ban_blue": "",
+      "ban_blue_name": "",
+      "score_blue": "0",
+      "score_red": "0"
+    }
+  }
+}
