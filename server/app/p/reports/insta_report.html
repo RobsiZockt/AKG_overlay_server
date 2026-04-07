@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1080, initial-scale=1.0">
+  <title>Instagram Story Report</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+
+    .fade-left-to-right {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .fade-left-to-right::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, white 0%, transparent 100%);
+      opacity: 1;
+      animation: fadeSweep 2s ease-out forwards;
+    }
+
+    @keyframes fadeSweep {
+      0% {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      100% {
+        opacity: 0;
+        transform: translateX(100%);
+      }
+    }
+.fade-delay-200ms::before {
+    animation-delay: 200ms;
+  }
+
+    @keyframes slide-in {
+      from {
+        transform: translateX(-100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .animate-slide-in {
+      animation: slide-in 0.5s ease-out forwards;
+    }
+
+    html, body {
+  margin: 0;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgb(255, 0, 0);
+}
+.stage {
+  width: 1080px;
+  height: 1920px;
+  background: white;
+  border: 2px solid red;
+}
+  </style>
+</head>
+<body class="m-0 p-0 w-[1080px] h-[1920px] overflow-hidden bg-no-repeat bg-contain bg-[url(../img/bg/9_16-sm_bg.png)]">
+  <div id="root"></div>
+
+<script src="../js/sm/insta_report.js"></script>
+
+
+
+</body>
+</html>

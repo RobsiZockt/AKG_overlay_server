@@ -1,0 +1,43 @@
+{
+    "id": 0,
+    "name": "",
+    "name_short": "",
+    "logo": "https://play.toornament.com/media/8597216805094416384/original",
+    "players":[
+        {
+            "id": 1,
+            "name": "",
+            "main_id": 0,
+            "role": "",
+            "extra": ""
+        },
+        {
+            "id": 2,
+            "name": "",
+            "main_id": 0,
+            "role": "",
+            "extra": ""
+        },
+        {
+            "id": 3,
+            "name": "",
+            "main_id": 0,
+            "role": "",
+            "extra": ""
+        },
+        {
+            "id": 4,
+            "name": "",
+            "main_id": 0,
+            "role": "",
+            "extra": ""
+        },
+        {
+            "id": 5,
+            "name": "",
+            "main_id": 0,
+            "role": "",
+            "extra": ""
+        }
+    ]
+}

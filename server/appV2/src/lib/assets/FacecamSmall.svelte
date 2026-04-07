@@ -1,0 +1,46 @@
+<script>
+    export let name = "";
+    export let social= "";
+    export let no_vid=false;
+    export let img;
+    export let trigger=false;
+
+    import Background from "./Background.svelte";
+     import SplitRevealBox from "./animations/SplitRevealBox.svelte";
+
+    let open = false;
+
+ $:if(name != ""){ 
+  if(trigger==true)
+  setTimeout(() => open = true, 400);
+ if(trigger==false) open = false;
+ }
+</script>
+<SplitRevealBox {open} width={1031} height={612} color="#348333">
+<div class="h-[612px] w-[1031px] flex justify-center">
+  <!-- Shared width wrapper -->
+  <div class="h-full w-fit flex flex-col">
+
+    <!-- Cam + Sides -->
+    <div class="flex h-[88%] w-full">
+      <div class="h-full w-[10px] bg-[#348333]"></div>
+
+      <div class="h-full w-[1011px]">
+        {#if no_vid === true}
+          <Background Map_url={img} />
+        {/if}
+      </div>
+
+      <div class="h-full w-[10px] bg-[#348333]"></div>
+    </div>
+
+    <!-- Cam Footer -->
+     {#if name != ""}
+    <div class="h-[12%] w-full text-center bg-[#000000ee] flex flex-col justify-center">
+      <p class="text-4xl text-white tracking-wide">{name}</p>
+      <p class="text-xl text-white tracking-wide">{social}</p>
+    </div>
+      {/if}
+  </div>
+</div>
+</SplitRevealBox>

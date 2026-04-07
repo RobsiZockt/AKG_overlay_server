@@ -11,7 +11,7 @@
 
   const h = getH();
 
-const eventSource = new EventSource("/api/update/stream");
+const eventSource = new EventSource("/api/api/update/stream");
 let cachedata=null;
 
 eventSource.onmessage = (e) => {
@@ -50,6 +50,17 @@ window.subscribeMatchup=function(handler){
     }
 
     return () => document.removeEventListener("matchupUpdate",listener);
+}
+
+window.subscribePlayers=function(handler){
+    const listener = (e) => handler(e.detail);
+    document.addEventListener("playersUpdate",listener);
+
+    if(cachedata !== null){
+        handler(cachedata);
+    }
+
+    return () => document.removeEventListener("playersUpdate",listener);
 }
 
 })();

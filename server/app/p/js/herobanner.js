@@ -44,7 +44,7 @@ if(setHighlight_red_Ext)
 
 async function update(id,data) {
   try {
-    const response = await fetch(`/api/played_maps/${id}`, {
+    const response = await fetch(`/api/api/played_maps/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -82,8 +82,7 @@ sel_team = "2";
     
   }
 
-  function handleImageClick(idx) {
-    const id =idx+1;
+  function handleImageClick(id) {
     let team = sel_team;
       setBan = { ban:`team: ${team} hero: ${id}`};
     update(latestKey,setBan);
@@ -106,7 +105,7 @@ sel_team = "2";
 
     useEffect(() => {
       // Fetch JSON from backend
-      fetch("/api/heros") // adjust this URL to your backend
+      fetch("/api/api/heros") // adjust this URL to your backend
         .then((res) => res.json())
         .then((json) => {
           const arrayData = Object.entries(json).map(([id, value]) => ({
@@ -189,7 +188,7 @@ return h("div", { className: "p-4 h-full flex flex-col" }, [
               key: idx,
               className:
                 "flex flex-col items-center p-1 rounded cursor-pointer transition-shadow ",
-              onClick: () => handleImageClick(idx),
+              onClick: () => handleImageClick(item.id),
             },
             [
               h("img", {
