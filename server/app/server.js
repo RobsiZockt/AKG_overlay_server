@@ -1,4 +1,4 @@
-const { error } = require("console");
+const { error, timeStamp } = require("console");
 const e = require("express");
 const express = require("express");
 const { readFileSync, writeFile, chownSync, lstatSync, copyFile } = require("fs");
@@ -9,6 +9,7 @@ const { body, validationResult, param } = require("express-validator");
 const app = express();
 const PORT = 4000;
 const cors = require("cors");
+const { match } = require("assert");
 
 const playedmaps = path.join(__dirname, "api", "played_maps.json");
 const matchup = path.join(__dirname, "api", "matchup.json");
@@ -22,17 +23,22 @@ const caster = path.join(__dirname,"api","caster.json");
 const stream_conf = path.join(__dirname,"api","stream_config.json");
 const past_matchups = path.join(__dirname,"api","past_matchups");
 
+//Univeral paths
+const uv_matchup = path.join(__dirname,"api","universal","uv_matchup.json");
 
 let map_data;
 let ban_data;
 let matchupCache ={};
 let playedMapsCache = {};
 let playersCache ={};
+let matchupLog=[];
 let streamConfCache;
+let uv_matchupCache ={};
 let lastMtime_playedMaps = 0;
 let lastMtime_matchup = 0;
 let lastMtime_players = 0;
 let lastMtime_streamConf = 0;
+let lastMtime_uv_matchup =0;
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "p")));
@@ -63,11 +69,36 @@ const broadcast = (data) => {
   }
 };
 
+async function log(origin,event,value) {
+  let now = new Date();
+  let next_id=0;
+ if(matchupLog.length!=0) next_id = 1 + matchupLog.at(-1).id;
+
+ const entry = {id:next_id,origin:origin,event:event,value:value,timeStamp:now};
+matchupLog = [...matchupLog,...entry];
+
+}
+
+const pollUVmatchup = async ()=>{
+  try{
+    const stats = await fs.stat(uv_matchup);
+    if(stats.mtimeMs !== lastMtime_uv_matchup && stats.size > 0){
+      const content = await fs.readFile(uv_matchup,"utf8");
+      uv_matchupCache = JSON.parse(content);
+      lastMtime_uv_matchup = stats.mtimeMs;
+      broadcast({type: "UVmatchupUpdate", payload: uv_matchupCache});
+    }
+  }catch (err){
+console.error("Error reading matchup.json: ". err)
+  }
+
+};
+setInterval(pollUVmatchup, 500);
 
 const pollStreamConf = async ()=>{
   try{
     const stats = await fs.stat(stream_conf);
-    if(stats.mtimeMs !== lastMtime_matchup && stats.size > 0){
+    if(stats.mtimeMs !== lastMtime_streamConf && stats.size > 0){
       const content = await fs.readFile(stream_conf,"utf8");
       streamConfCache = JSON.parse(content);
       lastMtime_streamConf = stats.mtimeMs;
@@ -311,6 +342,7 @@ app.put(
         playedMapsCache[entryKey].name = lookupdata.name;
         playedMapsCache[entryKey].image = lookupdata.path;
         playedMapsCache[entryKey].type = lookupdata.type;
+        log("","pickedMap",value); //how do i detect wich team picked or where??????
       } else if (key === "ban") {
         // checks "ban" for regex pattern, if correct and team is either 1 = blue or 2 = red it will look up the given data
         const regex = /^team:\s*(\d+)\s+hero:\s*(\d+)$/;
@@ -321,9 +353,11 @@ app.put(
         if (Number(match[1]) === 1) {
           playedMapsCache[entryKey].ban_blue = ban_data[match[2]].path;
           playedMapsCache[entryKey].ban_blue_name = ban_data[match[2]].name;
+          log("blue","banHero",match[2]);
         } else if (Number(match[1]) === 2) {
           playedMapsCache[entryKey].ban_red = ban_data[match[2]].path;
           playedMapsCache[entryKey].ban_red_name = ban_data[match[2]].name;
+          log("red","banHero",match[2]);
         } else {
           return res.status(400).json({ error: "Recived invalid team id" });
         }
@@ -943,6 +977,84 @@ app.get("/stconf",[],async(req,res)=>{
 });
 
 // END STREAM CONFIG API
+
+// START UNIVERSAL API
+
+app.get("/uv/matchup",[],async(req,res)=>{
+  try{
+    const content = await fs.readFile(uv_matchup,"utf8");
+    res.json(JSON.parse(content));
+  }catch (err){
+    res.status(500).json({error: err});
+  }
+});
+
+app.put("/uv/matchup/:op/:target",[],async(req,res)=>{
+
+  const target = req.params.target;
+  const op = req.params.op;
+  const data = req.body;
+
+
+  switch (op) {
+    case "add":
+      if(target == "blue"){
+        uv_matchupCache["blue_score"]++;
+      } else if(target =="red"){
+        uv_matchupCache["red_score"]++;
+      } 
+    break;
+    
+    case "sub":
+      if(target == "blue"){
+        uv_matchupCache["blue_score"]>0 ? uv_matchupCache["blue_score"]--: uv_matchupCache["blue_score"]=0;
+        
+      } else if(target =="red"){
+        uv_matchupCache["red_score"]>0 ? uv_matchupCache["red_score"]--: uv_matchupCache["red_score"]=0;
+      } 
+    break;
+    
+    case "setlogo":
+      if(target == "blue"){
+        uv_matchupCache["blue_logo"]=data.payload;
+      } else if(target =="red"){
+        uv_matchupCache["red_logo"]=data.payload;
+      } 
+    break;
+    
+    case "setshort":
+      if(target == "blue"){
+        uv_matchupCache["blue_short"]=data.payload;
+      } else if(target =="red"){
+        uv_matchupCache["red_short"]=data.payload;
+      } 
+    break;
+
+    case "setname":
+      if(target == "blue"){
+        uv_matchupCache["blue"]=data.payload;
+      } else if(target =="red"){
+        uv_matchupCache["red"]=data.payload;
+      } 
+    break;
+    
+    case "swap":
+      uv_matchupCache["switched"]==1 ? uv_matchupCache["switched"]=0 : uv_matchupCache["switched"]=1;
+    break;
+    
+  
+    default:
+      res.status(500).json({error: "incorrect request"});
+      break;
+  }
+  try{
+     await fs.writeFile(uv_matchup, JSON.stringify(uv_matchupCache,null,2),"utf8");
+  } catch (err){ res.status(500).json({error: err})};
+  res.status(201).json({status: "ok"});
+})
+
+
+// END UNIVERSAL API
 
 
 app.listen(PORT, '0.0.0.0', () => console.log(`Server is listening on ${PORT}`));

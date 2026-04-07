@@ -1,7 +1,7 @@
 <script>
     import Footer from "$lib/assets/Footer.svelte";
   import VSHeader from "$lib/assets/VSHeader.svelte";
-  import { matchupData } from "$lib/stores/matchupData";
+    import { UVmatchupData } from "$lib/stores/UVmatchupData";
   import { stream_config_static } from "$lib/stores/stream_config";
   import { onMount } from "svelte";
  onMount(()=>{stream_config_static.load();
@@ -13,7 +13,7 @@
 
 <div class="flex flex-col w-full h-[100vh] items-center">
 <div class="pt-[80px]">
-    <VSHeader matchupData={$matchupData}></VSHeader>
+    <VSHeader matchupData={$UVmatchupData}></VSHeader>
 </div>
     <div class="flex items-end h-full w-full">
         <Footer cd_mode={"pause"} cd_text={"PAUSE"} scrolltext={$stream_config_static.inf_txt!=null?$stream_config_static.inf_txt:""}></Footer>

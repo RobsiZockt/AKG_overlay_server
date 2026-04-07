@@ -3,6 +3,7 @@
   export let color = "bg-blue-500";
   export let apiPath = "/api/action";
   export let method = "POST";
+  export let height = "";
 
   let loading = false;
 
@@ -30,7 +31,7 @@
 <button
   on:click={handleClick}
   disabled={loading}
-  class={`px-4 py-1 text-white font-medium ${color} rounded-lg shadow hover:opacity-90 active:scale-95 transition`}
+  class={`px-4 py-1 text-white font-medium ${color} ${height} rounded-lg shadow hover:opacity-90 active:scale-95 transition`}
 >
   {text}
 </button>
