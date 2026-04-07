@@ -13,7 +13,9 @@
 
 <div class="flex flex-col w-full h-[100vh] items-center">
 <div class="pt-[80px]">
-    <VSHeader matchupData={$matchupData}></VSHeader>
+{#if $matchupData.data!="0"}
+    <VSHeader matchData={$matchupData}></VSHeader>
+{/if}
 </div>
     <div class="flex items-end h-full w-full">
         <Footer cd_mode={"pause"} cd_text={"PAUSE"} scrolltext={$stream_config_static.inf_txt!=null?$stream_config_static.inf_txt:""}></Footer>
