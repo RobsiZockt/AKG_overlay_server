@@ -342,7 +342,7 @@ app.put(
         playedMapsCache[entryKey].name = lookupdata.name;
         playedMapsCache[entryKey].image = lookupdata.path;
         playedMapsCache[entryKey].type = lookupdata.type;
-        log("","pickedMap",value); //how do i detect wich team picked or where??????
+      //  log("","pickedMap",value); //how do i detect wich team picked or where??????
       } else if (key === "ban") {
         // checks "ban" for regex pattern, if correct and team is either 1 = blue or 2 = red it will look up the given data
         const regex = /^team:\s*(\d+)\s+hero:\s*(\d+)$/;
@@ -353,11 +353,11 @@ app.put(
         if (Number(match[1]) === 1) {
           playedMapsCache[entryKey].ban_blue = ban_data[match[2]].path;
           playedMapsCache[entryKey].ban_blue_name = ban_data[match[2]].name;
-          log("blue","banHero",match[2]);
+       //   log("blue","banHero",match[2]);
         } else if (Number(match[1]) === 2) {
           playedMapsCache[entryKey].ban_red = ban_data[match[2]].path;
           playedMapsCache[entryKey].ban_red_name = ban_data[match[2]].name;
-          log("red","banHero",match[2]);
+       //   log("red","banHero",match[2]);
         } else {
           return res.status(400).json({ error: "Recived invalid team id" });
         }
