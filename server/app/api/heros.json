@@ -248,5 +248,10 @@
     "name": "Mizuki",
     "role": "Support",
     "path": "/img/heros/mizuki.png"
+  },
+  "51":{
+    "name": "Sierra",
+    "role": "DPS",
+    "path": "/img/heros/sierra.png"
   }
 }
