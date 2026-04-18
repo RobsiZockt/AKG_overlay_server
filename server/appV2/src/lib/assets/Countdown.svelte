@@ -18,7 +18,9 @@
         }
         else if(mode=="pause"){
             const set_time = time;
-            target.setMinutes(target.getMinutes() + parseInt(set_time));
+            const reset = new Date();
+            target.setMinutes(reset.getMinutes() + parseInt(set_time));
+            target.setSeconds(reset.getSeconds());
         }
     })
 

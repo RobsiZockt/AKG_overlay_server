@@ -1,17 +1,18 @@
 <script>
   import Countdown from "$lib/assets/Countdown.svelte";
   import InfiniteScrollText from "$lib/assets/InfiniteScrollText.svelte";
-  
+  import rz_logo from "$lib/assets/logos/RobsiZockt.png"
 import akg_logo from "$lib/assets/logos/akgaming_logo.png"
 import soloplan from "$lib/assets/logos/soloplan-square.svg"
 import uniliga from "$lib/assets/logos/Uniliga-TeilnehmerLogo-weiss.png"
 import { rot_text } from "$lib/stores/rottext";
   import { onDestroy, onMount } from "svelte";
 
-  let {cd_mode ="", cd_text="", scrolltext=[],time=""}=$props();
+  let {cd_mode ="", cd_text="", scrolltext=[],time="", sponsor=true, ico="", override=""}=$props();
 
   let toptext=$state("BUILDING DELAY");
 let end = $state(false);
+
 let textconf = $state("w-[1700px] flex flex-col");
 let rot_text_cache = $derived($rot_text);
 
@@ -22,6 +23,10 @@ end = true;
 toptext="STREAM ENDE";
 textconf="w-[2010px] flex flex-col";
 }
+if(sponsor==false){
+    textconf="w-[1910px] flex flex-col";
+   
+}
 
 function rmdtxt(){
 
@@ -30,8 +35,17 @@ function rmdtxt(){
     rot_text_cache.splice(n,1);
     if(rot_text_cache.length < 5) rot_text_cache=$rot_text;
 }
+let rotate = setInterval(rmdtxt,13000);
+$effect(()=>{
+    clearInterval(rotate);
+    if(override.trim()!=""){
+        toptext = override.toUpperCase();
+    }else{
+        rotate = setInterval(rmdtxt,13000);
+    }
+})
 
-const rotate = setInterval(rmdtxt,13000);
+
 if(end==true) clearInterval(rotate);
 onDestroy(()=>clearInterval(rotate));
 
@@ -40,7 +54,7 @@ onDestroy(()=>clearInterval(rotate));
 
 <div class="flex w-full h-[177px] bg-[#222222] p-2">
 <div class="flex border-2  w-full h-full">
-    <img class="pr-1 pl-1" src={akg_logo} alt=""/>
+    <img class="pr-1 pl-1" src={ico=="akg"?akg_logo:ico=="rz"?rz_logo:akg_logo} alt=""/>
     <div class="w-[4px] h-full bg-black"></div>
     {#if !end}
     <div class="flex flex-col h-full w-[310px] items-center justify-center">
@@ -55,7 +69,9 @@ onDestroy(()=>clearInterval(rotate));
         <InfiniteScrollText content={scrolltext} speed={60}></InfiniteScrollText>
     </div>
     <div class="w-[4px] h-full bg-black"></div>
+    {#if sponsor}
     <img class="pl-1" src={soloplan} alt=""/>
+    {/if}
     <img class="p-[15px]" src={uniliga} alt=""/>
 </div>
 </div>
