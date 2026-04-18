@@ -957,8 +957,13 @@ app.put("/stconf/update",[],async(req,res)=>{
   try{
   const data = req.body;
   const stconf = JSON.parse(await fs.readFile(stream_conf,"utf8"));
-
-  let stfconf_new = {...stconf, ...data};
+  let stfconf_new;
+  stfconf_new = {...stconf, ...data};
+  if(data.inf_txt!=null && !data.inf_txt.length){
+    const fallback = {inf_txt:["Folgt uns auf","Instagram, threads: @akgamingkempten","X/Twitter: @akgamingev","twitch"]};
+  stfconf_new = {...stconf,...fallback};
+  }
+      
   await fs.writeFile(stream_conf,JSON.stringify(stfconf_new,null,2),"utf8");
   res.status(201).json({status:"ok"}); 
   }catch (err){
