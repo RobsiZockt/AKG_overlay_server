@@ -40,7 +40,7 @@ $effect(()=>{
     clearInterval(rotate);
     if(override.trim()!=""){
         toptext = override.toUpperCase();
-    }else{
+    }else if(end !=true){
         rotate = setInterval(rmdtxt,13000);
     }
 })
