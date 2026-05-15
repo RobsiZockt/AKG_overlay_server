@@ -1,6 +1,7 @@
 <script>
   import DropdownMenu from "$lib/assets/DropdownMenu.svelte";
   import { casters } from "$lib/stores/casters";
+  import { interview } from "$lib/stores/interview";
   import { teamdata } from "$lib/stores/TeamData";
   import { stream_config_static } from "$lib/stores/stream_config";
   import { streamConfData } from "$lib/stores/streamConfData";
@@ -10,7 +11,8 @@
   import BoxText from "$lib/assets/wrapper/BoxText.svelte";
 
 
-    onMount(()=> {teamdata.load();casters.load();stream_config_static.load()});
+
+    onMount(()=> {teamdata.load();casters.load();stream_config_static.load();interview.load()});
 		let casters_local=$state([]);
     let first_team = $state(0);
     let second_team = $state(0);
@@ -19,6 +21,7 @@
     let toptxt = $state("");
     let bottxt = $state("");
     let starttime = $state(["",""]);
+    let interview_local = $state({name:"",team:"",role:"",team_img:""});
 
     async function setSTconf(target) {
       let data={};
@@ -76,6 +79,21 @@
 			}
 		}
 
+    async function saveInterview() {
+      			try{
+				let data = interview_local;
+				const res = await fetch(`/api/interview`, {
+            method: "POST",
+						headers: { "Content-Type": "application/json"},
+            body: JSON.stringify(data)
+        });
+				const rec = await res.json();
+        console.log(rec);
+			} catch (err){
+				console.warn(err);
+			}
+    }
+
 async function reset() {
   	try{
 				const res = await fetch(`/api/api/new_matchup`, {
@@ -87,7 +105,7 @@ async function reset() {
 				console.warn(err);
 			}
 }
-
+  $effect(()=>{interview_local = $interview});
 	$effect(()=>{ casters_local = $casters;});
 	$effect(()=>{setTeam("first_team",first_team)});
   $effect(()=>{setTeam("second_team",second_team)});;
@@ -135,6 +153,17 @@ async function reset() {
     {/if}
   </div>
 </BoxText>
+<BoxText title="Interview">
+  {#if $interview!=null}
+  <div class="flex w-full gap-1 h-fit pb-3">
+    <Textfield placeholdertxt="Name" bind:value={interview_local.name} width={300} onBlur={()=>saveInterview()}></Textfield>
+    <Textfield placeholdertxt="Team" bind:value={interview_local.team} width={100} onBlur={()=>saveInterview()}></Textfield>
+    <Textfield placeholdertxt="Role" bind:value={interview_local.role} width={100} onBlur={()=>saveInterview()}></Textfield>
+    <Textfield placeholdertxt="team_ico" bind:value={interview_local.team_img} width={100} onBlur={()=>saveInterview()}></Textfield>
+  </div>
+  {/if}
+</BoxText>
+
 <BoxText title="Timer Setup">
 <div>
   <div class="flex">

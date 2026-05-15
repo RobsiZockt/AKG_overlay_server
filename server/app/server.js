@@ -22,6 +22,7 @@ const team_dir = path.join(__dirname, "api", "teams");
 const caster = path.join(__dirname,"api","caster.json");
 const stream_conf = path.join(__dirname,"api","stream_config.json");
 const past_matchups = path.join(__dirname,"api","past_matchups");
+const interview = path.join(__dirname,"api","interview.json");
 
 //Univeral paths
 const uv_matchup = path.join(__dirname,"api","universal","uv_matchup.json");
@@ -864,12 +865,56 @@ app.put("/caster/:id",[
     let newdata = JSON.parse(data);
     newdata[req.params.id] = req.body;
     await fs.writeFile(caster, JSON.stringify(newdata, null, 2), "utf8");
-    res.status(201);
+     res.status(201).json({status:"ok"});
   }catch (err){
     res.status(500).json({error: err});
   }
 })
 //END CASTER API
+
+//START INTERVIEW API
+
+app.get("/interview",[],async(req,res)=>{
+  try{
+    const data = await fs.readFile(interview, "utf8");
+    res.json(JSON.parse(data)); 
+  }catch (error){
+    console.log(error);
+    res.status(500).json({error: "Could not read interview.json"})
+  }
+})
+
+app.post("/interview",[
+
+body().custom(items=>{
+  const allowedFiles = ["name", "team", "role", "team_img"];
+    const invalid = Object.keys(items).filter(k=>!allowedFiles.includes(k));
+    if(invalid.length) throw new Error(`Unexpected Fields ${invalid.join(", ")}`);
+  return true;
+}),
+
+  body("name").exists().isString(),
+  body("team").exists().isString(),
+  body("role").exists().isString(),
+  body("team_img").exists().isString()
+],async(req,res)=>{
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+const data = req.body;
+
+try{
+  await fs.writeFile(interview, JSON.stringify(data,null,2),"utf8");
+  res.status(201).json({status:"ok"});
+}catch(err){
+  res.status(500).json({error:"Internal server error"});
+}
+
+})
+
+//END INTERVIEW API
 
 //START STREAM CONFIG API
 app.post("/stconf/set/:target/:id",[

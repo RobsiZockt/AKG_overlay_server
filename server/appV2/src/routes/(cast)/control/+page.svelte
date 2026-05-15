@@ -29,7 +29,7 @@
 />
 
 {#if current_tag === "Live"}
-<div class="flex h-[90%] w-full object-contain">
+<div class="flex h-[90%] w-full object-contain overflow-y">
 <LiveControl/>
 </div>
 {:else if current_tag === "Setup"}
