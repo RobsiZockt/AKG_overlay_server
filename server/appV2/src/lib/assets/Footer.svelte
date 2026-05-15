@@ -8,7 +8,7 @@ import uniliga from "$lib/assets/logos/Uniliga-TeilnehmerLogo-weiss.png"
 import { rot_text } from "$lib/stores/rottext";
   import { onDestroy, onMount } from "svelte";
 
-  let {cd_mode ="", cd_text="", scrolltext=[],time="", sponsor=true, ico="", override=""}=$props();
+  let {cd_mode ="", cd_text="", scrolltext=[],time="", sponsor=true, ico="", override="" ,liga=true}=$props();
 
   let toptext=$state("BUILDING DELAY");
 let end = $state(false);
@@ -21,11 +21,17 @@ onMount(()=>rot_text.load());
 if(cd_mode=="end"){
 end = true;
 toptext="STREAM ENDE";
+if(sponsor==false || liga==false){
+    textconf="w-[2180px] flex flex-col";
+}else{
 textconf="w-[2010px] flex flex-col";
 }
-if(sponsor==false){
+}
+if(sponsor==false && cd_mode!="end"){
     textconf="w-[1910px] flex flex-col";
-   
+}
+if(liga==false && cd_mode!="end"){
+    textconf="w-[1910px] flex flex-col";
 }
 
 function rmdtxt(){
@@ -72,6 +78,8 @@ onDestroy(()=>clearInterval(rotate));
     {#if sponsor}
     <img class="pl-1" src={soloplan} alt=""/>
     {/if}
+    {#if liga}
     <img class="p-[15px]" src={uniliga} alt=""/>
+    {/if}
 </div>
 </div>

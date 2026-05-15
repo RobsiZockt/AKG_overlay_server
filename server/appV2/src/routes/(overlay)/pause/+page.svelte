@@ -9,6 +9,7 @@
   let refresh = $state(false);
    let s = page.url.searchParams.get("s");
  let ico = page.url.searchParams.get("ico");
+  let liga= page.url.searchParams.get("liga");
  onMount(()=>{stream_config_static.load();
         document.addEventListener("visibilitychange",()=>{
             if(document.hidden) refresh=true;
@@ -28,7 +29,7 @@
 {/if}
 </div>
     <div class="flex items-end h-full w-full">
-        <Footer cd_mode={"pause"} cd_text={"PAUSE"} sponsor={s=="false"?false:true} ico={ico!=null?ico:""} time={refresh==false?$stream_config_static.pausetime!=null?$stream_config_static.pausetime:"1":"1"} override={$streamConfData.override_top!=""?$streamConfData.override_top:""} scrolltext={$streamConfData.inf_txt!=null?$streamConfData.inf_txt:""}></Footer>
+        <Footer cd_mode={"pause"} cd_text={"PAUSE"} sponsor={s=="false"?false:true} ico={ico!=null?ico:""} liga={liga=="false"?false:true} time={refresh==false?$stream_config_static.pausetime!=null?$stream_config_static.pausetime:"1":"1"} override={$streamConfData.override_top!=""?$streamConfData.override_top:""} scrolltext={$streamConfData.inf_txt!=null?$streamConfData.inf_txt:""}></Footer>
     </div>
 </div>
 
