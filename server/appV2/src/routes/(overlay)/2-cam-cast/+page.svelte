@@ -7,6 +7,11 @@
  onMount(()=>{casters.load();
     document.addEventListener("visibilitychange",()=>{
     if(!document.hidden){
+        casters.refresh();
+        if($casters.length){
+            cast1 = $casters[0];
+            cast2 = $casters[1];
+        }
         trig=true;
     }
     else if (document.hidden){
