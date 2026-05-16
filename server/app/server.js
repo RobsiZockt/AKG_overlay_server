@@ -965,6 +965,7 @@ if(target=="first_team"||target=="second_team"){
 
     
     const files = await fs.readdir(team_dir);
+    files.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
     const filepath = path.join(team_dir, files[id]);
     let team;
     if(fileExists(filepath)){ team= JSON.parse(await fs.readFile(filepath,"utf8"));
