@@ -827,6 +827,7 @@ async function fileExists(path) {
   try{
     const id = parseInt(req.params.id);
     const files = await fs.readdir(team_dir);
+    files.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
     const filepath = path.join(team_dir, files[id]);
 
 if(fileExists(filepath))res.status(200).json(await fs.readFile(filepath,"utf8"));
