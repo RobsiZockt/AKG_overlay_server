@@ -49,7 +49,7 @@ $effect(()=>{
   <div class="flex items-center justify-center">
   	<Facecam name={cast1.name} social={cast1.social} img="" no_vid={false} trigger={trig}></Facecam> 
 		<!--SPACER-->
-   	<div class="w-[2%] h-full"></div>
+   	<div class="w-[49.6px] h-full"></div>
    	<Facecam name={cast2.name} social={cast2.social} img="" no_vid={false} trigger={trig}></Facecam>
  	</div>
 	<div class="h-[5%]"></div>
