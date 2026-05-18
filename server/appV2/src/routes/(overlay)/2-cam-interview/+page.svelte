@@ -44,7 +44,7 @@ $effect(()=>{
  
 </script>
 
-<div class="h-[100vh] w-full p-10 flex-col items-center justify-center bg-transparent">
+<div class="h-[100vh] w-full p-10 flex flex-col items-center justify-center bg-transparent">
   <div class="h-[5%]"></div>
   <div class="flex items-center justify-center">
   	<Facecam name={cast1.name} social={cast1.social} img="" no_vid={false} trigger={trig}></Facecam> 
@@ -60,7 +60,7 @@ $effect(()=>{
 				<div class="w-[1%]"></div>
 				<span class="text-7xl text-white tracking-wide">{interview_local.name}</span>
 			</div>
-  	</div>
+  		</div>
 	</div>
 </div>
 
