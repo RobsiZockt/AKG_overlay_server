@@ -23,7 +23,14 @@
 
     <!-- Cam + Sides -->
     <div class="flex h-[88%] w-full">
-      <div class="h-full w-[10px] bg-[#348333]"></div>
+      <div class="h-full w-[10px] flex flex-col "> <!--bg-[#348333]-->
+        <div class="w-full h-1/6 bg-[#e40303]"></div>
+        <div class="w-full h-1/6 bg-[#ff8c00]"></div>
+        <div class="w-full h-1/6 bg-[#ffed00]"></div>
+        <div class="w-full h-1/6 bg-[#008026]"></div>
+        <div class="w-full h-1/6 bg-[#004cff]"></div>
+        <div class="w-full h-1/6 bg-[#732982]"></div>
+      </div>
 
       <div class="h-full w-[1011px]">
         {#if no_vid === true}
@@ -31,7 +38,14 @@
         {/if}
       </div>
 
-      <div class="h-full w-[10px] bg-[#348333]"></div>
+      <div class="h-full w-[10px] flex flex-col "> <!--bg-[#348333]-->
+        <div class="w-full h-1/6 bg-[#e40303]"></div>
+        <div class="w-full h-1/6 bg-[#ff8c00]"></div>
+        <div class="w-full h-1/6 bg-[#ffed00]"></div>
+        <div class="w-full h-1/6 bg-[#008026]"></div>
+        <div class="w-full h-1/6 bg-[#004cff]"></div>
+        <div class="w-full h-1/6 bg-[#732982]"></div>
+      </div>
     </div>
 
     <!-- Cam Footer -->
