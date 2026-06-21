@@ -253,5 +253,10 @@
     "name": "Sierra",
     "role": "DPS",
     "path": "/img/heros/sierra.png"
+  },
+  "52":{
+    "name": "Shion",
+    "role": "DPS",
+    "path": "/img/heros/shion.png"
   }
 }
