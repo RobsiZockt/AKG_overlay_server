@@ -153,5 +153,10 @@
     "name": "Throne of Anubis",
     "path": "/img/maps/throne_of_anubis.webp",
     "type": "Clash"
+  },
+  "32":{
+    "name": "Neon Junktion",
+    "path": "/img/maps/neonjunktion.webp",
+    "type": "Hybrid"
   }
 }
