@@ -155,8 +155,8 @@
     "type": "Clash"
   },
   "32":{
-    "name": "Neon Junktion",
-    "path": "/img/maps/neonjunktion.webp",
+    "name": "Neon Junction",
+    "path": "/img/maps/neonjunction.webp",
     "type": "Hybrid"
   }
 }
