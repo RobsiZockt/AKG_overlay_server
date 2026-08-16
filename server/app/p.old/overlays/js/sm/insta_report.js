@@ -16,14 +16,16 @@ const game_logo_lookup ={
   LOL: "../img/icons/lol.svg",
   OW: "../img/icons/overwatch_logo.svg",
   CS2: "../img/icons/counter_strike_logo.webp",
-  VAL: "../img/icons/valorant_logo.png"
+  VAL: "../img/icons/valorant_logo.png",
+  RL: "../img/icons/rocket_league.png"
 };
 
 const game_name_lookup={
   LOL: "League of Legends",
   OW: "Overwatch2",
   CS2: "Counter Strike 2",
-  VAL: "Valorant"
+  VAL: "Valorant",
+  RL: "Rocket League"
 }
 
   /**
@@ -50,7 +52,7 @@ function Report(){
   useEffect(()=>{
      async function fetchData() {
       try {
-        const response = await fetch("/api/reports/sm_report");
+        const response = await fetch("/api/api/reports/sm_report");
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
         const data = await response.json();
        const arr = Object.values(data);
@@ -164,41 +166,27 @@ return h("div",{className:"w-full h-full bg-[#000000aa] flex-col items-end"},
       //h("div",{className:"h-full w-full z-999 bg-no-repeat bg-contain fade-diagonal bg-red-700"}),
         h("div",{className:"h-[14%] w-full bg-transparent relative items-center justify-center"},
           h("div",{className:"h-[50%] w-full bg-transparent"}),
-					h("span",{ className: "ml-2 font-arial text-[100px] text-white items-center justify-center flex" }, "ERGEBNISSE KW 47-2"),
+					h("span",{ className: "ml-2 font-arial text-[100px] text-white items-center justify-center flex" }, "ERGEBNISSE KW 23"),
 				),
         h("div",{className: "p-3 gap-3 h-[86%] w-full bg-transparent"},
-					// h("div",{className:"h-[2%] w-full bg-transparent"}),
-          //   h("div",{className:"h-[12%] w-full bg-transparent flex "},renderMatchup(0)),
-            
-          //   h("div",{className:"h-[2%] w-full bg-transparent"}),
-          //   h("div",{className:"h-[12%] w-full bg-transparent flex "},renderMatchup(1)),
-            
-          //   h("div",{className:"h-[2%] w-full bg-transparent"}),
-          //   h("div",{className:"h-[12%] w-full bg-transparent flex "},renderMatchup(2)),
-            
-          //   h("div",{className:"h-[2%] w-full bg-transparent"}),
-          //   h("div",{className:"h-[12%] w-full bg-transparent flex "},renderMatchup(3)),
-
-          //   h("div",{className:"h-[2%] w-full bg-transparent"}),
-          //   h("div",{className:"h-[12%] w-full bg-transparent flex "},renderMatchup(4)),
-            
-          //   h("div",{className:"h-[2%] w-full bg-transparent"}),
-          //   h("div",{className:"h-[12%] w-full bg-transparent flex "},renderMatchup(5)),
+					  //h("div",{className:"h-[2%] w-full bg-transparent"}),
+            //h("div",{className:"h-[12%] w-full bg-transparent flex "},renderMatchup(0)),
             
             h("div",{className:"h-[2%] w-full bg-transparent"}),
-            h("div",{className:"h-[12%] w-full bg-transparent flex "},renderMatchup(6)),
+            h("div",{className:"h-[12%] w-full bg-transparent flex "},renderMatchup(1)),
             
             h("div",{className:"h-[2%] w-full bg-transparent"}),
-            h("div",{className:"h-[12%] w-full bg-transparent flex "},renderMatchup(7)),
+            h("div",{className:"h-[12%] w-full bg-transparent flex "},renderMatchup(2)),
             
             h("div",{className:"h-[2%] w-full bg-transparent"}),
-            h("div",{className:"h-[12%] w-full bg-transparent flex "},renderMatchup(8)),
+            h("div",{className:"h-[12%] w-full bg-transparent flex "},renderMatchup(3)),
 
-
-            
-
-
-
+            h("div",{className:"h-[2%] w-full bg-transparent"}),
+            h("div",{className:"h-[12%] w-full bg-transparent flex "},renderMatchup(4)),
+         
+            h("div",{className:"h-[2%] w-full bg-transparent"}),
+            h("div",{className:"h-[12%] w-full bg-transparent flex "},renderMatchup(5)),
+                
 
         )
     );
