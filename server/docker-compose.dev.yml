@@ -39,6 +39,22 @@ services:
     networks:
       - app-network
 
+  db:
+    image: postgres:alpine
+    container_name: pg_database
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: secretpassword
+      POSTGRES_DB: empty_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./pg_db:/var/lib/postgresql
+      - ./inits/postgres:/docker-entrypoint-initdb.d:ro
+    networks:
+      - app-network
+
 networks:
   app-network:
     driver: bridge

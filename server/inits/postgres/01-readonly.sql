@@ -1,0 +1,1 @@
+CREATE ROLE readonly_user LOGIN PASSWORD 'readonly_password';

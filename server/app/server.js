@@ -27,6 +27,11 @@ const interview = path.join(__dirname,"api","interview.json");
 //Univeral paths
 const uv_matchup = path.join(__dirname,"api","universal","uv_matchup.json");
 
+//Database connection scripts
+const getDB = require("./modules/prediction/create_pred_from_db.js");
+const init_insertDB = require("./modules/prediction/pipeline_run_ff.js");
+const init_DB = require("./modules/prediction/create_new_db.js");
+
 let map_data;
 let ban_data;
 let matchupCache ={};
@@ -42,7 +47,7 @@ let lastMtime_streamConf = 0;
 let lastMtime_uv_matchup =0;
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "p")));
+app.use(express.static(path.join(__dirname, "p"))); 
 
 const corsOptions={
   origin: ["https://overlay.robsizockt.de", "https://cast.robsizockt.de", "http://cast.localhost", "http://overlay.localhost"]
@@ -1107,6 +1112,69 @@ app.put("/uv/matchup/:op/:target",[],async(req,res)=>{
 
 
 // END UNIVERSAL API
+
+
+// START PREDICTION DATABASE CALLS
+
+app.get("/pred/predict_outcome",[
+  body("database").exists().isString(),
+  body("team1_id").exists().isString(),
+  body("team2_id").exists().isString(),
+  body("team1_score").exists().isNumeric(),
+  body("team2_score").exists().isNumeric(),
+  body("map").exists().isString()
+],async(req,res)=>{
+
+  try{ 
+    const data = req.body;
+    console.log(data,data.database,typeof(data.database));
+    const content = await getDB.getPrediction("db","readonly_user","readonly_password", data.database, data.map,data.team1_id,data.team2_id,data.team1_score,data.team2_score);
+    console.log(content);
+    res.json(content);
+  } catch (err){
+    res.status(500).json({error: err});
+  }
+})
+
+app.get("/pred/power_rating/:db",
+[],async(req,res)=>{
+  try{
+    const db = req.params.db;
+    const content = await getDB.getAllTeamRatings("db","readonly_user","readonly_password",db);
+    //res.json(JSON.parse(content));
+    res.json(content);
+  } catch (err){
+    res.status(500).json({error:err});
+  }
+})
+
+//this script is deactivated until i know how to have users authenticate themselfs
+//only activeate it when you need to initialise the DB
+
+app.get("/pred/fast_forward",[],async(req,res)=>{
+  try{
+    init_insertDB.createAll();
+    res.status(200).json({ status: "ok", latest: data });
+  } catch (err){
+    res.status(500).json({ error:err });
+  }
+})
+
+app.post("/pred/create_db",[],async(req,res)=>{
+ 
+  try{
+    const data = req.body;
+    console.log(req.body,req.headers);
+    await init_DB.createDatabaseWithReadonly(data.database);
+    console.log("database: "+data.database);
+    res.status(200).json({ status: "ok", latest: data });
+  } catch (err){
+    res.status(500).json({ error:err, latest: data });
+  }
+})
+
+
+// END PREDICTION DATABASE CALLS
 
 
 app.listen(PORT, '0.0.0.0', () => console.log(`Server is listening on ${PORT}`));
