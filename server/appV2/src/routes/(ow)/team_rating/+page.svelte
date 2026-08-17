@@ -70,19 +70,19 @@ function formatObjects(objects) {
 
 <TutorialOverlay bind:open={openOverlay}/>
 
-<div class="w-full h-[100vh] bg-[#1e1e1e]">
+<div class="w-full h-[100vh] bg-[#1e1e1e] overflow-hidden">
   <div class="w-full h-[40px] flex items-center justify-end" onclick={()=>{showOverlay()}}>
     <span class="font-[Cascadia Mono] text-gray-300 text-2xl underline drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)] whitespace-pre font-mono p-2"> How it Works</span>
   </div>
   <div class="w-full h-full flex-col items-center justify-center">
-    <div class="w-full h-auto flex items-center justify-center py-12">
+    <div class="w-full h-auto flex items-center justify-center pb-12 bt-4">
       <span class="font-[Cascadia Mono] text-white text-9xl drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)] whitespace-pre font-mono p-2"> Funny Team Power Rating</span>
     </div>
     <div>
       <TekButton current_tab={updateData}></TekButton>
     </div>
-    <div class="w-full h-full items-center justify-center flex pt-4">
-    <div class="h-full w-[1780px] overflow-y-auto flex-col items-center justify-center">
+    <div class="w-full h-full items-start justify-center flex pt-4">
+    <div class="h-[790px] w-[1780px] overflow-y-auto flex-col items-center justify-center">
     {#each formatedData as split_data,index}
         <div class="w-full h-[50px]" onclick={()=> {openIndex=(openIndex === index?null:index)}}>
         <ListComponent index={index} data={split_data}></ListComponent> 
