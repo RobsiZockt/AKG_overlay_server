@@ -8,6 +8,28 @@ let glicko = new Glicko2();
 // Load Ratings
 // ---------------
 
+async function fetchTeamID(host,user,password,database,team_kurz) {
+  const client = new Client({
+    host,
+    port: 5432,
+    user,
+    password,
+    database,
+  })
+  await client.connect();
+
+  try{
+    const res = await client.query(`SELECT id FROM teams WHERE '${team_kurz}' = customfieldvalues_teamkurzel`);
+
+    return res.rows[0].id;
+  } catch(err){
+    return "Team Not found";
+  }finally{
+    client.end();
+  }
+  
+}
+
 async function fetchAllTeamRatings(host, user,password,database) {
   const client = new Client({
     host: host,
@@ -251,12 +273,17 @@ async function getPrediction( host,  user, password, database, map_name, team1_i
   
 }
 
+
 async function main() {
   // const prediction = await predict_map_outcome(glicko,"samoa","8250526365314572288","8250521986271281152",0,0);
 
   // console.log(prediction);
-
+  //const a = await fetchTeamID("localhost","admin","secretpassword","sose_26","HSKC");
+  const a = await getPrediction("localhost","readonly_user","readonly_password","sose_26","Suravasa","2453253901889753087","2453358508558624767",0,0);
+  console.log(a);
 }
+
 
 module.exports.getAllTeamRatings = sendAllTeamRatings;
 module.exports.getPrediction = getPrediction;
+module.exports.getTeamIDbyKurz = fetchTeamID;
