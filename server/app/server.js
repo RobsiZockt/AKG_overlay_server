@@ -1116,7 +1116,8 @@ app.put("/uv/matchup/:op/:target",[],async(req,res)=>{
 
 // START PREDICTION DATABASE CALLS
 
-app.get("/pred/predict_outcome",[
+// swap back to get when data does come from SSE cache
+app.post("/pred/predict_outcome",[
   body("database").exists().isString(),
   body("team1_id").exists().isString(),
   body("team2_id").exists().isString(),
@@ -1130,6 +1131,32 @@ app.get("/pred/predict_outcome",[
     console.log(data,data.database,typeof(data.database));
     const content = await getDB.getPrediction("db","readonly_user","readonly_password", data.database, data.map,data.team1_id,data.team2_id,data.team1_score,data.team2_score);
     console.log(content);
+    res.json(content);
+  } catch (err){
+    res.status(500).json({error: err});
+  }
+})
+
+// predict the outcome of the currently selected map/matchup of prodtool
+app.get("/pred/predict_current",[],async(req,res)=>{
+  try{
+    const season = "sose_26"
+    let t1_id = await getDB.getTeamIDbyKurz("db","readonly_user","readonly_password",season, matchupCache.blue_short);
+    let t2_id = await getDB.getTeamIDbyKurz("db","readonly_user","readonly_password",season, matchupCache.red_short);
+    let t1_score = matchupCache.blue_score;
+    let t2_score = matchupCache.red_score;
+    if(matchupCache.switched ===1)
+      {
+        [t1_id,t2_id] = [t2_id,t1_id];
+        [t1_score,t2_score]=[t2_score,t1_score];
+      }
+    const map = Object.values(playedMapsCache).at(-1).name.toLowerCase();
+    if(map==""||map==undefined){
+      res.status(500).json({error:"No Map selected"});
+      return;
+    }
+    
+    const content = await getDB.getPrediction("db","readonly_user","readonly_password",season,map,t1_id,t2_id,t1_score,t2_score);
     res.json(content);
   } catch (err){
     res.status(500).json({error: err});
@@ -1151,14 +1178,14 @@ app.get("/pred/power_rating/:db",
 //this script is deactivated until i know how to have users authenticate themselfs
 //only activeate it when you need to initialise the DB
 
-app.get("/pred/fast_forward",[],async(req,res)=>{
-  try{
-    init_insertDB.createAll();
-    res.status(200).json({ status: "ok", latest: data });
-  } catch (err){
-    res.status(500).json({ error:err });
-  }
-})
+// app.get("/pred/fast_forward",[],async(req,res)=>{
+//   try{
+//     init_insertDB.createAll();
+//     res.status(200).json({ status: "ok", latest: data });
+//   } catch (err){
+//     res.status(500).json({ error:err });
+//   }
+// })
 
 app.post("/pred/create_db",[],async(req,res)=>{
  
