@@ -26,6 +26,8 @@
 	</div>
 {:else if data.isOverlay}
 <div><slot></slot></div>
+{:else if data.isOW}
+<div><slot></slot></div>
 {:else}
 	<div style="border: 3px solid gray; padding: 1rem;">
 		<h2>Unknown host</h2><slot></slot>
