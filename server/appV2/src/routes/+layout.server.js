@@ -8,6 +8,7 @@ export const load = async ({ url, request }) => {
     isCaster: host?.startsWith('cast.'),
     isPublic: host?.startsWith('www.'),
     isOverlay: host?.startsWith('overlay.'),
+    isOW: host?.startsWith('ow.'),
   }
 }
 
