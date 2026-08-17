@@ -10,7 +10,9 @@ services:
     ports:
       - "4000"
     restart: unless-stopped
-
+    networks:
+      - app-network
+      
   nginx:
     image: nginx:stable
     ports:
@@ -22,6 +24,8 @@ services:
       - ./certbot/webroot:/var/www/certbot
       - ./fallback:/usr/share/nginx/nginx
       - ./certbot/conf:/etc/letsencrypt
+    networks:
+      - app-network
 
   certbot:
     image: certbot/certbot
@@ -33,6 +37,22 @@ services:
       certbot certonly --webroot --webroot-path=/var/www/certbot
       --email ${EMAIL} --agree-tos --no-eff-email
       -d ${NODE_DOMAIN}"
+
+  db:
+    image: postgres:alpine
+    container_name: pg_database
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: secretpassword
+      POSTGRES_DB: empty_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./pg_db:/var/lib/postgresql
+      - ./inits/postgres:/docker-entrypoint-initdb.d:ro
+    networks:
+      - app-network
 
   mediamtx:
     image: bluenviron/mediamtx:latest
