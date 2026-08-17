@@ -250,6 +250,7 @@ async function getAllTeamRatings(glicko = null,host, user,password,db) {
       rd: Number(ratingData.rd.toFixed(2)),
       sigma: Number(ratingData.sigma.toFixed(5)),
       games: ratingData.games,
+      id:teamId,
     };
   }
 
@@ -272,7 +273,50 @@ async function getPrediction( host,  user, password, database, map_name, team1_i
     return prediction;
   
 }
+async function getTeamDetails(host, user, password, database, id) {
+  const client = new Client({
+    host: host,
+    port: 5432,
+    user: user,
+    password: password,
+    database: database,
+  });
+  await client.connect();
+  try {
+    const result = await client.query(
+      `WITH MapStatsPerMatch AS (
+            -- Step 1: Compress the "many" side (maps) so there is only 1 row per match
+            SELECT 
+                ms.match_id,
+                COUNT(CASE WHEN msr.result = 'win' THEN 1 END) AS maps_won,
+                COUNT(CASE WHEN msr.result = 'loss' THEN 1 END) AS maps_lost,
+                ms.map AS maps_played
+            FROM match_set_results msr
+            JOIN match_sets ms ON msr.match_set_id = ms.id
+            WHERE msr.participant_id = '${id}'
+            GROUP BY ms.match_id, ms.map
+        )
 
+        -- Step 2: Join the clean, 1-to-1 map data to the matches table
+        SELECT 
+            SUM(map_data.maps_won) AS total_maps_won,
+            SUM(map_data.maps_lost) AS total_maps_lost,
+            -- Because there are no duplicated rows anymore, AVG() works perfectly here!
+            ROUND((AVG(CASE WHEN m.opponents_0_result = 'win' AND m.opponents_0_participant_id = '${id}' THEN 1.0 ELSE 0.0 END) + AVG(CASE WHEN m.opponents_1_result = 'win' AND m.opponents_1_participant_id = '${id}' THEN 1.0 ELSE 0.0 END))*100,2) AS match_winrate,
+            MODE() WITHIN GROUP (ORDER BY map_data.maps_played) AS most_played
+        FROM MapStatsPerMatch map_data
+        JOIN matches m ON m.id = map_data.match_id;`,
+    );
+     const data = Object.entries(result.rows[0]).map(([key,value])=>({txt:key,value:String(value)}));
+     return data;
+     
+  } catch (error) {
+    console.error("Error saving team ratings:", error);
+    throw error;
+  } finally {
+    client.end();
+  }
+}
 
 async function main() {
   // const prediction = await predict_map_outcome(glicko,"samoa","8250526365314572288","8250521986271281152",0,0);
@@ -287,3 +331,4 @@ async function main() {
 module.exports.getAllTeamRatings = sendAllTeamRatings;
 module.exports.getPrediction = getPrediction;
 module.exports.getTeamIDbyKurz = fetchTeamID;
+module.exports.getTeamDetails = getTeamDetails;

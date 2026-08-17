@@ -1175,6 +1175,17 @@ app.get("/pred/power_rating/:db",
   }
 })
 
+app.get("/pred/IDV/:id/:season",[],async(req,res)=>{
+  try{
+  const id = req.params.id;
+  const season = req.params.season;
+  const content = await getDB.getTeamDetails("db","readonly_user","readonly_password",season,id);
+  res.json(content);
+  } catch (err){
+    res.status(500).json({error:err});
+  }
+})
+
 //this script is deactivated until i know how to have users authenticate themselfs
 //only activeate it when you need to initialise the DB
 
