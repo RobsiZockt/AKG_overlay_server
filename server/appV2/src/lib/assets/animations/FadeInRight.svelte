@@ -1,11 +1,11 @@
 <script>
   export let delay = 200;      // ms
   export let duration = 1000; // ms
-  export let offset = "-20px";
+  export let offset = "20px";
 </script>
 
 <div
-  class=" fade-in-left w-full h-full"
+  class=" fade-in-right w-full h-full"
   style="animation-delay: {delay}ms; animation-duration: {duration}ms;
   --translate-from : {offset};"
 >
@@ -13,15 +13,15 @@
 </div>
 
 <style>
-  .fade-in-left {
+  .fade-in-right {
     opacity: 0;
     transform: translateX(var(--translate-from));
-    animation-name: fadeInLeft;
+    animation-name: fadeInRight;
     animation-fill-mode: forwards;
     animation-timing-function: ease;
   }
 
-  @keyframes fadeInLeft {
+  @keyframes fadeInRight {
     from {
       opacity: 0;
       transform: translateX(var(--translate-from));
