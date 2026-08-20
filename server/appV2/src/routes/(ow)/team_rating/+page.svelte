@@ -88,9 +88,9 @@ function formatObjects(objects) {
       <TekButton current_tab={updateData}></TekButton>
     </div>
     <div class="w-full h-full items-start justify-center flex pt-4">
-    <div class="h-[790px] w-[1950px] overflow-y-auto flex-col items-center justify-center">
+    <div class="h-[790px] w-[1330px] overflow-y-auto flex-col items-center justify-center">
     {#each formatedData as split_data,index}
-        <div class="w-full h-[50px]" onclick={()=> {openIndex=(openIndex === index?null:index)}}>
+        <div class="w-full h-[40px]" onclick={()=> {openIndex=(openIndex === index?null:index)}}>
         <ListComponent index={index} data={split_data}></ListComponent> 
         </div>
         {#if openIndex === index }
