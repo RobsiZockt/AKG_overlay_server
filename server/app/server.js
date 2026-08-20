@@ -230,8 +230,20 @@ app.post("/api/played_maps/new", async (req, res) => {
       ban_blue_name: "",
       score_blue: "0",
       score_red: "0",
+      picked_by : 0,
     };
     delete playedMapsCache[entryKey].key;
+
+    if(entryKey>1){
+      const last_m = playedMapsCache[latestKey];
+      if(last_m.score_blue>last_m.score_red){
+        playedMapsCache[entryKey].picked_by = 2;
+      } else if(last_m.score_blue<last_m.score_red){
+        playedMapsCache[entryKey].picked_by = 1;
+      } else if(last_m.score_blue==last_m.score_red){
+        playedMapsCache[entryKey].picked_by = last_m.picked_by;
+      }
+    }
 
     await fs.writeFile(
       playedmaps,
@@ -572,6 +584,7 @@ app.post("/api/new_matchup", [
           ban_blue_name: "",
           score_blue: "0",
           score_red: "0",
+          picked_by: 0,
         },
       });
       await fs.writeFile(playedmaps, reset, null, 2);
@@ -1145,10 +1158,16 @@ app.get("/pred/predict_current",[],async(req,res)=>{
     let t2_id = await getDB.getTeamIDbyKurz("db","readonly_user","readonly_password",season, matchupCache.red_short);
     let t1_score = matchupCache.blue_score;
     let t2_score = matchupCache.red_score;
+    let picked_by = Object.values(playedMapsCache).at(-1).picked_by;
     if(matchupCache.switched ===1)
       {
         [t1_id,t2_id] = [t2_id,t1_id];
         [t1_score,t2_score]=[t2_score,t1_score];
+        if(picked_by ==1){
+          picked_by =2;
+        }else if (picked_by==2){
+          picked_by =1;
+        }
       }
     const map = Object.values(playedMapsCache).at(-1).name.toLowerCase();
     if(map==""||map==undefined){
@@ -1156,7 +1175,7 @@ app.get("/pred/predict_current",[],async(req,res)=>{
       return;
     }
     
-    const content = await getDB.getPrediction("db","readonly_user","readonly_password",season,map,t1_id,t2_id,t1_score,t2_score);
+    const content = await getDB.getPrediction("db","readonly_user","readonly_password",season,map,t1_id,t2_id,t1_score,t2_score,picked_by);
     res.json(content);
   } catch (err){
     res.status(500).json({error: err});
