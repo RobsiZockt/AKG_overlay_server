@@ -34,7 +34,7 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
-      - ./fallback:/usr/share/nginx/nginx
+      - ./fallback:/usr/share/nginx/fallback
       - ./app/p/img:/usr/p/img
       - ./../../certs:/etc/ssl
     depends_on:
