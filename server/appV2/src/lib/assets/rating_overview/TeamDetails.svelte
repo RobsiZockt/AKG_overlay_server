@@ -21,7 +21,7 @@
 </script>
 
 {#if data != null}
-<div class="w-full h-[250px] p-1 items-center justify-center flex">
+<div class="w-full h-[200px] p-1 items-center justify-center flex">
     <Detail head_txt={data[0].txt} value={data[0].value}></Detail>
     <Detail head_txt={data[1].txt} value={data[1].value}></Detail>
     <Detail head_txt={data[2].txt} value={data[2].value}></Detail>
