@@ -1198,19 +1198,31 @@ app.get("/pred/IDV/:id/:season",[],async(req,res)=>{
 //   }
 // })
 
-app.post("/pred/create_db",[],async(req,res)=>{
+// app.post("/pred/create_db",[],async(req,res)=>{
  
-  try{
-    const data = req.body;
-    console.log(req.body,req.headers);
-    await init_DB.createDatabaseWithReadonly(data.database);
-    console.log("database: "+data.database);
-    res.status(200).json({ status: "ok", latest: data });
-  } catch (err){
-    res.status(500).json({ error:err, latest: data });
-  }
-})
+//   try{
+//     const data = req.body;
+//     console.log(req.body,req.headers);
+//     await init_DB.createDatabaseWithReadonly(data.database);
+//     console.log("database: "+data.database);
+//     res.status(200).json({ status: "ok", latest: data });
+//   } catch (err){
+//     res.status(500).json({ error:err, latest: data });
+//   }
+// })
 
+// app.post("/pred/create_db/ff",[],async(req,res)=>{
+//   try{
+//     await init_DB.createDatabaseWithReadonly("wise_24");
+//     await init_DB.createDatabaseWithReadonly("sose_25");
+//     await init_DB.createDatabaseWithReadonly("wise_25");
+//     await init_DB.createDatabaseWithReadonly("sose_26");
+//     await init_DB.createDatabaseWithReadonly("wise_26");
+//     res.status(200).json({ status: "ok" });
+//   } catch (err){
+//     res.status(500).json({ error:err });
+//   }
+// })
 
 // END PREDICTION DATABASE CALLS
 
