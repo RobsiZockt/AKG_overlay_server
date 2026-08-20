@@ -712,6 +712,38 @@ class Glicko2 {
   }
 
   // ========================================================
+  // PREDICTION CONFIDENCE
+  // ========================================================
+
+  rdConfidence(rd) {
+  const maxRD = 350;
+  const minRD = 30;
+
+  const confidence =
+    1 -
+    (rd - minRD) /
+    (maxRD - minRD);
+
+  return Math.max(
+    0,
+    Math.min(1, confidence)
+  );
+}
+
+  calculatePredictionConfidence(team1,team2){
+    const t1_ov_conf = this.rdConfidence(team1.overallRD);
+    const t2_ov_conf = this.rdConfidence(team2.overallRD);
+
+    const t1_map_conf = this.rdConfidence(team1.mapRD);
+    const t2_map_conf = this.rdConfidence(team2.mapRD);
+
+    const overallConfidence = Math.min(t1_ov_conf,t2_ov_conf);
+    const mapConfidence = Math.min(t1_map_conf,t2_map_conf);
+
+    const mapWeight=(team1.mapWeight +team2.mapWeight)/2;
+    return overallConfidence * ((1-mapWeight)+mapWeight*mapConfidence);
+  }
+  // ========================================================
   // CLEAR
   // ========================================================
 

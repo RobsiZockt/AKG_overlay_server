@@ -183,6 +183,8 @@ async function predict_map_outcome(
     current_t2_score,
   );
 
+  const pred_confidence = glicko.calculatePredictionConfidence(team1,team2);
+
   const teams = await getTeamData(host, user,password,db);
   const teamLookup = new Map(teams.map((team) => [team.id, team]));
 
@@ -197,7 +199,7 @@ async function predict_map_outcome(
     team1_win_probability: Number((winProbability * 100).toFixed(2)),
     team2_win_probability: Number(((1 - winProbability) * 100).toFixed(2)),
     predicted_winner: winProbability >= 0.5 ? team1_id : team2_id,
-    confidence: Number(Math.max(winProbability, 1 - winProbability).toFixed(4)),
+    confidence: pred_confidence,
 
     // ----------------------------------------------------
     // Effective ratings actually used for prediction.
