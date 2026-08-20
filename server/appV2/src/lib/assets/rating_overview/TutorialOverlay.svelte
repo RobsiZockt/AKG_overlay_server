@@ -33,7 +33,12 @@
       <h2 class="mb-2 text-xl font-semibold">Was ist das</h2>
 
       <p>TESTBUILD</p>
-      <p>Gute Frage, die Anleitung kommt bestimmt noch, bis dahin einfach sachen anklicken^^</p>
+      <p>Rating: based on a modified Glicko2 Algorithm using Map specific rating to determie who will win </p>
+      <p>This also accounts who picked the map and expects with two identical Teams that the team picking the map will win slightly</p>
+      <h3 class="mb-2 text-l font-semibold">How to Read</h3>
+      <p>Rating is das das Rating eines Teams, guess what</p>
+      <p>RD ist die halbe abweichung dieses Ratings, heist ein Team kann Rating +/- 2*RD haben</p>
+      <p>Games: Anzahl der gespielten Maps, die für das aktuelle Rating einbezogen werden</p>
       <p>Mehr Stats kommen sobald ich die Queries dafür fertig geschrieben habe</p>
     </div>
   </div>

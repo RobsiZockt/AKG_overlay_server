@@ -76,7 +76,7 @@ function formatObjects(objects) {
   </div>
   <div class="w-full h-full flex-col items-center justify-center">
     <div class="w-full h-auto flex items-center justify-center pb-12 bt-4">
-      <span class="font-[Cascadia Mono] text-white text-9xl drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)] whitespace-pre font-mono p-2"> Funny Team Power Rating</span>
+      <span class="font-[Cascadia Mono] text-white text-9xl drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)] whitespace-pre font-mono p-2"> Funny Team Power Rating V0.2</span>
     </div>
     <div>
       <TekButton current_tab={updateData}></TekButton>
