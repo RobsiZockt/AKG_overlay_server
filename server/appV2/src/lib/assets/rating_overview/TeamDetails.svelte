@@ -21,10 +21,9 @@
 </script>
 
 {#if data != null}
-<div class="w-full h-[200px] shrink-0 p-1 items-center justify-center flex">
-    <Detail head_txt={data[0].txt} value={data[0].value}></Detail>
-    <Detail head_txt={data[1].txt} value={data[1].value}></Detail>
-    <Detail head_txt={data[2].txt} value={data[2].value}></Detail>
-    <Detail head_txt={data[3].txt} value={data[3].value}></Detail>
+<div class="w-full h-auto shrink-0 p-1 grid grid-cols-4 gap-1">
+{#each data as item }
+  <Detail head_txt={item.txt} value={item.value}></Detail>
+{/each}
 </div>
 {/if}

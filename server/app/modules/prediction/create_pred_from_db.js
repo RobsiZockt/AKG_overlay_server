@@ -291,28 +291,56 @@ async function getTeamDetails(host, user, password, database, id) {
   await client.connect();
   try {
     const result = await client.query(
-      `WITH MapStatsPerMatch AS (
-            -- Step 1: Compress the "many" side (maps) so there is only 1 row per match
-            SELECT 
-                ms.match_id,
-                COUNT(CASE WHEN msr.result = 'win' THEN 1 END) AS maps_won,
-                COUNT(CASE WHEN msr.result = 'loss' THEN 1 END) AS maps_lost,
-                ms.map AS maps_played
-            FROM match_set_results msr
-            JOIN match_sets ms ON msr.match_set_id = ms.id
-            WHERE msr.participant_id = '${id}'
-            GROUP BY ms.match_id, ms.map
+      `WITH BestWorstMap AS(
+            SELECT
+                MAX(CASE WHEN rank_best = 1 THEN map_name END) AS best_map,
+                MAX(CASE WHEN rank_worst = 1 THEN map_name END) AS worst_map
+            FROM (
+                SELECT
+                    map_name,
+                    ROW_NUMBER() OVER (
+                        ORDER BY deviation * games / (games + 6.0) DESC
+                    ) AS rank_best,
+                    ROW_NUMBER() OVER (
+                        ORDER BY deviation * games / (games + 6.0) ASC
+                    ) AS rank_worst
+                FROM map_rating
+                WHERE team_id = '${id}'
+                AND games > 0
+            ) ranked
+        ),
+        MapStatsPerMatch AS (
+                    -- Step 1: Compress the "many" side (maps) so there is only 1 row per match
+                    SELECT 
+                        ms.match_id,
+                        COUNT(CASE WHEN msr.result = 'win' THEN 1 END) AS maps_won,
+                        COUNT(CASE WHEN msr.result = 'loss' THEN 1 END) AS maps_lost,
+                        ms.map AS maps_played
+                    FROM match_set_results msr
+                    JOIN match_sets ms ON msr.match_set_id = ms.id
+                    WHERE msr.participant_id = '${id}'
+                    GROUP BY ms.match_id, ms.map
+                ),
+        SatsCalculator AS(
+                -- Step 2: Join the clean, 1-to-1 map data to the matches table
+                SELECT 
+                    SUM(map_data.maps_won) AS total_maps_won,
+                    SUM(map_data.maps_lost) AS total_maps_lost,
+                    -- Because there are no duplicated rows anymore, AVG() works perfectly here!
+                    ROUND((AVG(CASE WHEN m.opponents_0_result = 'win' AND m.opponents_0_participant_id = '${id}' THEN 1.0 ELSE 0.0 END) + AVG(CASE WHEN m.opponents_1_result = 'win' AND m.opponents_1_participant_id = '${id}' THEN 1.0 ELSE 0.0 END))*100,2) AS match_winrate,
+                    MODE() WITHIN GROUP (ORDER BY map_data.maps_played) AS most_played
+                FROM MapStatsPerMatch map_data 
+                JOIN matches m ON m.id = map_data.match_id
         )
-
-        -- Step 2: Join the clean, 1-to-1 map data to the matches table
-        SELECT 
-            SUM(map_data.maps_won) AS total_maps_won,
-            SUM(map_data.maps_lost) AS total_maps_lost,
-            -- Because there are no duplicated rows anymore, AVG() works perfectly here!
-            ROUND((AVG(CASE WHEN m.opponents_0_result = 'win' AND m.opponents_0_participant_id = '${id}' THEN 1.0 ELSE 0.0 END) + AVG(CASE WHEN m.opponents_1_result = 'win' AND m.opponents_1_participant_id = '${id}' THEN 1.0 ELSE 0.0 END))*100,2) AS match_winrate,
-            MODE() WITHIN GROUP (ORDER BY map_data.maps_played) AS most_played
-        FROM MapStatsPerMatch map_data
-        JOIN matches m ON m.id = map_data.match_id;`,
+        SELECT
+        sc.total_maps_won,
+        sc.total_maps_lost,
+        sc.match_winrate,
+        sc.most_played,
+        bwm.best_map,
+        bwm.worst_map
+        FROM SatsCalculator sc
+        CROSS JOIN BestWorstMap bwm ;`,
     );
      const data = Object.entries(result.rows[0]).map(([key,value])=>({txt:key,value:String(value)}));
      return data;
