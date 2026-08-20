@@ -35,6 +35,8 @@
       <p>TESTBUILD</p>
       <p>Rating: based on a modified Glicko2 Algorithm using Map specific rating to determie who will win </p>
       <p>This also accounts who picked the map and expects with two identical Teams that the team picking the map will win slightly</p>
+      <h3 class="mb-2 text-l font-semibold">Interaktion</h3>
+      <p>Klickt einfach auf Das jeweilige Team von dem ihr weitere Stats wie u.a. Maps Won / Lost wissen wollt</p>
       <h3 class="mb-2 text-l font-semibold">How to Read</h3>
       <p>Rating is das das Rating eines Teams, guess what</p>
       <p>RD ist die halbe abweichung dieses Ratings, heist ein Team kann Rating +/- 2*RD haben</p>
