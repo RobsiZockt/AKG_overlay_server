@@ -98,7 +98,7 @@ async function getSeasonRatingMaps(db) {
         ratings[row.team_id]={};
 
       ratings[row.team_id][row.map_name]= {
-        rating: row.rating,
+        deviation: row.deviation,
         rd: row.rd,
         sigma: row.sigma,
         games: row.games
@@ -238,7 +238,7 @@ async function saveMapRatings(db, glicko) {
   
   try {
 
-    await client.query("CREATE TABLE IF NOT EXISTS map_rating (map_name TEXT, team_id TEXT, rating NUMERIC(40,30), rd NUMERIC(40,30), sigma NUMERIC(40,30),games INTEGER, PRIMARY KEY (map_name, team_id));");
+    await client.query("CREATE TABLE IF NOT EXISTS map_rating (map_name TEXT, team_id TEXT, deviation NUMERIC(40,30), rd NUMERIC(40,30), sigma NUMERIC(40,30),games INTEGER, PRIMARY KEY (map_name, team_id));");
     // Start transaction
     await client.query('BEGIN');
     
@@ -251,17 +251,17 @@ async function saveMapRatings(db, glicko) {
       for (const [teamId, ratingData] of teams) {
         await client.query(
           `INSERT INTO "map_rating" 
-           (map_name, team_id, rating, rd, sigma, games) 
+           (map_name, team_id, deviation, rd, sigma, games) 
            VALUES ($1, $2, $3, $4, $5, $6)
            ON CONFLICT (map_name, team_id) DO UPDATE SET
-             rating = EXCLUDED.rating,
+             deviation = EXCLUDED.deviation,
              rd = EXCLUDED.rd,
              sigma = EXCLUDED.sigma,
              games = EXCLUDED.games`,
           [
             mapName,
             teamId,
-            ratingData.rating,
+            ratingData.deviation,
             ratingData.rd,
             ratingData.sigma,
             ratingData.games
@@ -456,7 +456,7 @@ async function calculateNewMapRatings(old_maps, stayedplayers) {
       const played_maps = Object.keys(prev_rating);
       played_maps.forEach((map) => {
         rating = {
-          rating: prev_rating[map].rating * modifier + init_rating * Math.max(0, 1 - modifier),
+          deviation: prev_rating[map].deviation * modifier + 1 * Math.max(0, 1 - modifier),
           rd: prev_rating[map].rd * modifier + glicko.defaultRD * Math.max(0, 1 - modifier),
           sigma: prev_rating[map].sigma * modifier + glicko.defaultSigma * Math.max(0, 1 - modifier),
           games: Math.floor(prev_rating[map].games * Math.min(1, modifier)),
@@ -492,7 +492,7 @@ async function main(prev_db,target_db,target_stages){
   new_stages = target_stages;
 
 old_pool = new Pool({
-  host: "db",
+  host: 'db',
   port: 5432,
   user: "admin",
   password: "secretpassword",
@@ -503,7 +503,7 @@ old_pool = new Pool({
 });
 
 new_pool = new Pool({
-  host: "db",
+  host: 'db',
   port: 5432,
   user: "admin",
   password: "secretpassword",

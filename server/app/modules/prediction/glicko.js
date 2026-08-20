@@ -11,6 +11,11 @@ class Glicko2 {
     this.defaultRD = 350;
     this.defaultSigma = 0.06;
 
+    this.mapConfig = {
+      priorGames: 6, //amount until map is mostly trusted
+      pickAdvantage: 30, //amount Rating will be boosted temp when picking a map
+      maxMapDeviation: 200, //limit how much a map can divert from team rating //200 =~ Difference between Liga1 and Liga2
+    }
     // Momentum Strength
     this.momentumStrength = 0.25;
 
@@ -248,7 +253,7 @@ class Glicko2 {
   // UPDATE ONE RATING
   // ========================================================
 
-  updateRating(rating, rd, sigma, opponents) {
+  updateRating(rating, rd, sigma, opponents, selfAdjustment=0) {
     const mu = this.ratingToMu(rating);
     const phi = this.rdToPhi(rd);
 
@@ -267,10 +272,11 @@ class Glicko2 {
     let varianceInverse = 0;
 
     for (const opponent of opponents) {
-      const opponentMu = this.ratingToMu(opponent.rating);
+      const selfMu = this.ratingToMu(selfAdjustment);
+      const opponentMu = this.ratingToMu(opponent.rating)+this.ratingToMu(opponent.ratingAdjustment || 0);
       const opponentPhi = this.rdToPhi(opponent.rd);
       const gValue = this.g(opponentPhi);
-      const expected = this.expectedScore(mu, opponentMu, opponentPhi);
+      const expected = this.expectedScore(selfMu, opponentMu, opponentPhi);
       varianceInverse += Math.pow(gValue, 2) * expected * (1 - expected);
     }
 
@@ -329,6 +335,183 @@ class Glicko2 {
       sigma: newSigma,
     };
   }
+
+  // ========================================================
+  // UPDATE COMPLETE MATCH 
+  // ========================================================
+  //
+  // this function updates the Team rating and map deviation at once
+  // --------------------------------------------------------
+
+  updateCompleteMatch(
+    mapName,
+    team1ID,
+    team2ID,
+    team1Rounds,
+    team2Rounds,
+    teamPickedMap =0
+  ){
+
+    const team1Won = team1Rounds>team2Rounds;
+
+    const team1 = this.getTeamRating(team1ID);
+    const team2 = this.getTeamRating(team2ID);
+
+    // relative map data for teams
+    const map1 = this.getMapTeamRating(mapName,team1ID);
+    const map2 = this.getMapTeamRating(mapName,team2ID);
+
+    const team1Score = team1Won?1:0;
+    const team2Score = team1Won?0:1;
+
+    const team1MapRating = team1.rating + map1.deviation;
+    const team2MapRating = team2.rating + map2.deviation;
+
+    const weight1 = Math.min(map1.games/this.mapConfig.priorGames,1);
+    const weight2 = Math.min(map2.games/this.mapConfig.priorGames,1);
+
+    const effDev1 = map1.deviation + weight1;
+    const effDev2 = map2.deviation + weight2;
+
+    const team1PickBonus = teamPickedMap===1?this.mapConfig.pickAdvantage:0;
+    const team2PickBonus = teamPickedMap===2?this.mapConfig.pickAdvantage:0;
+
+    // Update Teams
+
+    const updatedTeam1 = this.updateRating(
+      team1.rating,
+      team1.rd,
+      team1.sigma,
+      [{
+        rating: team2.rating,
+        rd: team2.rd,
+        score: team1Score,
+
+        ratingAdjustment: effDev2 + team2PickBonus,
+      }],
+      effDev1 + team1PickBonus,
+    );
+
+    const updatedTeam2 = this.updateRating(
+      team2.rating,
+      team2.rd,
+      team2.sigma,
+      [{
+        rating: team1.rating,
+        rd: team1.rd,
+        score: team2Score,
+
+        ratingAdjustment: effDev1 + team1PickBonus,
+      }],
+      effDev2 + team2PickBonus,
+    );    
+
+    //Update Maps
+
+    const updatedMap1 = this.updateRating(
+      team1MapRating,
+      map1.rd,
+      map1.sigma,
+      [
+        {
+          rating: team2MapRating,
+          rd: map2.rd,
+          score: team1Score,
+          ratingAdjustment:
+            team2PickBonus,
+        },
+      ],
+      team1PickBonus
+    );
+
+    const updatedMap2 = this.updateRating(
+      team2MapRating,
+      map2.rd,
+      map2.sigma,
+      [
+        {
+          rating: team1MapRating,
+          rd: map1.rd,
+          score: team2Score,
+          ratingAdjustment:
+            team1PickBonus,
+        },
+      ],
+      team2PickBonus
+    );
+
+    // Map Rating into Deviation
+
+    const candidateDev1 = updatedMap1.rating - updatedTeam1.rating;
+    const candidateDev2 = updatedMap2.rating - updatedTeam2.rating;
+
+    const mapLearning1 = Math.min(map1.games+1/this.mapConfig.priorGames,1);
+    const mapLearning2 = Math.min(map2.games+1/this.mapConfig.priorGames,1);
+
+    let newDeviation1 = map1.deviation + mapLearning1 * (candidateDev1-map1.deviation);
+    let newDeviation2 = map2.deviation + mapLearning2 * (candidateDev2-map2.deviation);
+
+    // clamping
+
+    newDeviation1 = Math.max(-this.mapConfig.maxMapDeviation, (Math.min(this.mapConfig.maxMapDeviation,newDeviation1)));
+    newDeviation2 = Math.max(-this.mapConfig.maxMapDeviation, (Math.min(this.mapConfig.maxMapDeviation,newDeviation2)));
+
+    const newMapRD1 = map1.rd * (1- mapLearning1) + updatedMap1.rd * mapLearning1;
+    const newMapRD2 = map2.rd * (1- mapLearning2) + updatedMap2.rd * mapLearning2;
+
+    const newMapSigma1 = map1.sigma * (1-mapLearning1) + updatedMap1.sigma * mapLearning1;
+    const newMapSigma2 = map2.sigma * (1-mapLearning2) + updatedMap2.sigma * mapLearning2;
+
+    const finalTeam1 = {...updatedTeam1,games: (team1.games || 0)+1};
+    const finalTeam2 = {...updatedTeam2,games: (team2.games || 0)+1};
+
+    this.updateTeamRating(team1ID,finalTeam1);
+    this.updateTeamRating(team2ID,finalTeam2);
+
+    this.updateMapTeamRating(
+      mapName,
+      team1ID,
+      {
+        deviation: newDeviation1,
+        rd: newMapRD1,
+        sigma: newMapSigma1,
+        games: map1.games + 1,
+      }
+    )
+
+        this.updateMapTeamRating(
+      mapName,
+      team2ID,
+      {
+        deviation: newDeviation2,
+        rd: newMapRD2,
+        sigma: newMapSigma2,
+        games: map2.games + 1,
+      }
+    )
+
+    return{
+      team1: finalTeam1,
+      team2: finalTeam2,
+
+      map:{
+        mapName,
+        team1: {
+          deviation: newDeviation1,
+          rd: newMapRD1,
+          sigma: newMapSigma1,
+          games: map1.games + 1,
+        },
+        team2: {
+          deviation: newDeviation2,
+          rd: newMapRD2,
+          sigma: newMapSigma2,
+          games: map2.games + 1,
+        }
+      }
+    }
+  }
+
 
   // ========================================================
   // UPDATE A MATCH //might be that stageID and season boost must be pased here
@@ -408,17 +591,18 @@ class Glicko2 {
     // Create map if necessary.
     if (!mapRatings) {
       mapRatings = new Map();
-
       this.mapCache.set(mapName, mapRatings);
     }
 
     // Get team's map rating.
     let rating = mapRatings.get(teamId);
 
+
     // Team has never played this map.
     if (!rating) {
+      //uses deviation instead of rating
       rating = {
-        rating: this.defaultRating,
+        deviation: 0,
         rd: this.defaultRD,
         sigma: this.defaultSigma,
         games: 0,
@@ -435,7 +619,6 @@ class Glicko2 {
 
     if (!mapRatings) {
       mapRatings = new Map();
-
       this.mapCache.set(mapName, mapRatings);
     }
 
@@ -448,79 +631,44 @@ class Glicko2 {
 
   getBlendedPredictionRating(mapName, teamId) {
     const overall = this.getTeamRating(teamId);
-    const mapRatings = this.mapCache.get(mapName);
+    const map = this.getMapTeamRating(mapName,teamId);
 
+    const games = map.games || 0;
     // --------------------------------------------------------
     // Team has never played this map.
     // --------------------------------------------------------
-
-    if (!mapRatings || !mapRatings.has(teamId)) {
-      return {
-        rating: overall.rating,
-        rd: overall.rd,
-        sigma: overall.sigma,
-        games: 0,
-        source: "overall",
-        mapWeight: 0,
-        overallWeight: 1,
-      };
-    }
-
-    const mapRating = mapRatings.get(teamId);
-    const mapGames = mapRating.games || 0;
-
-    // --------------------------------------------------------
-    // 6 maps = 100% map-specific.
-    // --------------------------------------------------------
-
-    const mapWeight = Math.min(mapGames / 6, 1);
+    const mapWeight = Math.min(games / this.mapConfig.priorGames, 1);
     const overallWeight = 1 - mapWeight;
 
-    // --------------------------------------------------------
-    // No map history.
-    // --------------------------------------------------------
+    const mapDeviation = map.deviation || 0;
 
-    if (mapGames <= 0) {
-      return {
-        rating: overall.rating,
-        rd: overall.rd,
-        sigma: overall.sigma,
-        games: 0,
-        source: "overall",
-        mapWeight: 0,
-        overallWeight: 1,
-      };
-    }
+    const effectiveDeviation = mapDeviation * mapWeight;
 
-    // --------------------------------------------------------
-    // Blend the ratings.
-    // --------------------------------------------------------
+    const effectiveRating = overall.rating + effectiveDeviation;
 
-    const blendedRating =
-      overall.rating * overallWeight + mapRating.rating * mapWeight;
-
-    // --------------------------------------------------------
-    // Blend uncertainty.
-    // --------------------------------------------------------
-
-    const blendedRD = overall.rd * overallWeight + mapRating.rd * mapWeight;
-    const blendedSigma =
-      overall.sigma * overallWeight + mapRating.sigma * mapWeight;
+    const effectiveRD = overall.rd * overallWeight + map.rd * mapWeight;
+    const effectiveSigma = overall.sigma * overallWeight + map.sigma * mapWeight;
 
     return {
-      rating: blendedRating,
-      rd: blendedRD,
-      sigma: blendedSigma,
-      games: mapGames,
-      source: "blended",
-      mapWeight,
-      overallWeight,
+      rating: effectiveRating,
+      rd: effectiveRD,
+      sigma: effectiveSigma,
+
+      games,
+
+      source:"with deviation",
       overallRating: overall.rating,
       overallRD: overall.rd,
-      mapRating: mapRating.rating,
-      mapRD: mapRating.rd,
-    };
+      mapDeviation,
+      effectiveDeviation,
+      mapWeight,
+      overallWeight,
+      mapRD: map.rd,
+      mapSigma: map.sigma,
+    }
   }
+
+   
 
   // ========================================================
   // Momentum
@@ -550,9 +698,15 @@ class Glicko2 {
   // WIN PROBABILITY
   // ========================================================
 
-  calculateWinProbability(team1, team2) {
-    const mu1 = this.ratingToMu(team1.rating);
-    const mu2 = this.ratingToMu(team2.rating);
+  calculateWinProbability(team1, team2, teamPickedMap = 0) {
+
+  
+
+    const team1PickBonus = teamPickedMap===1?this.mapConfig.pickAdvantage:0;
+    const team2PickBonus = teamPickedMap===2?this.mapConfig.pickAdvantage:0;
+
+    const mu1 = this.ratingToMu(team1.rating + team1PickBonus);
+    const mu2 = this.ratingToMu(team2.rating + team2PickBonus);
     const phi2 = this.rdToPhi(team2.rd);
     return this.expectedScore(mu1, mu2, phi2);
   }

@@ -30,6 +30,7 @@ async function runMigration(target_db) {
                 set_number INTEGER NOT NULL,
                 status TEXT,
                 map TEXT,
+                picked_by INTEGER DEFAULT 0,
                 UNIQUE(match_id, set_number)
             );
 
@@ -125,6 +126,10 @@ async function runMigration(target_db) {
                OR TRIM(result) = '' 
                OR LOWER(result) = 'null';
         `);
+
+        await client.query(`
+            DELETE FROM match_sets
+            WHERE status = 'pending' AND map IS NULL`)
 
         console.log('Migration completed successfully!');
 

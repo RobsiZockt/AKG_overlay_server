@@ -79,11 +79,12 @@ async function getMatchData() {
   try {
     const isoTime = last_update.toISOString();
     const result = await client.query(
-      `SELECT ms.match_id, ms.set_number, o0.score AS op_a_score, o1.score AS op_b_score, o0.participant_id AS teama, o1.participant_id AS teamb, ms.map AS map, m.stage_id FROM match_sets ms
+      `SELECT ms.match_id, ms.set_number, o0.score AS op_a_score, o1.score AS op_b_score, o0.participant_id AS teama, o1.participant_id AS teamb, ms.map AS map, m.stage_id, ms.picked_by FROM match_sets ms
       JOIN match_set_results o0 ON ms.id = o0.match_set_id AND o0.opponent_index =0 
       JOIN match_set_results o1 ON ms.id = o1.match_set_id AND o1.opponent_index =1 
       JOIN matches m ON ms.match_id = m.id
-      WHERE '${isoTime}' < m.playedat;`,
+      WHERE '${isoTime}' < m.playedat
+      ORDER BY m.playedat ASC, ms.match_id ASC, ms.set_number ASC;`,
     );
 
     return result.rows;
@@ -135,7 +136,7 @@ async function fetchAllMapRatings() {
       if (ratings[row.team_id] === undefined) ratings[row.team_id] = {};
 
       ratings[row.team_id][row.map_name] = {
-        rating: Number(row.rating),
+        deviation: Number(row.deviation),
         rd: Number(row.rd),
         sigma: Number(row.sigma),
         games: Number(row.games),
@@ -161,20 +162,22 @@ async function loadToCache(glicko) {
     last_update = new Date(log);
 
     let teamratings = await fetchAllTeamRatings();
-    const teamkeys = await Object.keys(teamratings);
-    teamkeys.forEach((team) => {
-      glicko.updateTeamRating(team, teamratings[team]);
-    });
+
+    for(const teamId of Object.keys(teamratings)){
+      glicko.updateTeamRating(teamId,teamratings[teamId])
+    }
 
     let mapratings = await fetchAllMapRatings();
-    const map_teamkeys = Object.keys(mapratings);
-    map_teamkeys.forEach((team) => {
-      const maps = mapratings[team];
-      const mapkeys = Object.keys(maps);
-      mapkeys.forEach((map) => {
-        glicko.updateMapTeamRating(map, team, maps[map]);
-      });
-    });
+
+    for(const teamId of Object.keys(mapratings)){
+      const maps = mapratings[teamId];
+
+      for (const mapName of Object.keys(maps)){
+        glicko.updateMapTeamRating(mapName,teamId,maps[mapName]);
+      };
+    }
+
+    genereatePickedBy();
     return 1;
   } catch (error) {
     console.log(error);
@@ -248,7 +251,7 @@ async function saveMapRatings(glicko) {
   
   try {
 
-    await client.query("CREATE TABLE IF NOT EXISTS map_rating (map_name TEXT, team_id TEXT, rating NUMERIC(40,30), rd NUMERIC(40,30), sigma NUMERIC(40,30),games INTEGER, PRIMARY KEY (map_name, team_id));");
+    await client.query("CREATE TABLE IF NOT EXISTS map_rating (map_name TEXT, team_id TEXT, deviation NUMERIC(40,30), rd NUMERIC(40,30), sigma NUMERIC(40,30),games INTEGER, PRIMARY KEY (map_name, team_id));");
     // Start transaction
     await client.query('BEGIN');
     
@@ -261,17 +264,17 @@ async function saveMapRatings(glicko) {
       for (const [teamId, ratingData] of teams) {
         await client.query(
           `INSERT INTO "map_rating" 
-           (map_name, team_id, rating, rd, sigma, games) 
+           (map_name, team_id, deviation, rd, sigma, games) 
            VALUES ($1, $2, $3, $4, $5, $6)
            ON CONFLICT (map_name, team_id) DO UPDATE SET
-             rating = EXCLUDED.rating,
+             deviation = EXCLUDED.deviation,
              rd = EXCLUDED.rd,
              sigma = EXCLUDED.sigma,
              games = EXCLUDED.games`,
           [
             mapName,
             teamId,
-            ratingData.rating,
+            ratingData.deviation,
             ratingData.rd,
             ratingData.sigma,
             ratingData.games
@@ -293,6 +296,71 @@ async function saveMapRatings(glicko) {
 }
 
 // ============================================================
+// Save Picked by data To matchsets
+// ============================================================
+
+async function savePickData(data){
+  const client = await pool.connect();
+  
+  try {
+
+    await client.query('BEGIN');
+    
+    for (const item of data) {
+        await client.query(
+          `UPDATE match_sets 
+           SET picked_by = $1
+           WHERE match_id = $2
+            AND set_number = $3;`,
+          [
+            item.picked_by,
+            item.match_id,
+            item.set_number
+          ]
+        );
+      
+    }
+    
+    // Commit transaction
+    await client.query('COMMIT');
+    console.log("Map ratings saved successfully to database");
+  } catch (error) {
+    await client.query('ROLLBACK');
+    console.error("Error saving map ratings:", error);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+
+// ============================================================
+// Determine who picked map
+// ============================================================
+
+async function genereatePickedBy() {
+  let mapdata =  await getMatchData();
+
+  let prev_entry = null;
+
+  for(let map of mapdata){
+    if(prev_entry === null || map.match_id != prev_entry.match_id){
+      map.picked_by = 0;
+    } else{
+     if(prev_entry.op_a_score>prev_entry.op_b_score){
+      map.picked_by=2;
+     }else if( prev_entry.op_a_score<prev_entry.op_b_score){
+      map.picked_by =1;
+     }else{
+      map.picked_by = prev_entry.picked_by;
+     }
+    }
+    prev_entry=map;
+  }
+  await savePickData(mapdata);
+}
+
+// ============================================================
 // PROCESS ALL MAPS
 // ============================================================
 
@@ -301,10 +369,17 @@ async function processAllMatches() {
 
   await loadToCache(glicko);
 
-  // Load database data ONCE.
-  const [teams, matchData] = await Promise.all([getTeamData(), getMatchData()]);
+  const [teams, matchData] =
+    await Promise.all([
+      getTeamData(),
+      getMatchData(),
+    ]);
+
   const total = matchData.length;
-  console.log(`Starting Glicko-2 processing: ${total} maps`);
+
+  console.log(
+    `Starting Glicko-2 processing: ${total} maps`
+  );
 
   const startTime = Date.now();
 
@@ -312,40 +387,37 @@ async function processAllMatches() {
   let skipped = 0;
   let errors = 0;
 
-  // Only print every N maps so console logging itself
-  // doesn't become a performance bottleneck.
-  const progressEvery = Math.max(1, Math.floor(total / 100));
+  const progressEvery =
+    Math.max(1, Math.floor(total / 100));
 
   for (let index = 0; index < total; index++) {
     const match = matchData[index];
-    //here everything is fine and correct
+
     const current = index + 1;
 
-
-    // ----------------------------------------------------
-    // Validate map name
-    // ----------------------------------------------------
+    // --------------------------------------------------
+    // Validate map
+    // --------------------------------------------------
 
     if (
       match.map === null ||
       match.map === undefined ||
       String(match.map).trim() === ""
     ) {
-      //here the map is "" and the scores are allways both null
       skipped++;
 
       console.warn(
         `[${current}/${total}] SKIPPED: ` +
-          `no map name | match=${match.match_id}` +
-          ` | mapname=${match.map}`,
+        `no map name | ` +
+        `match=${match.match_id}`
       );
 
       continue;
     }
 
-    // ----------------------------------------------------
+    // --------------------------------------------------
     // Validate scores
-    // ----------------------------------------------------
+    // --------------------------------------------------
 
     if (
       match.op_a_score === null ||
@@ -354,62 +426,116 @@ async function processAllMatches() {
       match.op_b_score === undefined
     ) {
       skipped++;
-
       continue;
     }
 
-    // ----------------------------------------------------
-    // Ignore draws
-    // ----------------------------------------------------
+    const team1Rounds =
+      Number(match.op_a_score);
 
-    if (match.op_a_score === match.op_b_score) {
+    const team2Rounds =
+      Number(match.op_b_score);
+
+    if (
+      !Number.isFinite(team1Rounds) ||
+      !Number.isFinite(team2Rounds)
+    ) {
       skipped++;
+      continue;
+    }
 
+    // --------------------------------------------------
+    // Ignore draws
+    // --------------------------------------------------
+
+    if (
+      team1Rounds === team2Rounds
+    ) {
+      skipped++;
       continue;
     }
 
     try {
       // =================================================
-      // OVERALL TEAM RATINGS
+      // GET CURRENT TEAM STATE
       // =================================================
 
-      const team1 = glicko.getTeamRating(match.teama, match.stage_id, stages);
-      const team2 = glicko.getTeamRating(match.teamb, match.stage_id, stages);
-      const team1Won = match.op_a_score > match.op_b_score;
+      const team1 =
+        glicko.getTeamRating(
+          match.teama,
+          match.stage_id,
+          stages
+        );
 
-      // Calculate both updates from the ratings
-      // BEFORE this map.
-      const overallUpdated = glicko.updateMatch(team1, team2, team1Won);
-
-      // Save overall ratings.
-      glicko.updateTeamRating(match.teama, {
-        ...overallUpdated.team1,
-        games: team1.games + 1,
-      });
-
-      glicko.updateTeamRating(match.teamb, {
-        ...overallUpdated.team2,
-        games: team2.games + 1,
-      });
+      const team2 =
+        glicko.getTeamRating(
+          match.teamb,
+          match.stage_id,
+          stages
+        );
 
       // =================================================
-      // MAP-SPECIFIC RATINGS
+      // MAP PICKER
+      // =================================================
+      //
+      // For now:
+      //
+      // 0 = system picked
+      // 1 = team1 picked
+      // 2 = team2 picked
+      //
+      // You said this will be determined externally.
+      // So until then, everything is 0.
+      //
       // =================================================
 
-      const mapTeam1 = glicko.getMapTeamRating(match.map, match.teama);
-      const mapTeam2 = glicko.getMapTeamRating(match.map, match.teamb);
-      const mapUpdated = glicko.updateMatch(mapTeam1, mapTeam2, team1Won);
+      const mapPicker = match.picked_by; 
 
-      // Save map-specific ratings.
-      glicko.updateMapTeamRating(match.map, match.teama, {
-        ...mapUpdated.team1,
-        games: mapTeam1.games + 1,
-      });
+      // =================================================
+      // ONE NEW GLICKO UPDATE
+      // =================================================
 
-      glicko.updateMapTeamRating(match.map, match.teamb, {
-        ...mapUpdated.team2,
-        games: mapTeam2.games + 1,
-      });
+      const updated =
+        glicko.updateCompleteMatch(
+          match.map,
+
+          match.teama,
+          match.teamb,
+
+          team1Rounds,
+          team2Rounds,
+
+          mapPicker
+        );
+
+      // =================================================
+      // SAVE UPDATED OVERALL RATINGS TO CACHE
+      // =================================================
+
+      glicko.updateTeamRating(
+        match.teama,
+        updated.team1
+      );
+
+      glicko.updateTeamRating(
+        match.teamb,
+        updated.team2
+      );
+
+      // =================================================
+      // SAVE UPDATED MAP DEVIATIONS TO CACHE
+      // =================================================
+
+      glicko.updateMapTeamRating(
+        match.map,
+        match.teama,
+        updated.map.team1
+      );
+
+      glicko.updateMapTeamRating(
+        match.map,
+        match.teamb,
+        updated.map.team2
+      );
 
       // =================================================
       // SUCCESS
@@ -417,60 +543,106 @@ async function processAllMatches() {
 
       processed++;
 
-      // =================================================
-      // PROGRESS
-      // =================================================
+      if (
+        current === 1 ||
+        current === total ||
+        current % progressEvery === 0
+      ) {
+        const elapsed =
+          (Date.now() - startTime) / 1000;
 
-      if (current === 1 || current === total || current % progressEvery === 0) {
-        const elapsed = (Date.now() - startTime) / 1000;
-        const percent = ((current / total) * 100).toFixed(1);
-        const mapsPerSecond = current / Math.max(elapsed, 0.001);
-        const remaining = total - current;
-        const eta = remaining / Math.max(mapsPerSecond, 0.001);
+        const percent =
+          ((current / total) * 100)
+            .toFixed(1);
+
+        const mapsPerSecond =
+          current /
+          Math.max(elapsed, 0.001);
+
+        const remaining =
+          total - current;
+
+        const eta =
+          remaining /
+          Math.max(
+            mapsPerSecond,
+            0.001
+          );
 
         console.log(
           `[${current}/${total}] ` +
-            `${percent}% | ` +
-            `processed=${processed} ` +
-            `skipped=${skipped} ` +
-            `errors=${errors} | ` +
-            `map="${match.map}" | ` +
-            `speed=${mapsPerSecond.toFixed(1)} maps/s | ` +
-            `ETA=${eta.toFixed(1)}s`,
+          `${percent}% | ` +
+          `processed=${processed} ` +
+          `skipped=${skipped} ` +
+          `errors=${errors} | ` +
+          `map="${match.map}" | ` +
+          `score=${team1Rounds}:${team2Rounds} | ` +
+          `speed=${mapsPerSecond.toFixed(1)} maps/s | ` +
+          `ETA=${eta.toFixed(1)}s`
         );
       }
+
     } catch (error) {
       errors++;
 
-      console.error(`ERROR processing map ` + `${current}/${total}:`, {
-        match_id: match.match_id,
-        set_number: match.set_number,
-        map: match.map,
-        team_a: match.teama,
-        team_b: match.teamb,
-        score_a: match.op_a_score,
-        score_b: match.op_b_score,
-        error: error?.stack || error?.message || error,
-      });
+      console.error(
+        `ERROR processing map ` +
+        `${current}/${total}:`,
+        {
+          match_id: match.match_id,
+          set_number: match.set_number,
+          map: match.map,
+
+          team_a: match.teama,
+          team_b: match.teamb,
+
+          score_a: team1Rounds,
+          score_b: team2Rounds,
+
+          error:
+            error?.stack ||
+            error?.message ||
+            error,
+        }
+      );
     }
   }
 
-  const elapsed = (Date.now() - startTime) / 1000;
+  const elapsed =
+    (Date.now() - startTime) / 1000;
 
   console.log("");
-  console.log("========================================");
-  console.log("GLICKO-2 PROCESSING COMPLETE");
-  console.log("========================================");
+  console.log(
+    "========================================"
+  );
+  console.log(
+    "GLICKO-2 PROCESSING COMPLETE"
+  );
+  console.log(
+    "========================================"
+  );
+
   console.log(`Total maps:  ${total}`);
   console.log(`Processed:   ${processed}`);
   console.log(`Skipped:     ${skipped}`);
   console.log(`Errors:      ${errors}`);
-  console.log(`Time:        ${elapsed.toFixed(2)} seconds`);
+
   console.log(
-    `Speed:       ` +
-      `${(processed / Math.max(elapsed, 0.001)).toFixed(1)} maps/sec`,
+    `Time:        ${elapsed.toFixed(2)} seconds`
   );
-  console.log("========================================");
+
+  console.log(
+    `Speed:       ${
+      (
+        processed /
+        Math.max(elapsed, 0.001)
+      ).toFixed(1)
+    } maps/sec`
+  );
+
+  console.log(
+    "========================================"
+  );
 
   return glicko;
 }
@@ -518,7 +690,7 @@ async function main(target_db,target_stages) {
   target_database = target_db;
 
   pool = new Pool({
-  host: "db",
+  host: 'db',
   port: 5432,
   user: "admin",
   password: "secretpassword",
@@ -566,6 +738,7 @@ async function main(target_db,target_stages) {
     allTeamRatings
   };
 }
+
 
 // ============================================================
 // RUN

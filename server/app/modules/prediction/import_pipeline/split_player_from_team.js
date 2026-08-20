@@ -30,7 +30,7 @@ async function main(target_db) {
   target_database = target_db;
 
 pool = new Pool({
-  host: "db",
+  host: 'db',
   port: 5432,
   user: "admin",
   password: "secretpassword",

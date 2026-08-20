@@ -51,9 +51,9 @@ async function foo() {
     await split_matches.run(new_db);
     await split_players.run(new_db);
  }).then(async()=>{
-    await rate_next_season.run(old_db,new_db,new_stages);
+     await rate_next_season.run(old_db,new_db,new_stages);
  }).then(async()=>{
-    await calculate_ratings.run(new_db,new_stages);
+     await calculate_ratings.run(new_db,new_stages);
  }).finally(()=>{
     const elapsed = (Date.now() - startTime) / 1000;
     console.log(`NETWORK Time:        ${networkelapsed.toFixed(2)} seconds`);
@@ -114,6 +114,9 @@ async function createAll() {
 }
 
 module.exports.createAll = createAll;
+
+
+
 
 
 // wise 25 -> sose 26 CONFIG 

@@ -38,9 +38,9 @@ async function fetchAllTeamRatings(host, user,password,database) {
     password: password,
     database: database,
   });
-  await client.connect();
 
   try {
+      await client.connect();
     const result = await client.query(
       `SELECT * FROM team_rating
       ;`,
@@ -83,7 +83,7 @@ async function fetchAllMapRatings(host, user,password,database) {
       if (ratings[row.team_id] === undefined) ratings[row.team_id] = {};
 
       ratings[row.team_id][row.map_name] = {
-        rating: Number(row.rating),
+        deviation: Number(row.deviation),
         rd: Number(row.rd),
         sigma: Number(row.sigma),
         games: Number(row.games),
@@ -158,6 +158,7 @@ async function predict_map_outcome(
   team2_id,
   current_t1_score = 0,
   current_t2_score = 0,
+  teamPickedMap = 0,
   host, user,password,db
 ) {
   if (current_t1_score === null || current_t2_score === null) {
@@ -174,7 +175,7 @@ async function predict_map_outcome(
   // Calculate probability.
   // --------------------------------------------------------
 
-  const baseWinProb = glicko.calculateWinProbability(team1, team2);
+  const baseWinProb = glicko.calculateWinProbability(team1, team2, teamPickedMap);
 
   const winProbability = glicko.calculateMomentumProbablility(
     baseWinProb,
@@ -221,6 +222,12 @@ async function predict_map_outcome(
     team1_overall_weight: Number((team1.overallWeight * 100).toFixed(1)),
     team2_overall_weight: Number((team2.overallWeight * 100).toFixed(1)),
 
+    team1_map_deviation: team1.mapDeviation,
+    team2_map_deviation: team2.mapDeviation,
+
+    team1_effective_deviation: team1.effectiveDeviation,
+    team2_effective_deviation: team2.effectiveDeviation,
+
     team1_rating_source: team1.source,
     team2_rating_source: team2.source,
   };
@@ -229,9 +236,7 @@ async function predict_map_outcome(
 async function getAllTeamRatings(glicko = null,host, user,password,db) {
   // If the caller already processed the matches,
   // reuse that instance.
-  if (!glicko) {
-    glicko = await processAllMatches();
-  }
+  
 
   const teams = await getTeamData(host, user,password,db);
   const teamLookup = new Map(teams.map((team) => [team.id, team]));
@@ -266,10 +271,10 @@ async function sendAllTeamRatings( host,  user, password, database) {
   
 }
 
-async function getPrediction( host,  user, password, database, map_name, team1_id, team2_id,score_t1,score_t2) {
+async function getPrediction( host,  user, password, database, map_name, team1_id, team2_id,score_t1,score_t2,picked_by) {
     const sc = await loadToCache(host,  user, password, database);
 
-    const prediction = await predict_map_outcome(glicko,map_name,team1_id,team2_id,score_t1,score_t2,host, user,password,database);
+    const prediction = await predict_map_outcome(glicko,map_name,team1_id,team2_id,score_t1,score_t2,picked_by,host, user,password,database);
     return prediction;
   
 }
@@ -323,9 +328,12 @@ async function main() {
 
   // console.log(prediction);
   //const a = await fetchTeamID("localhost","admin","secretpassword","sose_26","HSKC");
-  const a = await getPrediction("localhost","readonly_user","readonly_password","sose_26","Suravasa","2453253901889753087","2453358508558624767",0,0);
+  const a = await getPrediction("localhost","admin","secretpassword","sose_26","runasapi","2453253901889753087","2453358508558624767",0,0,0);
   console.log(a);
+
+
 }
+
 
 
 module.exports.getAllTeamRatings = sendAllTeamRatings;
