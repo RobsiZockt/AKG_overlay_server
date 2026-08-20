@@ -7,7 +7,7 @@ services:
     command: node server.js
     expose:
       - "4000"
-    restart: unless-stopped
+    restart: no
     networks:
       - app-network
 
@@ -19,7 +19,7 @@ services:
     command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
     expose:
       - "5173"
-    restart: unless-stopped
+    restart: no
     networks:
       - app-network
 
@@ -42,7 +42,7 @@ services:
   db:
     image: postgres:alpine
     container_name: pg_database
-    restart: always
+    restart: no
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: secretpassword
