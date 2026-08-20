@@ -20,7 +20,10 @@ let openOverlay = $state(true);
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
-      data = await res.json();
+      const nr_data = await res.json();
+
+      data = nr_data.map((entry, index) => ({...entry,rank: index + 1}));
+
     } catch (err) {
       console.warn(err);
     }
@@ -53,8 +56,10 @@ function formatObjects(objects) {
     sec_season =newData;
     openIndex = null;
       await getData();
-    data = [{name:"Team",rating:"Rating",rd:"RD",games:"Games",id:"0"},...data]
+    data = [{name:"Team",rating:"Rating",rd:"RD",games:"Games",id:"0",rank:"Rank"},...data]
+    console.log("data "+data);
     formatedData = formatObjects(data);
+    console.log(formatedData);
   }
 
   function showOverlay(){
@@ -62,7 +67,8 @@ function formatObjects(objects) {
   }
 
   onMount(async()=>{ await getData();
-    data = [{name:"Team",rating:"Rating",rd:"RD",games:"Games",id:"0"},...data]
+    data = [{name:"Team",rating:"Rating",rd:"RD",games:"Games",id:"0",rank:"Rank"},...data];
+        console.log(data);
     formatedData = formatObjects(data);
   })
 </script>
@@ -82,7 +88,7 @@ function formatObjects(objects) {
       <TekButton current_tab={updateData}></TekButton>
     </div>
     <div class="w-full h-full items-start justify-center flex pt-4">
-    <div class="h-[790px] w-[1780px] overflow-y-auto flex-col items-center justify-center">
+    <div class="h-[790px] w-[1950px] overflow-y-auto flex-col items-center justify-center">
     {#each formatedData as split_data,index}
         <div class="w-full h-[50px]" onclick={()=> {openIndex=(openIndex === index?null:index)}}>
         <ListComponent index={index} data={split_data}></ListComponent> 
