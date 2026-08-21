@@ -1130,20 +1130,25 @@ app.put("/uv/matchup/:op/:target",[],async(req,res)=>{
 // START PREDICTION DATABASE CALLS
 
 // swap back to get when data does come from SSE cache
-app.post("/pred/predict_outcome",[
-  body("database").exists().isString(),
-  body("team1_id").exists().isString(),
-  body("team2_id").exists().isString(),
-  body("team1_score").exists().isNumeric(),
-  body("team2_score").exists().isNumeric(),
-  body("map").exists().isString()
+app.get("/pred/predict_outcome/:t1/:t2/:map",[
 ],async(req,res)=>{
 
   try{ 
-    const data = req.body;
-    console.log(data,data.database,typeof(data.database));
-    const content = await getDB.getPrediction("db","readonly_user","readonly_password", data.database, data.map,data.team1_id,data.team2_id,data.team1_score,data.team2_score);
-    console.log(content);
+    const data = req.params;
+
+    let t1_id = await getDB.getTeamIDbyKurz("db","readonly_user","readonly_password","sose_26", data.t1);
+    let t2_id = await getDB.getTeamIDbyKurz("db","readonly_user","readonly_password","sose_26", data.t2);
+    const content = await getDB.getPrediction("db","readonly_user","readonly_password", "sose_26", data.map,t1_id,t2_id,data.t1_score||0,data.t2_score||0,data.prev_won || 0);
+    const send = {
+      map_name: content.map_name,
+      team1_kurz: content.team1_kurz, 
+      team1_logo: content.team1_logo,
+      team2_kurz: content.team1_kurz, 
+      team2_logo: content.team1_logo,
+      team1_win_probability: content.team1_win_probability,
+      team2_win_probability: content.team2_win_probability,
+      confidence : content.confidence
+    }
     res.json(content);
   } catch (err){
     res.status(500).json({error: err});
@@ -1201,6 +1206,26 @@ app.get("/pred/IDV/:id/:season",[],async(req,res)=>{
   const content = await getDB.getTeamDetails("db","readonly_user","readonly_password",season,id);
   res.json(content);
   } catch (err){
+    res.status(500).json({error:err});
+  }
+})
+
+app.get("/pred/teamlist",[],async(req,res)=>{
+  try{
+    const season = "sose_26";
+    const content = await getDB.getTeamList("db","readonly_user","readonly_password",season);
+    res.json(content);
+  }catch (err){
+    res.status(500).json({error:err});
+  }
+})
+
+app.get("/pred/maplist",[],async(req,res)=>{
+  try{
+    const season = "sose_26";
+    const content = await getDB.getMapList("db","readonly_user","readonly_password",season);
+    res.json(content);
+  }catch (err){
     res.status(500).json({error:err});
   }
 })

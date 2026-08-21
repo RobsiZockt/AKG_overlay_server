@@ -21,5 +21,5 @@ onMount(()=>{
 
 
 <div class="h-[350px] w-[500px] flex">
-    <Prediction trigger={trig}></Prediction>
+    <Prediction trigger={trig} mode={"prod"}></Prediction>
 </div>

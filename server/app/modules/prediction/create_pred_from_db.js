@@ -128,6 +128,34 @@ async function getTeamData(host, user,password,database) {
   }
 }
 
+async function getLogoURL(host, user,password,database,teamID) {
+   const client = new Client({
+    host: host,
+    port: 5432,
+    user: user,
+    password: password,
+    database: database,
+  });
+  await client.connect();
+
+  try {
+    const result = await client.query(
+      `SELECT logo_id FROM teams WHERE id = '${teamID}'`
+    );
+
+    let logo_id = String(result.rows[0].logo_id);
+    if(logo_id!=null && logo_id!="")
+      return `https://play.toornament.com/media/file/${logo_id}/logo_large`
+    else 
+      return "https://play.toornament.com/media/8597216805094416384/original"
+  } catch (error) {
+    console.error("Error saving team ratings:", error);
+    throw error;
+  } finally {
+    client.end();
+  }
+}
+
 async function loadToCache(host, user,password,db) {
   try {
     let teamratings = await fetchAllTeamRatings(host, user,password,db);
@@ -168,9 +196,10 @@ async function predict_map_outcome(
   }
 
   const team1 = glicko.getBlendedPredictionRating(map_name, team1_id);
+  const t1_logo = await getLogoURL(host,user,password,db,team1_id);
 
   const team2 = glicko.getBlendedPredictionRating(map_name, team2_id);
-
+  const t2_logo = await getLogoURL(host,user,password,db,team2_id);
   // --------------------------------------------------------
   // Calculate probability.
   // --------------------------------------------------------
@@ -188,14 +217,17 @@ async function predict_map_outcome(
   const teams = await getTeamData(host, user,password,db);
   const teamLookup = new Map(teams.map((team) => [team.id, team]));
 
+
   return {
     map_name,
     team1_id,
     team1_name: teamLookup.get(team1_id).name,
     team1_kurz: teamLookup.get(team1_id).kurz,
+    team1_logo: t1_logo,
     team2_id,
     team2_name: teamLookup.get(team2_id).name,
     team2_kurz: teamLookup.get(team2_id).kurz,
+    team2_logo: t2_logo,
     team1_win_probability: Number((winProbability * 100).toFixed(2)),
     team2_win_probability: Number(((1 - winProbability) * 100).toFixed(2)),
     predicted_winner: winProbability >= 0.5 ? team1_id : team2_id,
@@ -353,6 +385,54 @@ async function getTeamDetails(host, user, password, database, id) {
   }
 }
 
+async function getTeamList(host,user,password,database) {
+    const client = new Client({
+    host: host,
+    port: 5432,
+    user: user,
+    password: password,
+    database: database,
+  });
+  await client.connect();
+  try {
+    const result = await client.query(
+      `SELECT customfieldvalues_teamkurzel FROM teams ORDER BY customfieldvalues_teamkurzel ASC;`,
+    );
+     const data = result.rows;
+     return data;
+     
+  } catch (error) {
+    console.error("Error saving team ratings:", error);
+    throw error;
+  } finally {
+    client.end();
+  }
+}
+
+async function getMapList(host,user,password,database) {
+    const client = new Client({
+    host: host,
+    port: 5432,
+    user: user,
+    password: password,
+    database: database,
+  });
+  await client.connect();
+  try {
+    const result = await client.query(
+      `SELECT DISTINCT map FROM match_sets ORDER BY map ASC;`,
+    );
+     const data = result.rows;
+     return data;
+     
+  } catch (error) {
+    console.error("Error saving team ratings:", error);
+    throw error;
+  } finally {
+    client.end();
+  }
+}
+
 async function main() {
   // const prediction = await predict_map_outcome(glicko,"samoa","8250526365314572288","8250521986271281152",0,0);
 
@@ -370,3 +450,5 @@ module.exports.getAllTeamRatings = sendAllTeamRatings;
 module.exports.getPrediction = getPrediction;
 module.exports.getTeamIDbyKurz = fetchTeamID;
 module.exports.getTeamDetails = getTeamDetails;
+module.exports.getTeamList = getTeamList;
+module.exports.getMapList = getMapList;
