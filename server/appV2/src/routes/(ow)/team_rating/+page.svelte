@@ -60,9 +60,7 @@ function formatObjects(objects) {
     openIndex = null;
       await getData();
     data = [{name:"Team",rating:"Rating",rd:"RD",games:"Games",id:"0",rank:"Rank"},...data]
-    console.log("data "+data);
     formatedData = formatObjects(data);
-    console.log(formatedData);
   }
 
   function showOverlay(){
@@ -71,7 +69,6 @@ function formatObjects(objects) {
 
   onMount(async()=>{ await getData();
     data = [{name:"Team",rating:"Rating",rd:"RD",games:"Games",id:"0",rank:"Rank"},...data];
-        console.log(data);
     formatedData = formatObjects(data);
   })
 </script>
