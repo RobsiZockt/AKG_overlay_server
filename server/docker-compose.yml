@@ -51,8 +51,8 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: secretpassword
       POSTGRES_DB: empty_db
-    ports:
-      - "5432:5432"
+    expose:
+      - "5432"
     volumes:
       - ./pg_db:/var/lib/postgresql
       - ./inits/postgres:/docker-entrypoint-initdb.d:ro
