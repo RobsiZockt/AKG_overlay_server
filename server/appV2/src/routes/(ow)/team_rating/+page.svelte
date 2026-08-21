@@ -1,4 +1,6 @@
 <script>
+  
+
 // @ts-nocheck
 
 import ListComponent from "$lib/assets/rating_overview/ListComponent.svelte";
@@ -7,6 +9,7 @@ import ListComponent from "$lib/assets/rating_overview/ListComponent.svelte";
   import TutorialOverlay from "$lib/assets/rating_overview/TutorialOverlay.svelte";
   import BoxText from "$lib/assets/wrapper/BoxText.svelte";
   import { onMount } from "svelte";
+  import { goto } from "$app/navigation";
 
 let sec_season = $state("sose_26");
 let data = $state()
@@ -80,8 +83,13 @@ function formatObjects(objects) {
 <TutorialOverlay bind:open={openOverlay}/>
 
 <div class="w-full h-[100vh] bg-[#1e1e1e] overflow-hidden">
-  <div class="w-full h-[40px] flex items-center justify-end" onclick={()=>{showOverlay()}}>
-    <span class="font-[Cascadia Mono] text-gray-300 text-2xl underline drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)] whitespace-pre font-mono p-2"> How it Works</span>
+<div class="h-[40px] w-full flex items-center justify-end">
+    <div class="w-auto h-full flex" onclick={()=>{showOverlay()}}>
+      <span class="font-[Cascadia Mono] text-gray-300 text-2xl underline drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)] whitespace-pre font-mono p-2"> How it Works</span>
+    </div>
+    <div class="w-auto h-full flex" onclick={()=>{goto('/team_prediction')}}>
+      <span class="font-[Cascadia Mono] text-gray-300 text-2xl underline drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)] whitespace-pre font-mono p-2"> Prediction System(soon)</span>
+    </div>
   </div>
   <div class="w-full h-full flex-col items-center justify-center">
     <div class="w-full h-auto flex items-center justify-center pb-12 bt-4">
