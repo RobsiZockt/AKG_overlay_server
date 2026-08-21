@@ -33,15 +33,16 @@
       <h2 class="mb-2 text-xl font-semibold">Was ist das</h2>
 
       <p>TESTBUILD</p>
-      <p>Rating: based on a modified Glicko2 Algorithm using Map specific rating to determie who will win </p>
-      <p>This also accounts who picked the map and expects with two identical Teams that the team picking the map will win slightly</p>
+      <p>This Rating System is based on a modified Glicko2 Algorithm using Map specific rating to determie who will win </p>
+      <p>This also accounts who picked the map and expects, with two identical Teams, that the team picking the map will win slightly</p>
       <h3 class="mb-2 text-l font-semibold">Interaktion</h3>
-      <p>Klickt einfach auf Das jeweilige Team von dem ihr weitere Stats wie u.a. Maps Won / Lost wissen wollt</p>
+      <p>Klickt einfach auf das jeweilige Team von dem ihr weitere Stats wie u.a. Maps Won / Lost wissen wollt</p>
       <h3 class="mb-2 text-l font-semibold">How to Read</h3>
-      <p>Rating is das das Rating eines Teams, guess what</p>
-      <p>RD ist die halbe abweichung dieses Ratings, heist ein Team kann Rating +/- 2*RD haben</p>
+      <p>Rating is das Rating eines Teams, guess what</p>
+      <p>RD ist die halbe Abweichung dieses Ratings, heist ein Team kann ein Rating von Rating +/- 2*RD haben</p>
       <p>Games: Anzahl der gespielten Maps, die für das aktuelle Rating einbezogen werden</p>
       <p>Mehr Stats kommen sobald ich die Queries dafür fertig geschrieben habe</p>
+      <p>Falls ihr noch Ideen für Stats hab, let me know :3 </p>
     </div>
   </div>
 {/if}
