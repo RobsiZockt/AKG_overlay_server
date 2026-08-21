@@ -32,7 +32,7 @@
 
       <h2 class="mb-2 text-xl font-semibold">Was ist das</h2>
 
-      <p>TESTBUILD</p>
+      <p>PRE-ALPHA BUILD</p>
       <p>This Rating System is based on a modified Glicko2 Algorithm using Map specific rating to determie who will win </p>
       <p>This also accounts who picked the map and expects, with two identical Teams, that the team picking the map will win slightly</p>
       <h3 class="mb-2 text-l font-semibold">Interaktion</h3>

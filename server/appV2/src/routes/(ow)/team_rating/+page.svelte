@@ -84,11 +84,11 @@ function formatObjects(objects) {
 
 <div class="w-full h-[100vh] bg-[#1e1e1e] overflow-hidden">
 <div class="h-[40px] w-full flex items-center justify-end">
-    <div class="w-auto h-full flex" onclick={()=>{showOverlay()}}>
-      <span class="font-[Cascadia Mono] text-gray-300 text-2xl underline drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)] whitespace-pre font-mono p-2"> How it Works</span>
-    </div>
     <div class="w-auto h-full flex" onclick={()=>{goto('/team_prediction')}}>
       <span class="font-[Cascadia Mono] text-gray-300 text-2xl underline drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)] whitespace-pre font-mono p-2"> Prediction System(soon)</span>
+    </div>  
+    <div class="w-auto h-full flex" onclick={()=>{showOverlay()}}>
+      <span class="font-[Cascadia Mono] text-gray-300 text-2xl underline drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)] whitespace-pre font-mono p-2"> How it Works</span>
     </div>
   </div>
   <div class="w-full h-full flex-col items-center justify-center">
