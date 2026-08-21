@@ -3,11 +3,7 @@
 export async function handle({ event, resolve }) {
 	const hostname = event.url.hostname;
 
-	console.log('HOSTNAME:', hostname);
-
 	const subdomain = getSubdomain(hostname);
-
-	console.log('SUBDOMAIN:', subdomain);
 
 	event.locals.subdomain = subdomain;
 
