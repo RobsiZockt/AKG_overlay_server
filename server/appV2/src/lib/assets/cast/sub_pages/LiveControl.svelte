@@ -7,6 +7,7 @@
   import { heros } from "$lib/stores/heros";
   import { playedMaps } from '$lib/stores/playedMapsUpdate';
   import { matchupData } from "$lib/stores/matchupData";
+  import EventLogger from "../EventLogger.svelte";
 
   let blue_team, blue_name, red_team , red_name, current_map;
 
@@ -73,4 +74,7 @@ let update_sel_map = (newData) => {
     </div>
   </div>
 </div>
-<div class="w-[25%] h-[90%] bg-red-600"></div>
+<div class="w-[25%] h-[90%]">
+
+  <EventLogger></EventLogger>
+</div>

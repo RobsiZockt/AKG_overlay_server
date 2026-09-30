@@ -11,6 +11,9 @@ const PORT = 4000;
 const cors = require("cors");
 const { match } = require("assert");
 
+const {logger, EventTypes} = require('./modules/EventLogger/event_logger.js');
+const eventBus = require("./modules/eventBus.js");
+
 const playedmaps = path.join(__dirname, "api", "played_maps.json");
 const matchup = path.join(__dirname, "api", "matchup.json");
 const maps = path.join(__dirname, "api", "maps.json");
@@ -31,6 +34,8 @@ const uv_matchup = path.join(__dirname,"api","universal","uv_matchup.json");
 const getDB = require("./modules/prediction/create_pred_from_db.js");
 const init_insertDB = require("./modules/prediction/pipeline_run_ff.js");
 const init_DB = require("./modules/prediction/create_new_db.js");
+const { type } = require("os");
+
 
 let map_data;
 let ban_data;
@@ -75,15 +80,6 @@ const broadcast = (data) => {
   }
 };
 
-async function log(origin,event,value) {
-  let now = new Date();
-  let next_id=0;
- if(matchupLog.length!=0) next_id = 1 + matchupLog.at(-1).id;
-
- const entry = {id:next_id,origin:origin,event:event,value:value,timeStamp:now};
-matchupLog = [...matchupLog,...entry];
-
-}
 
 const pollUVmatchup = async ()=>{
   try{
@@ -167,6 +163,11 @@ const pollPlayedMaps = async () => {
 };
 setInterval(pollPlayedMaps, 200);
 
+eventBus.on("newLoggedEvent",(event)=>{
+  console.log("Event recived: " + event.event);
+  broadcast({type: "newLoggedEvent", payload: event});
+})
+
 // SSE endpoint just sends cached data
 // SSE endpoint just sends cached data
 app.get("/api/update/stream",cors(corsOptions), (req, res) => {
@@ -238,10 +239,13 @@ app.post("/api/played_maps/new", async (req, res) => {
       const last_m = playedMapsCache[latestKey];
       if(last_m.score_blue>last_m.score_red){
         playedMapsCache[entryKey].picked_by = 2;
+        logger.log(EventTypes.MAP_WON, {team:matchupCache.blue});
       } else if(last_m.score_blue<last_m.score_red){
         playedMapsCache[entryKey].picked_by = 1;
+        logger.log(EventTypes.MAP_WON, {team:matchupCache.red});
       } else if(last_m.score_blue==last_m.score_red){
         playedMapsCache[entryKey].picked_by = last_m.picked_by;
+        logger.log(EventTypes.MAP_DRAWN, {});
       }
     }
 
@@ -259,7 +263,6 @@ app.post("/api/played_maps/new", async (req, res) => {
       let s2 = parseInt(playedMapsCache[key].score_red);
 
       if (s1 == s2) {
-        console.log("Map result: Draw, skippin calculation");
       }
       if (s1 > s2) {
         blue++;
@@ -270,12 +273,16 @@ app.post("/api/played_maps/new", async (req, res) => {
     }
     let update = { blue_score: blue, red_score: red };
 
+    
+
 
     const data = await fs.readFile(matchup, "utf8");
     const json = JSON.parse(data);
     const updated = { ...json, ...update };
 
     await fs.writeFile(matchup, JSON.stringify(updated, null, 2), "utf8");
+
+
 
     res.status(201).json({ status: "ok", latest: playedMapsCache[entryKey] + updated });
   } catch (err) {
@@ -360,6 +367,21 @@ app.put(
         playedMapsCache[entryKey].name = lookupdata.name;
         playedMapsCache[entryKey].image = lookupdata.path;
         playedMapsCache[entryKey].type = lookupdata.type;
+
+        switch (playedMapsCache[entryKey].picked_by){
+          case 0:
+            logger.log(EventTypes.MAP_PICK,{by:"SYSTEM", map:lookupdata.name, img_path:lookupdata.path});
+            break;
+          case 1:
+            logger.log(EventTypes.MAP_PICK,{by:matchupCache.blue, map:lookupdata.name, img_path:lookupdata.path});
+            break;
+          case 2:
+            logger.log(EventTypes.MAP_PICK,{by:matchupCache.red, map:lookupdata.name, img_path:lookupdata.path});
+            break;
+          default:
+            logger.log(EventTypes.MAP_PICK,{by:"UNKNOWN", map:lookupdata.name, img_path:lookupdata.path});
+            break;
+        }
       //  log("","pickedMap",value); //how do i detect wich team picked or where??????
       } else if (key === "ban") {
         // checks "ban" for regex pattern, if correct and team is either 1 = blue or 2 = red it will look up the given data
@@ -368,14 +390,17 @@ app.put(
         if (!match)
           return res.status(400).json({ error: "recived syntax not correct" });
 
+        let t_hero;
+        let path_hero;
         if (Number(match[1]) === 1) {
-          playedMapsCache[entryKey].ban_blue = ban_data[match[2]].path;
-          playedMapsCache[entryKey].ban_blue_name = ban_data[match[2]].name;
-       //   log("blue","banHero",match[2]);
+          path_hero = playedMapsCache[entryKey].ban_blue = ban_data[match[2]].path;
+          t_hero = playedMapsCache[entryKey].ban_blue_name = ban_data[match[2]].name;
+          logger.log(EventTypes.HERO_BAN,{team:matchupCache.blue, hero:t_hero, img_path:path_hero});
         } else if (Number(match[1]) === 2) {
-          playedMapsCache[entryKey].ban_red = ban_data[match[2]].path;
-          playedMapsCache[entryKey].ban_red_name = ban_data[match[2]].name;
-       //   log("red","banHero",match[2]);
+          path_hero = playedMapsCache[entryKey].ban_red = ban_data[match[2]].path;
+          t_hero = playedMapsCache[entryKey].ban_red_name = ban_data[match[2]].name;
+          logger.log(EventTypes.HERO_BAN,{team:matchupCache.red, hero:t_hero, img_path:path_hero});
+
         } else {
           return res.status(400).json({ error: "Recived invalid team id" });
         }
@@ -414,9 +439,11 @@ app.post("/api/played_maps/:id/:team/:action", [],async(req,res)=>{
       if(team == "blue") {
         let tmp = parseInt(playedMapsCache[entryKey].score_blue) + 1;
         playedMapsCache[entryKey].score_blue = tmp.toString(10);
+        logger.log(EventTypes.SET_MAP_SCORE, {team: "blue", score: tmp});
       } else if (team == "red"){
            let tmp = parseInt(playedMapsCache[entryKey].score_red) + 1;
         playedMapsCache[entryKey].score_red = tmp.toString(10);
+        logger.log(EventTypes.SET_MAP_SCORE, {team: "red", score: tmp});
       }
     }
         if(op == "sub"){
@@ -424,10 +451,12 @@ app.post("/api/played_maps/:id/:team/:action", [],async(req,res)=>{
         let tmp = parseInt(playedMapsCache[entryKey].score_blue) - 1;
          if(tmp < 0) tmp = 0;
         playedMapsCache[entryKey].score_blue = tmp.toString(10);
+        logger.log(EventTypes.SET_MAP_SCORE, {team: "blue", score: tmp});
       } else if (team == "red"){
         let tmp = parseInt(playedMapsCache[entryKey].score_red) - 1;
         if(tmp < 0) tmp = 0;
         playedMapsCache[entryKey].score_red = tmp.toString(10);
+        logger.log(EventTypes.SET_MAP_SCORE, {team: "red", score: tmp});
       }
     }
 
@@ -501,9 +530,15 @@ app.put("/api/matchup", [], async (req, res) => {
 
     if(op === "swap"){
       if(matchupCache["switched"] === 1)
-    {update = {switched: 0};};
-    if(matchupCache["switched"]=== 0)
-    {update = {switched: 1};};
+      {
+        update = {switched: 0};
+        logger.log(EventTypes.SWAP_SIDES,{});
+      };
+      if(matchupCache["switched"]=== 0)
+      {
+        update = {switched: 1};
+        logger.log(EventTypes.SWAP_SIDES,{});
+      };
     }
     else if(op === "calc"){
     //calculates the new score of the matchup
@@ -515,7 +550,6 @@ app.put("/api/matchup", [], async (req, res) => {
 
 
       if (s1 == s2) {
-        console.log("Map result: Draw, skippin calculation");
       }
       if (s1 > s2) {
         blue++;
@@ -591,6 +625,8 @@ app.post("/api/new_matchup", [
     } catch (error) {
       console.log("could not reset");
     }
+
+    logger.clear();
     
     res.status(200).json({ status: "ok", latest: data });
   } catch (err) {
@@ -1047,6 +1083,20 @@ app.get("/stconf",[],async(req,res)=>{
 });
 
 // END STREAM CONFIG API
+
+// START EVENT LOGGER API
+
+app.get("/events",[],async(req,res)=>{
+  try{
+    const data = logger.getEvents();
+    res.json(data);
+  }catch (err){
+    res.status(500).json({error: err});
+  }
+})
+
+
+// END EVENT LOGGER API
 
 // START UNIVERSAL API
 
