@@ -1,16 +1,21 @@
-server:
-  rtmp:
-    enabled: no
-    listen: 1935
+logLevel: debug
 
-  srt:
-    enabled: yes
-    listen: 0.0.0.0:9000
-    latency: 200
+# RTMP configuration
+rtmpDisable: yes
+rtmpAddress: :1935
+
+# SRT configuration
+srt: yes
+srtAddress: 0.0.0.0:9000
+
+# WebRTC & WHIP configuration
+webrtc: yes
+webrtcAddress: :8889
+webrtcLocalUDPAddress: :8189
+webrtcIPsFromInterfaces: true
+webrtcAdditionalHosts:
+  - broadcast.robsizockt.de
+
 
 paths:
-  all:
-    publish:
-      enabled: yes
-    read:
-      enabled: yes
+  all_others:
