@@ -6,6 +6,7 @@ const SOURCE_COLUMN_2 = 'opponents_1_participant_id';
 const SOURCE_TABLE = 'entire_liga_flat';
 const NEW_TABLE = 'teams';
 let target_database = "";
+let tournament_id="";
 
 // Note: Because JSON arrays use numbers natively, "item_" is removed from the path.
 // e.g., "lineup_item_0_logo" becomes "lineup_0_logo".
@@ -112,33 +113,72 @@ function flattenJSON(obj, prefix = '') {
 }
 
 // 2. Updated Fetch for JSON
-async function fetchJsonData(entryValue) {
-    const path = "https://play.toornament.com/api/participants/" + entryValue; 
-    const response = await fetch(path, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        }
-    });
+async function fetchJsonData() {
+    const allParticipants=[];
+    let offset = 0;
+    let total = Infinity;
 
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+    while(offset<total){
+        const url = new URL(
+            "https://play.toornament.com/api/participants/"
+        );
+
+        url.searchParams.set("tournament_ids", tournament_id);
+        url.searchParams.set("offset",String(offset));
+
+        const response = await fetch(url.toString(), {
+            method: 'GET',
+            headers:{
+                'Content-Type': 'application/json',
+            }
+        });
+
+        if(!response.ok){
+             throw new Error(`HTTP error! status: ${response.status}`)
+        }
+
+        const result = await response.json();
+
+        const participants = result.items;
+        const range = result.range;
+
+        if (!Array.isArray(participants)) {
+            throw new Error(
+                'Expected the participant array in response.data.'
+            );
+        }
+
+        if (!range || typeof range.total !== 'number') {
+            throw new Error('Missing or invalid pagination metadata.');
+        }
+
+        total = range.total;
+
+        allParticipants.push(...participants);
+
+        // Use the API's returned offset and length.
+        offset = range.offset + range.length;
+
+        // Stop if the API returns an empty page.
+        if (range.length === 0) {
+            break;
+        }
     }
-    
-    // Parse natively as JSON instead of text
-    return await response.json(); 
-}
+
+    return allParticipants;
+
+    }
 
 // 3. Updated Filter Function
 function processJsonData(jsonObject, originalValue) {
     const flattenedData = flattenJSON(jsonObject);
-    console.log(flattenedData);
-    flattenedData.source_value = originalValue;
+    flattenedData.source_value = originalValue; 
     return flattenedData;
 }
 
-async function main(target_db) {
+async function main(target_db,target_tournament) {
     target_database = target_db;
+    tournament_id = target_tournament;
     const client = new Client({
         user: 'admin',
         password: 'secretpassword',
@@ -149,39 +189,32 @@ async function main(target_db) {
 
     try {
         await client.connect();
-        console.log(`Fetching unique values...`);
-
-        // Added "AS entry_id" so JS knows what column to map to
-        const queryRes = await client.query(`
-            SELECT DISTINCT "${SOURCE_COLUMN}" AS entry_id
-            FROM ${SOURCE_TABLE} 
-            WHERE "${SOURCE_COLUMN}" IS NOT NULL
-
-            UNION
-
-            SELECT DISTINCT "${SOURCE_COLUMN_2}" AS entry_id
-            FROM ${SOURCE_TABLE} 
-            WHERE "${SOURCE_COLUMN_2}" IS NOT NULL;
-        `);
-        
-        const uniqueEntries = queryRes.rows.map(row => row.entry_id);
-        console.log(`Found ${uniqueEntries.length} unique entries.`);
-
-        if (uniqueEntries.length === 0) return;
 
         const newDataset = [];
-        for (const entry of uniqueEntries) {
-            try {
-                console.log(`Processing: ${entry}...`);
-                const jsonData = await fetchJsonData(entry);
-                const filteredData = processJsonData(jsonData, entry);
-                newDataset.push(filteredData);
-                
-                // Optional: await new Promise(r => setTimeout(r, 500)); 
-            } catch (err) {
-                console.error(`Failed on entry ${entry}:`, err.message);
+        try{
+            const participants = await fetchJsonData();
+            for(const participant of participants){
+                try{
+                    console.log(`Processing: ${participant.id}...`);
+                    const filteredData = processJsonData(
+                        participant,
+                        participant.id
+                    );
+                    newDataset.push(filteredData);
+                }catch(err){
+                    console.error(
+                        `Failed on participant ${participant.id}:`,
+                        err.message
+                    );
+                }
             }
+        }catch (err) {
+                console.error(
+                `Failed to fetch tournament ${tournament_id}:`,
+                err.message
+            );
         }
+
 
         if (newDataset.length === 0) {
             console.log("No data was successfully parsed.");

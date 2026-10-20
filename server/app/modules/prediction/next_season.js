@@ -8,6 +8,7 @@ const Glicko2 = require("./glicko.js");
 let old_db = "";
 let new_db = "";
 
+let stageLookup={};
 
 let new_stages = {
 
@@ -27,24 +28,69 @@ let new_pool = new Pool();
 // getTeam DATA and ratings
 // -------------------------
 
+async function mapTeamtoStage(stages){
+
+  for(const stage of Object.keys(stages)){
+    const g_url = new URL(
+      "https://play.toornament.com/api/groups/"
+    );
+    g_url.searchParams.set("stage_ids",String(stage));
+
+    const g_response = await fetch(g_url.toString(), {
+      method: 'GET',
+      headers:{
+        'Content-Type': 'application/json',
+      }
+    });
+    if(!g_response.ok){
+      throw new Error(`HTTP error! status: ${g_response.status}`)
+    }
+    const g_result = await g_response.json();
+
+    const toor_stage = g_result.items[0].id;
+
+
+    // GET TEAMS IN TOOR STAGE
+    //ranking url
+    const r_url = new URL(
+      "https://play.toornament.com/api/ranking-items/"
+    );
+    r_url.searchParams.set("group_ids",String(toor_stage));
+
+    const r_response = await fetch(r_url.toString(), {
+      method: 'GET',
+      headers:{
+        'Content-Type': 'application/json',
+      }
+    });
+    if(!r_response.ok){
+      throw new Error(`HTTP error! status: ${r_response.status}`)
+    }
+    const r_result = await r_response.json();
+    
+    for(const t of r_result.items){
+      stageLookup[t.participant.id] = stage;
+    }  
+  }
+
+}
+
+
 async function getTeamData(db, stages) {
   const client = await db.connect();
+  await mapTeamtoStage(stages);
 
   try {
     const result = await client.query(
-      `SELECT DISTINCT t.id, t.name, ms.stage_id FROM teams t 
-      JOIN matches ms ON ms.opponents_0_participant_id = t.id 
-      WHERE ms.stage_id = '${Object.keys(stages)[0]}' OR ms.stage_id = '${Object.keys(stages)[1]}' OR ms.stage_id = '${Object.keys(stages)[2]}' OR ms.stage_id = '${Object.keys(stages)[3]}' 
-      UNION  
-      SELECT DISTINCT t.id, t.name, ms.stage_id FROM teams t 
-      JOIN matches ms ON ms.opponents_1_participant_id = t.id 
-      WHERE ms.stage_id = '${Object.keys(stages)[0]}' OR ms.stage_id = '${Object.keys(stages)[1]}' OR ms.stage_id = '${Object.keys(stages)[2]}' OR ms.stage_id = '${Object.keys(stages)[3]}'
-      UNION
-      SELECT DISTINCT t.id, t.name, NULL AS stage_id FROM teams t WHERE NOT EXISTS (SELECT 1 FROM matches ms WHERE ms.opponents_1_participant_id = t.id)
+      `SELECT DISTINCT t.id, t.name FROM teams t 
       ;`,
     );
+//stage_id
+    const withStages = result.rows.map(row=>({
+      ...row, stage_id: stageLookup[row.id]
+    }))
 
-    return result.rows;
+    return withStages;
   } catch (error) {
     console.error("Error reading team Data:", error);
     throw error;
@@ -295,31 +341,41 @@ async function saveMapRatings(db, glicko) {
 async function getStayingPlayers(old_teams, new_teams) {
 
     let results={};
-    //itterate new teams
-    Object.values(new_teams).forEach(team => {
-        //check if old team exists
-        if(old_teams[team.kurz]==undefined){
-            results[team.id]={
-                old_id: null,
-                amount_stayed:-1
-            }
-            return;
-        }
-        //check how many players stayed
-        const prev_team=old_teams[team.kurz];
-        let stayed_players=0;
-        team.players.forEach(player => {
-            if (prev_team.players.includes(player)){
-                stayed_players++;
-            }
-        });
+
+  let usedOldTeams = new Set();
+
+  for(team of Object.values(new_teams)){
+    let bestMatch = null;
+    let bestStayed = 0;
+
+    for(const prev_team of Object.values(old_teams)){
+      if(usedOldTeams.has(prev_team.id)) continue;
+
+      const oldPlayers = new Set(prev_team.players);
+      const stayed = team.players.filter(player=> oldPlayers.has(player)).length;
+
+      if(stayed > bestStayed){
+        bestStayed = stayed;
+        bestMatch = prev_team;
+      }
+
+      if(!bestMatch || team.players.length===0 || bestStayed/ bestMatch.players.length <0.5){
         results[team.id]={
-            old_id: prev_team.id,
-            amount_stayed: stayed_players
-        }
+          old_id: null,
+          amount_stayed:-1
+      };
+      continue;
+    }
+    results[team.id]={
+      old_id: bestMatch.id,
+      amount_stayed: bestStayed
+    };
+    
+  }
 
+   if(bestMatch!=null) usedOldTeams.add(bestMatch.id);
 
-    })
+  }
     return results;
     
 }
@@ -342,7 +398,6 @@ async function calculateNewTeamRatings(stayedplayers) {
     
     for(const team of current_teams){
         const teamID = team.id;
-
         // Team id lookup / link is supplied in stayed players. index is the new team id, old_id is the old team id
         if(stayedplayers[teamID].old_id != null){
             const prev_rating = prev_ratings[stayedplayers[teamID].old_id];
@@ -356,8 +411,18 @@ async function calculateNewTeamRatings(stayedplayers) {
             if(stayedplayers[teamID]){
                 const amount_stayed = stayedplayers[teamID].amount_stayed;
                 if(amount_stayed<2){
-                    stayed_modifier = 0;
-                    continue;
+                  const rating = {
+                    rating: init_rating,
+                    rd: glicko.defaultRD,
+                    sigma: glicko.defaultSigma,
+                    games: 0,
+                    stageID: team.stage_id,
+                    initialStageBoost: stageBoost
+                  };
+
+                  glicko.updateTeamRating(teamID,rating);
+
+                  continue;
                 } else if(amount_stayed>5){
                   stayed_mod = 1 + ((amount_stayed-5)/2)/10;
                 } else {
@@ -441,7 +506,7 @@ async function calculateNewMapRatings(old_maps, stayedplayers) {
       if (stayedplayers[teamID]) {
         const amount_stayed = stayedplayers[teamID].amount_stayed;
         if (amount_stayed < 2) {
-          stayed_modifier = 0;
+          stayed_mod = 0;
           continue;
         } else if (amount_stayed > 5) {
           stayed_mod = 1 + (amount_stayed - 5) / 2 / 10;
@@ -515,6 +580,7 @@ new_pool = new Pool({
 
     await execute();
 }
+
 
 
 module.exports.run = main;

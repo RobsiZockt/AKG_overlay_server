@@ -1249,6 +1249,17 @@ app.get("/pred/power_rating/:db",
   }
 })
 
+app.get("/pred/power_rating/pf/:db",[],async(req,res)=>{
+   try{
+    const db = req.params.db;
+    const content = await getDB.getAllTeamRatings("db","readonly_user","readonly_password",db);
+    //res.json(JSON.parse(content));
+    res.json(content);
+  } catch (err){
+    res.status(500).json({error:err});
+  }
+})
+
 app.get("/pred/IDV/:id/:season",[],async(req,res)=>{
   try{
   const id = req.params.id;
@@ -1277,6 +1288,15 @@ app.get("/pred/maplist",[],async(req,res)=>{
     res.json(content);
   }catch (err){
     res.status(500).json({error:err});
+  }
+})
+
+app.post("/pred/runupdate",[],async(req,res)=>{
+  try{
+    init_insertDB.createNew();
+    res.status(200).json({ status: "ok", latest: data });
+  } catch (err){
+    res.status(500).json({ error:err });
   }
 })
 

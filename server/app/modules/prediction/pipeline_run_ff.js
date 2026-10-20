@@ -41,11 +41,10 @@ async function foo() {
 }
  async function main(){
      const startTime = Date.now();
- await import_entire_liga.run(new_db,tournament_id).then(async()=>{
+  await import_entire_liga.run(new_db,tournament_id).then(async()=>{
     await import_matches.run(new_db);
-    await import_teams.run(new_db);
+    await import_teams.run(new_db,tournament_id);
     networkelapsed = (Date.now() - startTime) / 1000;
-    
  }
  ).then(async()=>{
     await split_matches.run(new_db);
@@ -113,7 +112,24 @@ async function createAll() {
    await main();
 }
 
+async function createNew() {
+
+      // sose 26 -> wise 26 CONFIG 
+   tournament_id = "2562692125320538111"; // new tournament id, corresponding to new_db
+   old_db = "sose_26";
+   new_db = "wise_26"; //new === target db
+   new_stages={  //new === target stages
+   "2587988936623761407": 1,
+   "2590418313482625023": 2,
+   "2590418425048512511": 3,
+   "2590418728048218111": 4,
+   };
+   
+   await main();
+}
+
 module.exports.createAll = createAll;
+module.exports.createNew = createNew;
 
 
 

@@ -110,11 +110,7 @@ async function getTeamData(host, user,password,database) {
 
   try {
     const result = await client.query(
-      `SELECT DISTINCT t.id, t.name, t.customfieldvalues_teamkurzel AS kurz, ms.stage_id FROM teams t 
-      JOIN matches ms ON ms.opponents_0_participant_id = t.id 
-      UNION  
-      SELECT DISTINCT t.id, t.name, t.customfieldvalues_teamkurzel AS kurz, ms.stage_id FROM teams t 
-      JOIN matches ms ON ms.opponents_1_participant_id = t.id 
+      `SELECT DISTINCT t.id, t.name, t.customfieldvalues_teamkurzel AS kurz FROM teams t
       ;`,
       // WHERE ms.stage_id = '${Object.keys(stages)[0]}' OR ms.stage_id = '${Object.keys(stages)[1]}' OR ms.stage_id = '${Object.keys(stages)[2]}' OR ms.stage_id = '${Object.keys(stages)[3]}'
     );
@@ -298,8 +294,9 @@ async function getAllTeamRatings(glicko = null,host, user,password,db) {
 
 async function sendAllTeamRatings( host,  user, password, database) {
   const sc = await loadToCache(host,  user, password, database);
-
+ 
   const allTeamRatings = await getAllTeamRatings(glicko,host, user,password,database);
+
   return Object.values(allTeamRatings).sort((a, b) => b.rating - a.rating);
   //return console.log(Object.values(allTeamRatings).sort((a, b) => b.rating - a.rating));
   
@@ -436,14 +433,14 @@ async function getMapList(host,user,password,database) {
 async function main() {
   // const prediction = await predict_map_outcome(glicko,"samoa","8250526365314572288","8250521986271281152",0,0);
 
+  const a = await sendAllTeamRatings("localhost","admin","secretpassword","wise_26");
   // console.log(prediction);
   //const a = await fetchTeamID("localhost","admin","secretpassword","sose_26","HSKC");
-  const a = await getPrediction("localhost","admin","secretpassword","sose_26","runasapi","2453253901889753087","2453358508558624767",0,0,0);
+  //const a = await getPrediction("localhost","admin","secretpassword","sose_26","runasapi","2453253901889753087","2453358508558624767",0,0,0);
   console.log(a);
 
 
 }
-
 
 
 module.exports.getAllTeamRatings = sendAllTeamRatings;
@@ -452,3 +449,4 @@ module.exports.getTeamIDbyKurz = fetchTeamID;
 module.exports.getTeamDetails = getTeamDetails;
 module.exports.getTeamList = getTeamList;
 module.exports.getMapList = getMapList;
+
