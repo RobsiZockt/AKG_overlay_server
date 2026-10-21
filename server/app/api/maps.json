@@ -158,5 +158,10 @@
     "name": "Neon Junction",
     "path": "/img/maps/neonjunction.webp",
     "type": "Hybrid"
+  },
+    "33":{
+    "name": "Watchpoint: Grimsvötn",
+    "path": "/img/maps/grimsvoetn.webp",
+    "type": "Escort"
   }
 }

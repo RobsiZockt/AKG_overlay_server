@@ -258,5 +258,10 @@
     "name": "Shion",
     "role": "DPS",
     "path": "/img/heros/shion.png"
+  },
+   "53": {
+    "name": "Doctrine",
+    "role": "Support",
+    "path": "/img/heros/doctrine.png"
   }
 }
