@@ -1185,10 +1185,11 @@ app.get("/pred/predict_outcome/:t1/:t2/:map",[
 
   try{ 
     const data = req.params;
+    const season = "wise_26"
 
-    let t1_id = await getDB.getTeamIDbyKurz("db","readonly_user","readonly_password","sose_26", data.t1);
-    let t2_id = await getDB.getTeamIDbyKurz("db","readonly_user","readonly_password","sose_26", data.t2);
-    const content = await getDB.getPrediction("db","readonly_user","readonly_password", "sose_26", data.map,t1_id,t2_id,data.t1_score||0,data.t2_score||0,data.prev_won || 0);
+    let t1_id = await getDB.getTeamIDbyKurz("db","readonly_user","readonly_password",season, data.t1);
+    let t2_id = await getDB.getTeamIDbyKurz("db","readonly_user","readonly_password",season, data.t2);
+    const content = await getDB.getPrediction("db","readonly_user","readonly_password", season, data.map,t1_id,t2_id,data.t1_score||0,data.t2_score||0,data.prev_won || 0);
     const send = {
       map_name: content.map_name,
       team1_kurz: content.team1_kurz, 
@@ -1208,7 +1209,7 @@ app.get("/pred/predict_outcome/:t1/:t2/:map",[
 // predict the outcome of the currently selected map/matchup of prodtool
 app.get("/pred/predict_current",[],async(req,res)=>{
   try{
-    const season = "sose_26"
+    const season = "wise_26"
     let t1_id = await getDB.getTeamIDbyKurz("db","readonly_user","readonly_password",season, matchupCache.blue_short);
     let t2_id = await getDB.getTeamIDbyKurz("db","readonly_user","readonly_password",season, matchupCache.red_short);
     let t1_score = matchupCache.blue_score;
