@@ -1,7 +1,7 @@
 <script>
 //@ts-nocheck
 
-  let items = ["wise_24", "sose_25", "wise_25","sose_26"];
+  let items = ["wise_24", "sose_25", "wise_25","sose_26","wise_26"];
    let current_tag = $state(items[3]);
 
   function select(tag) {

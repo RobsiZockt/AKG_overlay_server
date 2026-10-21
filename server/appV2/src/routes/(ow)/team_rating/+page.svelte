@@ -11,7 +11,7 @@ import ListComponent from "$lib/assets/rating_overview/ListComponent.svelte";
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
 
-let sec_season = $state("sose_26");
+let sec_season = $state("wise_26");
 let data = $state()
 let formatedData = $state();
 let openIndex = $state(-1);
