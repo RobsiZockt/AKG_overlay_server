@@ -430,6 +430,28 @@ async function getMapList(host,user,password,database) {
   }
 }
 
+async function getTimestamp(host,user,password,database) {
+   const client = new Client({
+    host: host,
+    port: 5432,
+    user: user,
+    password: password,
+    database: database,
+  });
+  await client.connect();
+  try {
+    const result = await client.query(
+      `SELECT last_update FROM config;`,
+    );
+     const data = Object.values(result.rows[0]);
+     return data;
+     
+  } catch (error) {
+  } finally {
+    client.end();
+  }
+}
+
 async function main() {
   // const prediction = await predict_map_outcome(glicko,"samoa","8250526365314572288","8250521986271281152",0,0);
 
@@ -449,4 +471,4 @@ module.exports.getTeamIDbyKurz = fetchTeamID;
 module.exports.getTeamDetails = getTeamDetails;
 module.exports.getTeamList = getTeamList;
 module.exports.getMapList = getMapList;
-
+module.exports.getTimestamp = getTimestamp;

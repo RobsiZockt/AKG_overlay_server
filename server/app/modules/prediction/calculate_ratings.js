@@ -55,13 +55,7 @@ async function getTeamData() {
   try {
 
     const result = await client.query(
-      `SELECT DISTINCT t.id, t.name, ms.stage_id FROM teams t 
-      JOIN matches ms ON ms.opponents_0_participant_id = t.id 
-      WHERE ms.stage_id = '${Object.keys(stages)[0]}' OR ms.stage_id = '${Object.keys(stages)[1]}' OR ms.stage_id = '${Object.keys(stages)[2]}' OR ms.stage_id = '${Object.keys(stages)[3]}' 
-      UNION  
-      SELECT DISTINCT t.id, t.name, ms.stage_id FROM teams t 
-      JOIN matches ms ON ms.opponents_1_participant_id = t.id 
-      WHERE ms.stage_id = '${Object.keys(stages)[0]}' OR ms.stage_id = '${Object.keys(stages)[1]}' OR ms.stage_id = '${Object.keys(stages)[2]}' OR ms.stage_id = '${Object.keys(stages)[3]}';`
+      `SELECT DISTINCT t.id, t.name FROM teams t`
     );
 
     return result.rows;

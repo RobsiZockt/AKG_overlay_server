@@ -1185,7 +1185,7 @@ app.get("/pred/predict_outcome/:t1/:t2/:map",[
 
   try{ 
     const data = req.params;
-    const season = "wise_26"
+    const season = "wise_26";
 
     let t1_id = await getDB.getTeamIDbyKurz("db","readonly_user","readonly_password",season, data.t1);
     let t2_id = await getDB.getTeamIDbyKurz("db","readonly_user","readonly_password",season, data.t2);
@@ -1241,7 +1241,8 @@ app.get("/pred/predict_current",[],async(req,res)=>{
 app.get("/pred/power_rating/:db",
 [],async(req,res)=>{
   try{
-    const db = req.params.db;
+    let db = req.params.db;
+    if (db =="pf") {db = "prefire_clone";}
     const content = await getDB.getAllTeamRatings("db","readonly_user","readonly_password",db);
     //res.json(JSON.parse(content));
     res.json(content);
@@ -1250,11 +1251,11 @@ app.get("/pred/power_rating/:db",
   }
 })
 
-app.get("/pred/power_rating/pf/:db",[],async(req,res)=>{
+//Get teamrating of PREFIRE (for kjell / Tulow)
+app.get("/pred/power_rating/pf",[],async(req,res)=>{
    try{
-    const db = req.params.db;
+    const db = "prefire_clone";
     const content = await getDB.getAllTeamRatings("db","readonly_user","readonly_password",db);
-    //res.json(JSON.parse(content));
     res.json(content);
   } catch (err){
     res.status(500).json({error:err});
@@ -1274,7 +1275,7 @@ app.get("/pred/IDV/:id/:season",[],async(req,res)=>{
 
 app.get("/pred/teamlist",[],async(req,res)=>{
   try{
-    const season = "sose_26";
+    const season = "wise_26";
     const content = await getDB.getTeamList("db","readonly_user","readonly_password",season);
     res.json(content);
   }catch (err){
@@ -1284,7 +1285,7 @@ app.get("/pred/teamlist",[],async(req,res)=>{
 
 app.get("/pred/maplist",[],async(req,res)=>{
   try{
-    const season = "sose_26";
+    const season = "wise_26";
     const content = await getDB.getMapList("db","readonly_user","readonly_password",season);
     res.json(content);
   }catch (err){
@@ -1294,12 +1295,23 @@ app.get("/pred/maplist",[],async(req,res)=>{
 
 app.post("/pred/runupdate",[],async(req,res)=>{
   try{
-    init_insertDB.createNew();
+    init_insertDB.update("prefire_clone");
     res.status(200).json({ status: "ok", latest: data });
   } catch (err){
     res.status(500).json({ error:err });
   }
 })
+
+app.get("/pred/getTimestamp/:id",[],async(req,res)=>{
+   try{
+  const id = req.params.id;
+  const content = await getDB.getTimestamp("db","readonly_user","readonly_password",id);
+  res.json(content);
+  } catch (err){
+    res.status(500).json({error:err});
+  }
+})
+
 
 //this script is deactivated until i know how to have users authenticate themselfs
 //only activeate it when you need to initialise the DB

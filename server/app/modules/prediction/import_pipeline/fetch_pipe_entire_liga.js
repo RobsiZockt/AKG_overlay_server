@@ -35,6 +35,9 @@ const EXCLUDED_PATHS=
     "opponents_1_participant_customfieldvalues_logo_icon_medium",
     "opponents_1_participant_customfieldvalues_logo_logo_small",
     "opponents_1_participant_customfieldvalues_logo_logo_medium",
+    "stage_settings",
+    "group_settings",
+
 
 ];
 

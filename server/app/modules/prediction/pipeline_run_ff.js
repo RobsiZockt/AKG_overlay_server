@@ -114,25 +114,45 @@ async function createAll() {
 
 async function createNew() {
 
-      // sose 26 -> wise 26 CONFIG 
-   tournament_id = "2562692125320538111"; // new tournament id, corresponding to new_db
-   old_db = "sose_26";
-   new_db = "wise_26"; //new === target db
+
+}
+
+async function update(tar_db) {
+
+   tournament_id = "2562692125320538111";
    new_stages={  //new === target stages
    "2587988936623761407": 1,
    "2590418313482625023": 2,
    "2590418425048512511": 3,
    "2590418728048218111": 4,
-   };
-   
-   await main();
+   }
+
+   await import_entire_liga.run(tar_db,tournament_id).then(async()=>{
+   await import_matches.run(tar_db).then(async()=>{
+      await split_matches.run(tar_db);
+      await calculate_ratings.run(tar_db,new_stages);
+   })})
 }
 
 module.exports.createAll = createAll;
 module.exports.createNew = createNew;
+module.exports.update = update;
 
 
 
+
+   //    // sose 26 -> wise 26 CONFIG 
+   // tournament_id = "2562692125320538111"; // new tournament id, corresponding to new_db
+   // old_db = "sose_26";
+   // new_db = "wise_26"; //new === target db
+   // new_stages={  //new === target stages
+   // "2587988936623761407": 1,
+   // "2590418313482625023": 2,
+   // "2590418425048512511": 3,
+   // "2590418728048218111": 4,
+   // };
+   
+   // await main();
 
 
 // wise 25 -> sose 26 CONFIG 

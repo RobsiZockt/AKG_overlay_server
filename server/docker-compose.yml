@@ -76,6 +76,14 @@ services:
     volumes:
       - ./nginx/mediamtx.yml:/mediamtx.yml:ro
   
+  db_maintenance:
+    build: ./db-maintenance
+    profiles: ["maintenance"]
+    restart: no
+    env_file:
+      - ./db-maintenance/.env
+    networks:
+      - app-network
 
 networks:
   app-network:

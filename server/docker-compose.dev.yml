@@ -54,6 +54,15 @@ services:
       - ./inits/postgres:/docker-entrypoint-initdb.d:ro
     networks:
       - app-network
+  
+  db_maintenance:
+    build: ./db-maintenance
+    profiles: ["maintenance"]
+    restart: no
+    env_file:
+      - ./db-maintenance/.env
+    networks:
+      - app-network
 
 networks:
   app-network:
