@@ -4,7 +4,7 @@ set -e
 
 echo "Starting Prefireing..."
 
-docker compose -f /server/docker-compose.yml --profile maintenance run --rm db_maintenance
+docker compose -f ../server/docker-compose.yml --profile maintenance run --rm db_maintenance
 
 echo "Created DB snapshot"
 sleep 1m
