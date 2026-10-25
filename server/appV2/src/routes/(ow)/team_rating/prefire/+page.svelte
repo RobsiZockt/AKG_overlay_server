@@ -11,15 +11,17 @@ import ListComponent from "$lib/assets/rating_overview/ListComponent.svelte";
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
 
-let sec_season = $state("wise_26");
-let data = $state()
+
+let data = $state();
+let { updatedAt } = $props();
 let formatedData = $state();
 let openIndex = $state(-1);
-let openOverlay = $state(true);
+let openOverlay = $state(false);
+let leastGames = $state(Infinity);
 
     async function getData() {
     try {
-      const res = await fetch(`/api/pred/power_rating/pf/${sec_season}`, {
+      const res = await fetch(`/api/pred/power_rating/pf`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
@@ -27,10 +29,43 @@ let openOverlay = $state(true);
 
       data = nr_data.map((entry, index) => ({...entry,rank: index + 1}));
 
+      data.forEach(dat => {
+        if(Number(dat.games)<leastGames) leastGames = Number(dat.games);
+      });
+
     } catch (err) {
       console.warn(err);
     }
   }
+
+      async function getTS() {
+    try {
+      const res = await fetch(`/api/pred/getTimestamp/prefire_clone`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      const dat = await res.json();
+      updatedAt = dat[0];
+
+    } catch (err) {
+      console.warn(err);
+    }
+  }
+
+  const date = $derived(new Date(updatedAt));
+  const isValid = $derived(!isNaN(date.getTime()));
+
+  const formatted = $derived(
+    isValid
+      ? new Intl.DateTimeFormat('de-DE', {
+          dateStyle: 'medium',
+          timeStyle: 'short'
+        }).format(date)
+      : null
+  );
+
+
+
 
 function formatObjects(objects) {
     const keys = Object.keys(objects[0]);
@@ -58,7 +93,7 @@ function formatObjects(objects) {
   let updateData = async (newData) => {
     sec_season =newData;
     openIndex = null;
-      await getData();
+      await getData(); await getTS();
     data = [{name:"Team",rating:"Rating",rd:"RD",games:"Games",id:"0",rank:"Rank"},...data]
     formatedData = formatObjects(data);
   }
@@ -67,7 +102,7 @@ function formatObjects(objects) {
     openOverlay=true;
   }
 
-  onMount(async()=>{ await getData();
+  onMount(async()=>{ await getData(); await getTS();
     data = [{name:"Team",rating:"Rating",rd:"RD",games:"Games",id:"0",rank:"Rank"},...data];
     formatedData = formatObjects(data);
   })
@@ -88,24 +123,50 @@ function formatObjects(objects) {
       <span class="font-[Cascadia Mono] text-gray-300 text-2xl underline drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)] whitespace-pre font-mono p-2"> How it Works</span>
     </div>
   </div>
+
   <div class="w-full h-full flex-col items-center justify-center">
-    <div class="w-full h-auto flex items-center justify-center pb-12 bt-4">
-      <span class="font-[Cascadia Mono] text-white text-7xl drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)] whitespace-pre font-mono p-2"> Funny Team Power Rating V0.3 PREFIRE</span>
-    </div>
-    <div>
-      <TekButton current_tab={updateData}></TekButton>
+    <div class="w-full h-auto flex flex-col items-center justify-center pb-12 mt-4 gap-3">
+      <div class="flex items-end gap-3">
+        <span class="font-mono text-white text-7xl drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)] whitespace-pre p-2">
+          Funny Team Power Rating
+        </span>
+        <span class="font-mono text-gray-400 text-sm border border-gray-600 rounded px-2 py-0.5 mb-5">
+          v0.3
+        </span>
+      </div>
+
+      <div class="flex items-center gap-2 font-mono text-sm text-amber-300 bg-amber-400/10 border border-amber-400/40 rounded px-3 py-1">
+        <span class="font-bold tracking-widest">PREFIRE</span>
+        <span class="text-amber-200/70">– Rating may change</span>
+        {#if formatted}
+        <span class="text-amber-200/70">|</span>
+        <span class="text-amber-200/70">
+          Stand: <time datetime={date.toISOString()}>{formatted}</time>
+        </span>
+      {/if}
+      </div>
+      {#if leastGames <10}
+      <div class="flex items-center gap-2 font-mono text-sm text-red-300 bg-red-400/10 border border-red-400/40 rounded px-3 py-1">
+        <span class="font-bold tracking-widest">WARNING</span>
+        <span class="text-red-200/70">– Rating is VERY inacurate for Teams with less than 10 Games</span>
+      </div> 
+      {/if}     
+      <div class="flex items-center gap-2 font-mono text-sm text-red-300 bg-red-400/10 border border-red-400/40 rounded px-3 py-1">
+        <span class="font-bold tracking-widest">WARNING</span>
+        <span class="text-red-200/70">– Rating will be better after Day 3 is completed</span>
+      </div>
     </div>
     <div class="w-full h-full items-start justify-center flex pt-4">
-    <div class="h-[790px] w-[1330px] overflow-y-auto flex-col items-center justify-center">
-    {#each formatedData as split_data,index}
-        <div class="w-full h-[40px]" onclick={()=> {openIndex=(openIndex === index?null:index)}}>
-        <ListComponent index={index} data={split_data}></ListComponent> 
-        </div>
-        {#if openIndex === index }
-        <TeamDetails teamid={split_data.id} season={sec_season}/>
-        {/if}
-    {/each}
-    </div>
+      <div class="h-[790px] w-[1330px] overflow-y-auto flex-col items-center justify-center">
+      {#each formatedData as split_data,index}
+          <div class="w-full h-[40px]" onclick={()=> {openIndex=(openIndex === index?null:index)}}>
+            <ListComponent index={index} data={split_data}></ListComponent> 
+          </div>
+          {#if openIndex === index }
+            <TeamDetails teamid={split_data.id} season={"prefire_clone"}/>
+          {/if}
+      {/each}
+      </div>
     </div>
   </div>
 </div>
