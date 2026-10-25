@@ -1293,10 +1293,12 @@ app.get("/pred/maplist",[],async(req,res)=>{
   }
 })
 
-app.post("/pred/runupdate",[],async(req,res)=>{
+app.post("/pred/runupdate/:id",[],async(req,res)=>{
   try{
-    init_insertDB.update("prefire_clone");
-    res.status(200).json({ status: "ok", latest: data });
+    let db = req.params.id;
+    if (db =="pf") {db = "prefire_clone";}
+    init_insertDB.update(db);
+    res.status(200).json({ status: "ok"});
   } catch (err){
     res.status(500).json({ error:err });
   }
