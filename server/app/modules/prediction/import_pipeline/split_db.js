@@ -42,7 +42,8 @@ async function runMigration(target_db) {
                 score INTEGER,
                 result TEXT,
                 forfeit BOOLEAN,
-                position INTEGER
+                position INTEGER,
+                UNIQUE (match_set_id, opponent_index)
             );
         `);
 
@@ -112,7 +113,7 @@ async function runMigration(target_db) {
 
         const insertResultsQuery = `
             INSERT INTO match_set_results (match_set_id, participant_id, opponent_index, score, result, forfeit, position)
-            ${resultsSelects.join(' UNION ALL ')};
+            ${resultsSelects.join(' UNION ALL ')} ON CONFLICT (match_set_id, opponent_index) DO NOTHING ;
         `;
         await client.query(insertResultsQuery);
 

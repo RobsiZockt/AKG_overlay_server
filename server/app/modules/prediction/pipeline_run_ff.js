@@ -113,7 +113,18 @@ async function createAll() {
 }
 
 async function createNew() {
-
+      // sose 26 -> wise 26 CONFIG 
+   tournament_id = "2562692125320538111"; // new tournament id, corresponding to new_db
+   old_db = "sose_26";
+   new_db = "wise_26"; //new === target db
+   new_stages={  //new === target stages
+   "2587988936623761407": 1,
+   "2590418313482625023": 2,
+   "2590418425048512511": 3,
+   "2590418728048218111": 4,
+   };
+   
+   await main();
 
 }
 

@@ -1266,7 +1266,7 @@ app.get("/pred/IDV/:id/:season",[],async(req,res)=>{
   try{
   const id = req.params.id;
   const season = req.params.season;
-  const content = await getDB.getTeamDetails("db","readonly_user","readonly_password",season,id);
+  const content = await getDB.getTea+mDetails("db","readonly_user","readonly_password",season,id);
   res.json(content);
   } catch (err){
     res.status(500).json({error:err});
@@ -1311,6 +1311,15 @@ app.get("/pred/getTimestamp/:id",[],async(req,res)=>{
   res.json(content);
   } catch (err){
     res.status(500).json({error:err});
+  }
+})
+
+app.post("/regen", async(req,res)=>{
+  try{
+  await init_insertDB.createNew()
+      res.status(200).json({ status: "ok"});
+  } catch (err){
+    res.status(500).json({ error:err });
   }
 })
 

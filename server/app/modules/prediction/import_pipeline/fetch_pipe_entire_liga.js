@@ -165,7 +165,9 @@ async function main(target_db,target_tournament) {
 
         const colDefs = columns.map(col => {
             const cleanCol = col.toLowerCase();
-            return cleanCol.endsWith('map_data') ? `"${cleanCol}" JSONB` : `"${cleanCol}" TEXT`;
+            const type = cleanCol.endsWith('map_data') ? `JSONB` : `TEXT`;
+            const unique = cleanCol==="id"? ` UNIQUE`:``;
+            return `"${cleanCol}" ${type} ${unique}`;
         });
 
         const createTableSql = `
@@ -178,7 +180,7 @@ async function main(target_db,target_tournament) {
         const placeholders = columns.map((_, i) => `$${i + 1}`).join(', ');
         const insertSql = `
             INSERT INTO ${TARGET_TABLE} (${columns.map(c => `"${c.toLowerCase()}"`).join(', ')})
-            VALUES (${placeholders});
+            VALUES (${placeholders}) ON CONFLICT ("id") DO NOTHING;
         `;
 
         // Connect to the DB and execute

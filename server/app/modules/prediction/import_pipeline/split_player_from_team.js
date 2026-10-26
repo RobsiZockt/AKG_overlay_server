@@ -53,7 +53,8 @@ pool = new Pool({
         id SERIAL PRIMARY KEY,
         team_id TEXT NOT NULL,
         player_name TEXT,
-        battletag TEXT
+        battletag TEXT,
+        UNIQUE (team_id, battletag)
       )
     `;
 
@@ -104,7 +105,7 @@ pool = new Pool({
     if (allPlayers.length > 0) {
       const insertQuery = `
         INSERT INTO team_players (team_id, player_name, battletag)
-        VALUES ($1, $2, $3)
+        VALUES ($1, $2, $3) ON CONFLICT (team_id, battletag) DO NOTHING;
       `;
 
       // Insert each player individually

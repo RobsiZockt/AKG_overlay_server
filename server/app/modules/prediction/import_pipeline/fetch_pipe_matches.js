@@ -183,7 +183,9 @@ async function main(target_db) {
         const columns = Object.keys(newDataset[0]);
         const colDefs = columns.map(col => {
             const cleanCol = col.toLowerCase();
-            return cleanCol.endsWith('map_data') ? `"${cleanCol}" JSONB` : `"${cleanCol}" TEXT`;
+            const type = cleanCol.endsWith('map_data') ? `JSONB` : `TEXT`;
+            const unique = cleanCol==="id"? ` UNIQUE`:``;
+            return `"${cleanCol}" ${type} ${unique}`;
         });
 
         await client.query(`
@@ -197,7 +199,7 @@ async function main(target_db) {
         const placeholders = columns.map((_, i) => `$${i + 1}`).join(', ');
         const insertSql = `
             INSERT INTO ${NEW_TABLE} (${columns.map(c => `"${c.toLowerCase()}"`).join(', ')})
-            VALUES (${placeholders});
+            VALUES (${placeholders}) ON CONFLICT ("id") DO NOTHING;
         `;
 
         let inserted = 0;
