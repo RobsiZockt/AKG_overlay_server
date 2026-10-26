@@ -1266,7 +1266,7 @@ app.get("/pred/IDV/:id/:season",[],async(req,res)=>{
   try{
   const id = req.params.id;
   const season = req.params.season;
-  const content = await getDB.getTea+mDetails("db","readonly_user","readonly_password",season,id);
+  const content = await getDB.getTeamDetails("db","readonly_user","readonly_password",season,id);
   res.json(content);
   } catch (err){
     res.status(500).json({error:err});
