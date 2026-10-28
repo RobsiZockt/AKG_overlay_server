@@ -1297,6 +1297,7 @@ app.post("/pred/runupdate/:id",[],async(req,res)=>{
   try{
     let db = req.params.id;
     if (db =="pf") {db = "prefire_clone";}
+    if(db == "latest") {db = "wise_26";}
     init_insertDB.update(db);
     res.status(200).json({ status: "ok"});
   } catch (err){
