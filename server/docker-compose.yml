@@ -6,7 +6,7 @@ services:
     volumes:
       - ./app:/app
     working_dir: /app
-    command: node server.js
+    command: sh -c "npm install && node server.js"
     expose:
       - "4000"
     restart: unless-stopped
