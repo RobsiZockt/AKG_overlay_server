@@ -10,13 +10,19 @@ import ListComponent from "$lib/assets/rating_overview/ListComponent.svelte";
   import BoxText from "$lib/assets/wrapper/BoxText.svelte";
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
+  import PrefireRedirect from "$lib/assets/rating_overview/Prefire_redirect.svelte";
 
 let sec_season = $state("wise_26");
 let data = $state()
 let formatedData = $state();
 let openIndex = $state(-1);
 let openOverlay = $state(true);
+let openRedirect = $state(false);
 let leastGames = $state(Infinity);
+
+const now = new Date();
+const showRD = now.getDay() === 0 && now.getHours() >= 18 && now.getHours() < 23;
+if(showRD) openRedirect = true;
 
     async function getData() {
     try {
@@ -81,53 +87,61 @@ function formatObjects(objects) {
   <title>OW Uniliga Rating - by RZ</title>
 </svelte:head>
 
+<PrefireRedirect bind:open={openRedirect} url="https://ow.robsizockt.de/team_rating/prefire"/>
+
 <TutorialOverlay bind:open={openOverlay}/>
 
-<div class="w-full h-[100vh] bg-[#1e1e1e] overflow-hidden">
-<div class="h-[40px] w-full flex items-center justify-end">
-    <div class="w-auto h-full flex" onclick={()=>{goto('/team_prediction')}}>
-      <span class="font-[Cascadia Mono] text-gray-300 text-2xl underline drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)] whitespace-pre font-mono p-2"> Prediction System</span>
-    </div>  
-    <div class="w-auto h-full flex" onclick={()=>{showOverlay()}}>
-      <span class="font-[Cascadia Mono] text-gray-300 text-2xl underline drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)] whitespace-pre font-mono p-2"> How it Works</span>
+<div class="w-full h-dvh bg-[#1e1e1e] flex flex-col overflow-x-hidden overflow-y-auto">
+  <!-- Top nav -->
+  <div class="h-10 w-full shrink-0 flex items-center justify-end">
+    <div class="w-auto h-full flex" onclick={() => { goto('/team_prediction') }}>
+      <span class="text-gray-300 text-lg 2xl:text-2xl underline drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)] whitespace-pre font-['Cascadia_Mono'] font-mono p-2"> Prediction System</span>
     </div>
-    
+    <div class="w-auto h-full flex" onclick={() => { showOverlay() }}>
+      <span class="text-gray-300 text-lg 2xl:text-2xl underline drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)] whitespace-pre font-['Cascadia_Mono'] font-mono p-2"> How it Works</span>
+    </div>
   </div>
-  <div class="w-full h-full flex-col items-center justify-center">
-    <div class="w-full h-auto flex flex-col items-center justify-center pb-12 mt-4 gap-3">
-        <div class="flex items-end gap-3">
-          <span class="font-mono text-white text-7xl drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)] whitespace-pre p-2">
-            Funny Team Power Rating
-          </span>
-          <span class="font-mono text-gray-400 text-sm border border-gray-600 rounded px-2 py-0.5 mb-5">
-            v0.3
-          </span>
-        </div>
-        {#if leastGames <10}
-          <div class="flex items-center gap-2 font-mono text-sm text-red-300 bg-red-400/10 border border-red-400/40 rounded px-3 py-1">
-            <span class="font-bold tracking-widest">WARNING</span>
-            <span class="text-red-200/70">– Rating is VERY inacurate for Teams with less than 10 Games</span>
-          </div> 
-        {/if}     
+
+  <!-- Main content: fills the remaining height -->
+  <div class="w-full flex-1 min-h-0 flex flex-col items-center">
+    <!-- Header -->
+    <div class="w-full shrink-0 flex flex-col items-center justify-center pb-4 2xl:pb-12 mt-2 2xl:mt-4 gap-2 2xl:gap-3 px-4">
+      <div class="flex items-end gap-3">
+        <span class="font-mono text-white text-4xl xl:text-5xl 2xl:text-7xl drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)] p-2 text-center">
+          Funny Team Power Rating
+        </span>
+        <span class="font-mono text-gray-400 text-sm border border-gray-600 rounded px-2 py-0.5 mb-3 2xl:mb-5">
+          v0.4
+        </span>
+      </div>
+      {#if leastGames < 10}
         <div class="flex items-center gap-2 font-mono text-sm text-red-300 bg-red-400/10 border border-red-400/40 rounded px-3 py-1">
           <span class="font-bold tracking-widest">WARNING</span>
-          <span class="text-red-200/70">– Rating will be better after Day 3 is completed</span>
+          <span class="text-red-200/70">– Rating is VERY inacurate for Teams with less than 10 Games</span>
         </div>
+      {/if}
+      <div class="flex items-center gap-2 font-mono text-sm text-red-300 bg-red-400/10 border border-red-400/40 rounded px-3 py-1">
+        <span class="font-bold tracking-widest">WARNING</span>
+        <span class="text-red-200/70">– Rating will be better after Day 3 is completed</span>
       </div>
-    <div>
+    </div>
+
+    <div class="shrink-0">
       <TekButton current_tab={updateData}></TekButton>
     </div>
-    <div class="w-full h-full items-start justify-center flex pt-4">
-    <div class="h-[790px] w-[1330px] overflow-y-auto flex-col items-center justify-center">
-    {#each formatedData as split_data,index}
-        <div class="w-full h-[40px]" onclick={()=> {openIndex=(openIndex === index?null:index)}}>
-        <ListComponent index={index} data={split_data}></ListComponent> 
-        </div>
-        {#if openIndex === index }
-        <TeamDetails teamid={split_data.id} season={sec_season}/>
-        {/if}
-    {/each}
-    </div>
+
+    <!-- List: takes the remaining height, scrolls internally -->
+    <div class="w-full flex-1 min-h-[300px] flex justify-center pt-4 px-4 pb-4">
+      <div class="w-full max-w-[1330px] h-full overflow-y-auto">
+        {#each formatedData as split_data, index}
+          <div class="w-full h-10" onclick={() => { openIndex = (openIndex === index ? null : index) }}>
+            <ListComponent index={index} data={split_data}></ListComponent>
+          </div>
+          {#if openIndex === index}
+            <TeamDetails teamid={split_data.id} season={sec_season} />
+          {/if}
+        {/each}
+      </div>
     </div>
   </div>
 </div>
