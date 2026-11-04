@@ -353,8 +353,8 @@ async function getTeamDetails(host, user, password, database, id) {
         SatsCalculator AS(
                 -- Step 2: Join the clean, 1-to-1 map data to the matches table
                 SELECT 
-                    SUM(map_data.maps_won) AS total_maps_won,
-                    SUM(map_data.maps_lost) AS total_maps_lost,
+                    SUM(map_data.maps_won) AS maps_won,
+                    SUM(map_data.maps_lost) AS maps_lost,
                     -- Because there are no duplicated rows anymore, AVG() works perfectly here!
                     ROUND((AVG(CASE WHEN m.opponents_0_result = 'win' AND m.opponents_0_participant_id = '${id}' THEN 1.0 ELSE 0.0 END) + AVG(CASE WHEN m.opponents_1_result = 'win' AND m.opponents_1_participant_id = '${id}' THEN 1.0 ELSE 0.0 END))*100,2) AS match_winrate,
                     MODE() WITHIN GROUP (ORDER BY map_data.maps_played) AS most_played
@@ -362,8 +362,8 @@ async function getTeamDetails(host, user, password, database, id) {
                 JOIN matches m ON m.id = map_data.match_id
         )
         SELECT
-        sc.total_maps_won,
-        sc.total_maps_lost,
+        sc.maps_won,
+        sc.maps_lost,
         sc.match_winrate,
         sc.most_played,
         bwm.best_map,
