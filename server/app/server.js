@@ -10,6 +10,9 @@ const app = express();
 const PORT = 4000;
 const cors = require("cors");
 const { match } = require("assert");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 
 const {logger, EventTypes} = require('./modules/EventLogger/event_logger.js');
 const eventBus = require("./modules/eventBus.js");
@@ -36,6 +39,22 @@ const init_insertDB = require("./modules/prediction/pipeline_run_ff.js");
 const init_DB = require("./modules/prediction/create_new_db.js");
 const { type } = require("os");
 
+// AUTH SYS
+const auth = require("./modules/auth/read_db.js");
+const rateLimit = require("express-rate-limit");
+const loginLimiter = rateLimit({
+  windowMs: 15*60*1000,
+  limit:15,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {error: "Rate Limit reached"}
+})
+const DUMMY_HASH = bcrypt.hashSync(crypto.randomBytes(16).toString('hex'),12);
+const JWT_SECRET = process.env.JWT_SECRET;
+if(!JWT_SECRET||JWT_SECRET.length<32){
+  throw new Error("JWT SECRET missing or too short");
+}
+
 
 let map_data;
 let ban_data;
@@ -51,8 +70,31 @@ let lastMtime_players = 0;
 let lastMtime_streamConf = 0;
 let lastMtime_uv_matchup =0;
 
+
+// AUTH FUNCTIONS
+
+function reqAuth(req,res,next){
+  const header = req.get("authorization")||"";
+  const [scheme, token] = header.split(" ");
+  if(scheme !== "Bearer" || !token){
+    return res.status(401).json({error: "Missing bearer token"});
+  }
+
+  try{
+    req.user = jwt.verify(token, process.env.JWT_SECRET, {algorithms: ["HS256"]});
+    next();
+  } catch{
+    res.status(401).json({error: "Invalid or expired token"});
+  }
+}
+
+const reqRole = (...roles) =>(req,res,next)=> roles.includes(req.user.role)?next(): res.status(403).json({error: "Forbidden"});
+
+///////////////
+
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "p"))); 
+app.set("trust proxy", 1); //trust nginx
 
 const corsOptions={
   origin: ["https://overlay.robsizockt.de", "https://cast.robsizockt.de", "http://cast.localhost", "http://overlay.localhost"]
@@ -167,6 +209,7 @@ eventBus.on("newLoggedEvent",(event)=>{
   console.log("Event recived: " + event.event);
   broadcast({type: "newLoggedEvent", payload: event});
 })
+
 
 // SSE endpoint just sends cached data
 // SSE endpoint just sends cached data
@@ -1293,7 +1336,7 @@ app.get("/pred/maplist",[],async(req,res)=>{
   }
 })
 
-app.post("/pred/runupdate/:id",[],async(req,res)=>{
+app.post("/pred/runupdate/:id", reqAuth, reqRole("updater"), [],async(req,res)=>{
   try{
     let db = req.params.id;
     if (db =="pf") {db = "prefire_clone";}
@@ -1315,9 +1358,9 @@ app.get("/pred/getTimestamp/:id",[],async(req,res)=>{
   }
 })
 
-app.post("/regen", async(req,res)=>{
+app.post("/regen", reqAuth, reqRole("admin"), async(req,res)=>{
   try{
-  await init_insertDB.createNew()
+ // await init_insertDB.createNew()
       res.status(200).json({ status: "ok"});
   } catch (err){
     res.status(500).json({ error:err });
@@ -1365,6 +1408,26 @@ app.post("/regen", async(req,res)=>{
 
 // END PREDICTION DATABASE CALLS
 
+
+// START AUTH API
+
+app.post('/login',loginLimiter, async(req,res)=>{
+  const {username, password}= req.body ||{};
+  if(typeof username!=="string" || typeof password !== "string"){
+    return res.status(400).json({error: "Bad request"});
+  }
+  let user = await auth.findUser(username);
+  const ok = await bcrypt.compare(password, user ? user.pass_hash : DUMMY_HASH);
+
+  if(!user || !user.active || !ok){
+    return res.status(401).json({error:"Invalid"});
+  }
+
+  const token = jwt.sign({sub: user.id, role: user.role}, process.env.JWT_SECRET,{expiresIn: "12h"});
+  res.json({token});
+})
+
+// END AUTH API
 
 app.listen(PORT, '0.0.0.0', () => console.log(`Server is listening on ${PORT}`));
 
