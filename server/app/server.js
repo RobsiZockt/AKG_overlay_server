@@ -51,9 +51,9 @@ const loginLimiter = rateLimit({
 })
 const DUMMY_HASH = bcrypt.hashSync(crypto.randomBytes(16).toString('hex'),12);
 const JWT_SECRET = process.env.JWT_SECRET;
-if(!JWT_SECRET||JWT_SECRET.length<32){
-  throw new Error("JWT SECRET missing or too short");
-}
+// if(!JWT_SECRET||JWT_SECRET.length<32){
+//   throw new Error("JWT SECRET missing or too short");
+// }
 
 
 let map_data;
