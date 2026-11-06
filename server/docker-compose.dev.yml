@@ -4,7 +4,9 @@ services:
     volumes:
       - ./app:/app
     working_dir: /app
-    command: node server.js
+    env_file:
+      - ./app/.env
+    command: sh -c "npm install && node server.js"
     expose:
       - "4000"
     restart: no
