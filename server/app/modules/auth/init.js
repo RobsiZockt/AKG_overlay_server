@@ -1,20 +1,29 @@
-import pg from "pg";
+const pg = require( "pg");
+const fs = require( "fs");
+const path = require( "path");
+const crypto = require( "crypto");
+
+const ENV_PATH = path.resolve(__dirname,"./../../.env");
+const KEY = "JWT_SECRET";
+const secret = crypto.randomBytes(64).toString("hex");
 
 const { Client } = pg;
 
-/**
- * Creates a PostgreSQL database and configures readonly_user
- * with read-only access.
- *
- * @param {Object} config
- * @param {string} config.host
- * @param {number} config.port
- * @param {string} config.user
- * @param {string} config.password
- * @param {string} config.database - Admin database to connect to
- * @param {string} config.databaseName - Database to create/configure
- */
-export async function create(dbname) {
+function saveSecret(){
+  let content = fs.existsSync(ENV_PATH) ? fs.readFileSync(ENV_PATH,"utf8"):"";
+  const line = `${KEY}=${secret}$`;
+  const regex = new RegExp(`^${KEY}`);
+
+  if(regex.test(content)){
+    content = content.replace(regex, ()=> line);
+  }else{
+    if(content&&!content.endsWith("\n")) content +="\n";
+    content += line + "\n";
+  }
+  fs.writeFileSync(ENV_PATH,content);
+}
+
+async function create(dbname) {
   const databaseName= dbname;
 
 
@@ -53,12 +62,18 @@ export async function create(dbname) {
    
     //Replace Password on prod server
     await admin.query(
-        `DROP ROLE api_reader;
-        CREATE ROLE api_reader WITH
-        LOGIN
-        PASSWORD 'test'
-        NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION
-        CONNECTION LIMIT 10;
+        `
+        DO $$
+        BEGIN
+            IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'api_reader') THEN
+                CREATE ROLE api_reader WITH
+                    LOGIN
+                    PASSWORD 'test'
+                    NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION
+                    CONNECTION LIMIT 10;
+            END IF;
+        END
+        $$;
         ALTER ROLE api_reader SET default_transaction_read_only = on;
         GRANT CONNECT ON DATABASE ${databaseName} TO api_reader;
         `
@@ -80,7 +95,7 @@ export async function create(dbname) {
 
   try {
      await target.query(
-      `CREATE TABLE users (
+      `CREATE TABLE IF NOT EXISTS users (
       id            SERIAL PRIMARY KEY,
       username      TEXT UNIQUE NOT NULL,
       pass_hash     TEXT NOT NULL,
@@ -105,3 +120,4 @@ export async function create(dbname) {
 }
 
 create("persistant");
+saveSecret();
