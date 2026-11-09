@@ -10,6 +10,10 @@ class Glicko2 {
     this.defaultRating = 1500;
     this.defaultRD = 350;
     this.defaultSigma = 0.06;
+    this.maxStepPerRD = 0.3; //bock overshooting
+    this.favDamp = { winCut: 0.6, lossBoost: 0.8 };
+
+    this.trace = {};
 
     this.mapConfig = {
       priorGames: 6, //amount until map is mostly trusted
@@ -249,92 +253,168 @@ class Glicko2 {
     return offsets[clampedStage -1] - avg;
   }
 
+  // ======================================================== 
+  // Damping results to further keep teams in their stage
+  // ========================================================
+  dampFavorite(oldRating, newRating, E) {
+  if (E <= 0.5) return newRating;            // underdogs keep plain Glicko behavior
+  const k = (E - 0.5) / 0.5;                 // 0 at an even match, 1 at a certainty
+  const delta = newRating - oldRating;
+  const factor = delta >= 0
+    ? 1 - this.favDamp.winCut * k            // wins are worth less
+    : 1 + this.favDamp.lossBoost * k;        // losses hurt more
+  return oldRating + delta * factor;
+}
+
   // ========================================================
   // UPDATE ONE RATING
   // ========================================================
 
-  updateRating(rating, rd, sigma, opponents, selfAdjustment=0) {
-    const mu = this.ratingToMu(rating);
-    const phi = this.rdToPhi(rd);
+  // updateRating(rating, rd, sigma, opponents, selfAdjustment=0) {
+  //   const mu = this.ratingToMu(rating);
+  //   const phi = this.rdToPhi(rd);
 
-    // ----------------------------------------------------
-    // Step 1:
-    // Increase uncertainty before rating period.
-    // ----------------------------------------------------
+  //   // ----------------------------------------------------
+  //   // Step 1:
+  //   // Increase uncertainty before rating period.
+  //   // ----------------------------------------------------
 
-    const phiStar = Math.sqrt(Math.pow(phi, 2) + Math.pow(sigma, 2));
+  //   const phiStar = Math.sqrt(Math.pow(phi, 2) + Math.pow(sigma, 2));
 
-    // ----------------------------------------------------
-    // Step 2:
-    // Calculate variance.
-    // ----------------------------------------------------
+  //   // ----------------------------------------------------
+  //   // Step 2:
+  //   // Calculate variance.
+  //   // ----------------------------------------------------
 
-    let varianceInverse = 0;
+  //   let varianceInverse = 0;
 
-    for (const opponent of opponents) {
-      const selfMu = this.ratingToMu(selfAdjustment);
-      const opponentMu = this.ratingToMu(opponent.rating)+this.ratingToMu(opponent.ratingAdjustment || 0);
-      const opponentPhi = this.rdToPhi(opponent.rd);
-      const gValue = this.g(opponentPhi);
-      const expected = this.expectedScore(selfMu, opponentMu, opponentPhi);
-      varianceInverse += Math.pow(gValue, 2) * expected * (1 - expected);
-    }
+  //   for (const opponent of opponents) {
+  //     const selfMu = this.ratingToMu(selfAdjustment);
+  //     const opponentMu = this.ratingToMu(opponent.rating)+this.ratingToMu(opponent.ratingAdjustment || 0);
+  //     const opponentPhi = this.rdToPhi(opponent.rd);
+  //     const gValue = this.g(opponentPhi);
+  //     const expected = this.expectedScore(selfMu, opponentMu, opponentPhi);
+  //     varianceInverse += Math.pow(gValue, 2) * expected * (1 - expected);
+  //   }
 
-    // No useful information.
-    if (varianceInverse <= 0) {
-      return {
-        rating,
-        rd: this.phiToRD(phiStar),
-        sigma,
-      };
-    }
+  //   // No useful information.
+  //   if (varianceInverse <= 0) {
+  //     return {
+  //       rating,
+  //       rd: this.phiToRD(phiStar),
+  //       sigma,
+  //     };
+  //   }
 
-    const variance = 1 / varianceInverse;
+  //   const variance = 1 / varianceInverse;
 
-    // ----------------------------------------------------
-    // Step 3:
-    // Calculate delta.
-    // ----------------------------------------------------
+  //   // ----------------------------------------------------
+  //   // Step 3:
+  //   // Calculate delta.
+  //   // ----------------------------------------------------
 
-    let deltaSum = 0;
+  //   let deltaSum = 0;
 
-    for (const opponent of opponents) {
-      const opponentMu = this.ratingToMu(opponent.rating);
-      const opponentPhi = this.rdToPhi(opponent.rd);
-      const gValue = this.g(opponentPhi);
-      const expected = this.expectedScore(mu, opponentMu, opponentPhi);
-      deltaSum += gValue * (opponent.score - expected);
-    }
+  //   for (const opponent of opponents) {
+  //     const opponentMu = this.ratingToMu(opponent.rating);
+  //     const opponentPhi = this.rdToPhi(opponent.rd);
+  //     const gValue = this.g(opponentPhi);
+  //     const expected = this.expectedScore(mu, opponentMu, opponentPhi);
+  //     deltaSum += gValue * (opponent.score - expected);
+  //   }
 
-    const delta = variance * deltaSum;
+  //   const delta = variance * deltaSum;
 
-    // ----------------------------------------------------
-    // Step 4:
-    // New volatility.
-    // ----------------------------------------------------
+  //   // ----------------------------------------------------
+  //   // Step 4:
+  //   // New volatility.
+  //   // ----------------------------------------------------
 
-    const newSigma = this.calculateNewSigma(phi, sigma, delta, variance);
+  //   const newSigma = this.calculateNewSigma(phi, sigma, delta, variance);
 
-    // ----------------------------------------------------
-    // Step 5:
-    // New RD.
-    // ----------------------------------------------------
+  //   // ----------------------------------------------------
+  //   // Step 5:
+  //   // New RD.
+  //   // ----------------------------------------------------
 
-    const newPhi = 1 / Math.sqrt(1 / Math.pow(phiStar, 2) + 1 / variance);
+  //   const newPhi = 1 / Math.sqrt(1 / Math.pow(phiStar, 2) + 1 / variance);
 
-    // ----------------------------------------------------
-    // Step 6:
-    // New rating.
-    // ----------------------------------------------------
+  //   // ----------------------------------------------------
+  //   // Step 6:
+  //   // New rating.
+  //   // ----------------------------------------------------
 
-    const newMu = mu + Math.pow(newPhi, 2) * deltaSum;
+  //   const newMu = mu + Math.pow(newPhi, 2) * deltaSum;
 
+  //   return {
+  //     rating: this.muToRating(newMu),
+  //     rd: this.phiToRD(newPhi),
+  //     sigma: newSigma,
+  //   };
+  // }
+updateRating(rating, rd, sigma, opponents, selfAdjustment = 0) {
+  const mu = this.ratingToMu(rating);
+  const phi = this.rdToPhi(rd);
+  const phiStar = Math.sqrt(phi * phi + sigma * sigma);
+
+  // adjustments are offsets in rating points -> offsets on the mu scale
+  const selfMuEff = mu + selfAdjustment / this.scale;
+
+  // precompute per-opponent values once
+  const opps = opponents.map((o) => {
+    const oppMuEff = this.ratingToMu(o.rating) + (o.ratingAdjustment || 0) / this.scale;
+    const oppPhi = this.rdToPhi(o.rd);
     return {
-      rating: this.muToRating(newMu),
-      rd: this.phiToRD(newPhi),
-      sigma: newSigma,
+      g: this.g(oppPhi),
+      expected: this.expectedScore(selfMuEff, oppMuEff, oppPhi),
+      score: o.score,
+      w: o.weight ?? 0.33
     };
+  });
+
+  // Step 2: variance
+  let varianceInverse = 0;
+  for (const o of opps) {
+    varianceInverse += o.w * o.g * o.g * o.expected * (1 - o.expected);
   }
+  if (varianceInverse <= 0) {
+    return { rating, rd: this.phiToRD(phiStar), sigma };
+  }
+  const variance = 1 / varianceInverse;
+
+  // Step 3: delta (same expected scores as the variance step)
+  let deltaSum = 0;
+  for (const o of opps) {
+    deltaSum += o.w * o.g * (o.score - o.expected);
+  }
+  const delta = variance * deltaSum;
+
+  // Steps 4-6 unchanged
+  const newSigma = this.calculateNewSigma(phi, sigma, delta, variance);
+  const newPhi = 1 / Math.sqrt(1 / (phiStar * phiStar) + 1 / variance);
+  const newMu = mu + newPhi * newPhi * deltaSum;
+
+  const rawRating = this.muToRating(newMu);
+  const rawStep   = rawRating - rating;
+  const maxStep   = this.maxStepPerRD * rd;
+  const step      = Math.max(-maxStep, Math.min(maxStep, rawStep));
+
+  // if part of the step was cut, only part of the information was absorbed
+  const absorbed  = Math.abs(rawStep) < 1e-9 ? 1 : Math.abs(step / rawStep);
+  const rawRD     = this.phiToRD(newPhi);
+  const outRD     = rd + (rawRD - rd) * absorbed;
+
+  if(absorbed!=1)
+  console.log("Absorbed " + absorbed);
+
+  return {
+    rating: rating + step,
+    rd: outRD,
+    sigma: newSigma,
+  };
+}
+
+
 
   // ========================================================
   // UPDATE COMPLETE MATCH 
@@ -376,6 +456,12 @@ class Glicko2 {
     const team1PickBonus = teamPickedMap===1?this.mapConfig.pickAdvantage:0;
     const team2PickBonus = teamPickedMap===2?this.mapConfig.pickAdvantage:0;
 
+    const mu1 = this.ratingToMu(team1.rating) + (effDev1 + team1PickBonus) /this.scale;
+    const mu2 = this.ratingToMu(team2.rating) + (effDev2 + team2PickBonus) /this.scale;
+    const E1 = this.expectedScore(mu1,mu2,this.rdToPhi(team2.rd));
+    const E2 = 1- E1;
+
+
     // Update Teams
 
     const updatedTeam1 = this.updateRating(
@@ -405,6 +491,25 @@ class Glicko2 {
       }],
       effDev2 + team2PickBonus,
     );    
+
+    // updateCompleteMatch, right after updatedTeam1/updatedTeam2 are computed
+    const TRACK = 2590401095831134207; // the team's id
+    const rec = (id, me, opp, after, score) => {
+      if (id != TRACK) return;
+      const e = this.calculateWinProbability(me, opp);
+      const b = opp.rating < 1400 ? "<1400" : opp.rating < 1600 ? "1400-1600"
+              : opp.rating < 1800 ? "1600-1800" : "1800+";
+      const r = (this.trace[b] ||= { maps: 0, gain: 0, expected: 0, actual: 0 });
+      r.maps++; r.gain += after - me.rating; r.expected += e; r.actual += score;
+      (this.rows ||= []).push({
+        opp: opp.rating.toFixed(0), oppRD: opp.rd.toFixed(0),
+        E: e.toFixed(2), score,
+        before: me.rating.toFixed(0), after: after.toFixed(0), rd: me.rd.toFixed(0),
+      });
+    };
+    rec(team1ID, team1, team2, updatedTeam1.rating, team1Score);
+    rec(team2ID, team2, team1, updatedTeam2.rating, team2Score);
+
 
     //Update Maps
 
@@ -462,8 +567,11 @@ class Glicko2 {
     const newMapSigma1 = map1.sigma * (1-mapLearning1) + updatedMap1.sigma * mapLearning1;
     const newMapSigma2 = map2.sigma * (1-mapLearning2) + updatedMap2.sigma * mapLearning2;
 
-    const finalTeam1 = {...updatedTeam1,games: (team1.games || 0)+1};
-    const finalTeam2 = {...updatedTeam2,games: (team2.games || 0)+1};
+    const finalRating1 = this.dampFavorite(team1.rating, updatedTeam1.rating, E1);
+    const finalRating2 = this.dampFavorite(team2.rating, updatedTeam2.rating, E2);
+
+    const finalTeam1 = {...updatedTeam1,games: (team1.games || 0)+1,rating: finalRating1};
+    const finalTeam2 = {...updatedTeam2,games: (team2.games || 0)+1,rating: finalRating2};
 
     this.updateTeamRating(team1ID,finalTeam1);
     this.updateTeamRating(team2ID,finalTeam2);
@@ -479,7 +587,7 @@ class Glicko2 {
       }
     )
 
-        this.updateMapTeamRating(
+    this.updateMapTeamRating(
       mapName,
       team2ID,
       {

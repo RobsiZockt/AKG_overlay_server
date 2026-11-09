@@ -413,7 +413,7 @@ async function calculateNewTeamRatings(stayedplayers) {
                 if(amount_stayed<2){
                   const rating = {
                     rating: init_rating,
-                    rd: glicko.defaultRD,
+                    rd: glicko.defaultRD-150,
                     sigma: glicko.defaultSigma,
                     games: 0,
                     stageID: team.stage_id,
@@ -451,7 +451,7 @@ async function calculateNewTeamRatings(stayedplayers) {
 
             const rating = {
                 rating: init_rating,
-                rd: glicko.defaultRD,
+                rd: glicko.defaultRD-150,
                 sigma: glicko.defaultSigma,
                 games: 0,
                 stageID: team.stage_id,

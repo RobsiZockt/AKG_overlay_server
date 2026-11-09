@@ -199,7 +199,6 @@ async function saveTeamRatings(glicko) {
     const allTeams = glicko.getAllTeams();
     for (const [teamId, ratingData] of allTeams) {
 
-      console.warn("calc "+ratingData.stageID + " | " + typeof(ratingData.stageID));
 
       await client.query(
         `INSERT INTO "team_rating" 
@@ -537,6 +536,7 @@ async function processAllMatches() {
 
       processed++;
 
+
       if (
         current === 1 ||
         current === total ||
@@ -725,6 +725,9 @@ async function main(target_db,target_stages) {
   console.log("Overall Team Ratings:");
 
   console.table(Object.values(allTeamRatings).sort((a,b)=>b.rating - a.rating));
+
+  console.table(glicko.trace);
+  console.table(glicko.rows);
 
 
   return {
