@@ -151,15 +151,8 @@ function formatObjects(objects) {
       {/if}
       </div>
       {#if leastGames < 10}
-        <div class="flex items-center gap-2 font-mono text-sm text-red-300 bg-red-400/10 border border-red-400/40 rounded px-3 py-1">
-          <span class="font-bold tracking-widest">WARNING</span>
-          <span class="text-red-200/70">– Rating is VERY inacurate for Teams with less than 10 Games</span>
-        </div>
+        <Notification type="warning" color="yellow" text="Upcoming Rating recalculation, check patchnotes for more information"/>
       {/if}
-      <div class="flex items-center gap-2 font-mono text-sm text-red-300 bg-red-400/10 border border-red-400/40 rounded px-3 py-1">
-        <span class="font-bold tracking-widest">WARNING</span>
-        <span class="text-red-200/70">– Rating will be better after Day 3 is completed</span>
-      </div>
     </div>
 
     <!-- List: takes the remaining height, scrolls internally -->

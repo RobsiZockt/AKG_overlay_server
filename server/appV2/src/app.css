@@ -22,5 +22,11 @@
 }
 
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
-
+.prose-patchnotes{
+    --tw-prose-body: #d4d4d4;
+    --tw-prose-headings: #ffffff;
+    --tw-prose-links: #ffaa00;
+    --tw-prose-bold: #ffffff;
+}
