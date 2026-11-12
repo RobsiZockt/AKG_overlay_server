@@ -1,6 +1,6 @@
 import { marked } from "marked";
 
-export const prerender = true;
+export const prerender = false;
 
 const files = import.meta.glob("/src/lib/patchnotes/*.md",{
     query: "?raw",
@@ -8,7 +8,6 @@ const files = import.meta.glob("/src/lib/patchnotes/*.md",{
     eager: true
 }) as Record<string, string>
 
-export function load(){
     const patches = Object.entries(files).map(([path, raw])=>{
         const  slug = path.split("/").pop()!.replace(".md","");
         return{
@@ -18,5 +17,7 @@ export function load(){
         };
     })
     .sort((a,b)=>b.date.localeCompare(a.date));
+
+export function load(){
     return {patches};
 }
