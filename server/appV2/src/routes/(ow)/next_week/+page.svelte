@@ -13,7 +13,6 @@ async function get_week_Pred() {
       });
       predictData = await res.json();
       entries = predictData[0].results;
-      console.log(entries);
     } catch (err) {
       console.warn(err);
     }
