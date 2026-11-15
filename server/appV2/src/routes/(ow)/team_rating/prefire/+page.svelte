@@ -120,12 +120,12 @@ function formatObjects(objects) {
 <div class="w-full h-dvh bg-[#1e1e1e] flex flex-col overflow-x-hidden overflow-y-auto">
   <!-- Top nav -->
   <div class="h-10 w-full shrink-0 flex items-center justify-end">
-    <div class="w-auto h-full flex" onclick={() => { goto('/team_prediction') }}>
+    <div class="w-auto h-full flex" href='/team_prediction'>
       <span class="text-gray-300 text-lg 2xl:text-2xl underline drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)] whitespace-pre font-['Cascadia_Mono'] font-mono p-2"> Prediction System</span>
     </div>
-    <div class="w-auto h-full flex" onclick={() => { showOverlay() }}>
-      <span class="text-gray-300 text-lg 2xl:text-2xl underline drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)] whitespace-pre font-['Cascadia_Mono'] font-mono p-2"> How it Works</span>
-    </div>
+    <a class="w-auto h-full flex" href="/next_week">
+      <span class="text-gray-300 text-lg 2xl:text-2xl underline drop-shadow-[0_1.4px_1.4px_rgba(0,0,0,0.8)] whitespace-pre font-['Cascadia_Mono'] font-mono p-2"> Next Week Prediction</span>
+    </a>
   </div>
 
   <!-- Main content: fills the remaining height -->
