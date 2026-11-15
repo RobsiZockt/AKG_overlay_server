@@ -1,5 +1,3 @@
-// src/hooks.server.js
-
 export async function handle({ event, resolve }) {
 	const hostname = event.url.hostname;
 

@@ -96,3 +96,20 @@ export async function createDatabaseWithReadonly(dbname) {
     `Database "${databaseName}" is configured for readonly_user`
   );
 }
+
+export async function dropDB(dbname) {
+    const admin = new Client({
+    host: "db",
+    port: 5432,
+    user: "admin",
+    password: "secretpassword",
+    database: "empty_db",
+  });
+
+  await admin.connect();
+  try{
+  await admin.query(`DROP DATABASE ${dbname}`);
+  } finally{
+    await admin.end();
+  }
+}

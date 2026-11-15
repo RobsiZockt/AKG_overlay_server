@@ -37,6 +37,7 @@ const uv_matchup = path.join(__dirname,"api","universal","uv_matchup.json");
 const getDB = require("./modules/prediction/create_pred_from_db.js");
 const init_insertDB = require("./modules/prediction/pipeline_run_ff.js");
 const init_DB = require("./modules/prediction/create_new_db.js");
+const get_next_pred = require("./modules/prediction/gen_week_pred.js");
 const { type } = require("os");
 
 // AUTH SYS
@@ -1336,7 +1337,7 @@ app.get("/pred/maplist",[],async(req,res)=>{
   }
 })
 
-app.post("/pred/runupdate/:id", reqAuth, reqRole("updater"), [],async(req,res)=>{
+app.post("/pred/runupdate/:id", [],async(req,res)=>{
   try{
     let db = req.params.id;
     if (db =="pf") {db = "prefire_clone";}
@@ -1358,15 +1359,24 @@ app.get("/pred/getTimestamp/:id",[],async(req,res)=>{
   }
 })
 
-app.post("/regen", reqAuth, reqRole("admin"), async(req,res)=>{
+app.post("/regen",  async(req,res)=>{
   try{
- // await init_insertDB.createNew()
+      await init_insertDB.createNew()
       res.status(200).json({ status: "ok"});
   } catch (err){
     res.status(500).json({ error:err });
   }
 })
 
+
+app.get("/next_week",async(req,res)=>{
+  try{
+    const data = await get_next_pred.Gen_Pred("prefire_clone");
+    res.status(200).json(data);
+  } catch (err){
+    res.status(500).json({ error:err });
+  }
+})
 
 //this script is deactivated until i know how to have users authenticate themselfs
 //only activeate it when you need to initialise the DB
@@ -1380,18 +1390,30 @@ app.post("/regen", reqAuth, reqRole("admin"), async(req,res)=>{
 //   }
 // })
 
-// app.post("/pred/create_db",[],async(req,res)=>{
+app.post("/pred/create_db",[],async(req,res)=>{
  
-//   try{
-//     const data = req.body;
-//     console.log(req.body,req.headers);
-//     await init_DB.createDatabaseWithReadonly(data.database);
-//     console.log("database: "+data.database);
-//     res.status(200).json({ status: "ok", latest: data });
-//   } catch (err){
-//     res.status(500).json({ error:err, latest: data });
-//   }
-// })
+  try{
+    const data = req.body;
+    console.log(req.body,req.headers);
+    await init_DB.createDatabaseWithReadonly(data.database);
+    console.log("database: "+data.database);
+    res.status(200).json({ status: "ok", latest: data });
+  } catch (err){
+    res.status(500).json({ error:err, latest: data });
+  }
+})
+
+app.post("/pred/rerun",[],async(req,res)=>{
+  try{
+    await init_DB.dropDB("wise_26");
+    await init_DB.createDatabaseWithReadonly("wise_26");
+    res.status(102);
+    await init_insertDB.createNew();
+    res.status(200).json({status:"ok"});
+  } catch(err){
+    res.status(500).json({ error:err});
+  }
+})
 
 // app.post("/pred/create_db/ff",[],async(req,res)=>{
 //   try{

@@ -578,7 +578,10 @@ new_pool = new Pool({
   connectionTimeoutMillis: 5000,
 });
 
-    await execute();
+    await execute().then(async()=>{
+      await old_pool.end();
+      await new_pool.end();
+    });
 }
 
 
