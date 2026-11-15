@@ -120,6 +120,9 @@ function formatObjects(objects) {
         {#if leastGames < 10}
         <Notification type="warning" color="yellow" text="Upcoming Rating recalculation, check patchnotes for more information"/>
         {/if}
+        <a href="/patchnotes">
+        <Notification type="info" color="yellow" text="Rating recalculation complete, check patchnotes for more information"/>
+        </a>
       </div>
 
       <div class="shrink-0">
